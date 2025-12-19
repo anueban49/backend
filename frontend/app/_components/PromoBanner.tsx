@@ -2,7 +2,7 @@
 import {useState, useEffect} from 'react';
 export function PromoBanner() {
 return (
-    <div className="w-screen h-5/12 bg-gray-50">
+    <div className="w-screen h-[570px] bg-gray-500">
         Promotion products display here
     </div>
 )

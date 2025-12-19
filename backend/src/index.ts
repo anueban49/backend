@@ -1,19 +1,17 @@
-import express from 'express';
+import express from "express";
+import "dotenv/config";
+import { connectDB } from "./lib/db";
+const uri = process.env.MONGODB_URI!;
+connectDB(uri).then(() => {
+  app.listen(port, () => console.log(...));
+});
 const app = express();
 const port = 4049;
 
-app.use(express.json()); 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
-const arr: string[] = [];
-
-app.get('/', (req, res) => {
-  res.json(arr)
-})
-app.post('/', (req, res) => {
-  const data = req.body
-  console.log("data: ", data)
-  res.send('success')
-})
 app.listen(port, () => {
-  console.log(`Example app listening on port 4049`)
-})
+  console.log(`Example app listening on port 4049`);
+});
