@@ -1,6 +1,6 @@
 import express from "express";
 import "dotenv/config";
-import { connectDB } from "./lib/db";
+import { connectDB } from "./lib/db.js";
 const uri = process.env.MONGODB_URI!;
 connectDB(uri).then(() => {
   app.listen(port, () => console.log(...));
@@ -15,3 +15,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port 4049`);
 });
+
+

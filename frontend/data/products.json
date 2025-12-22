@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Finger Food",
+        "image": "./public/productImages/4ff51a14c041fc57196ebf52f07e524b5e4cc98c.png",
+        "price": 12.99,
+        "description": "Fluffy pancakes stacked with fruits, cream, syrup, and powdered sugar."
+    },
+        {
+        "name": "Finger Food",
+        "image": "public/productImages/4ff51a14c041fc57196ebf52f07e524b5e4cc98c.png",
+        "price": 12.99,
+        "description": "Fluffy pancakes stacked with fruits, cream, syrup, and powdered sugar."
+    },
+        {
+        "name": "Finger Food",
+        "image": "public/productImages/4ff51a14c041fc57196ebf52f07e524b5e4cc98c.png",
+        "price": 12.99,
+        "description": "Fluffy pancakes stacked with fruits, cream, syrup, and powdered sugar."
+    },
+        {
+        "name": "Finger Food",
+        "image": "public/productImages/4ff51a14c041fc57196ebf52f07e524b5e4cc98c.png",
+        "price": 12.99,
+        "description": "Fluffy pancakes stacked with fruits, cream, syrup, and powdered sugar."
+    }
+
+]

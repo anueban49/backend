@@ -1,16 +1,22 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Children } from "react";
 import { PromoBanner } from "./PromoBanner";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-export default function Homepage() {
+import { ReactNode } from "react";
+
+type BaseSctructureProps = {
+  children: React.ReactNode;
+};
+export default function Homepage({ children }: BaseSctructureProps) {
   return (
     <>
       <div className="flex flex-col">
         {" "}
         <Header />
         <PromoBanner />
-        <Footer/>
+        {children}
+        <Footer />
       </div>
     </>
   );
