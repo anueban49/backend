@@ -2,7 +2,7 @@ import { Schema, model, Document } from "mongoose";
 
 //The extends Document part means the IProduct interface is
 // inheriting from the Document interface, which comes from Mongoose (the MongoDB ODM for Node.js).
-export interface IProduct extends Document {
+export interface FoodProduct extends Document {
   name: string;
   description: string;
   price: number;
@@ -13,7 +13,7 @@ export interface IProduct extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-const ProductSchema = new Schema<IProduct>(
+const FoodSchema = new Schema<FoodProduct>(
   {
     name: { type: String, required: true, index: "text" },
     description: { type: String, index: "text" },
@@ -25,6 +25,6 @@ const ProductSchema = new Schema<IProduct>(
   },
   { timestamps: true }
 );
-ProductSchema.index({ name: "text", description: "text" });
+FoodSchema.index({ name: "text", description: "text" });
 
-export const Product = model<IProduct>('Product', ProductSchema);
+export const Product = model<FoodProduct>('Food', FoodSchema);

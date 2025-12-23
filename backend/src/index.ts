@@ -1,11 +1,16 @@
 import express from "express";
 import "dotenv/config";
-import { connectDB } from "./lib/db.js";
+
+import { connectToDB } from "./database/index.js";
+await connectToDB();
+const app = express();
+
+
 const uri = process.env.MONGODB_URI!;
-connectDB(uri).then(() => {
+connectToDB(uri).then(() => {
   app.listen(port, () => console.log(...));
 });
-const app = express();
+
 const port = 4049;
 
 app.get("/", (req, res) => {
