@@ -15,7 +15,7 @@ export default function Homepage({ children }: BaseSctructureProps) {
         {" "}
         <Header />
         <PromoBanner />
-        <div className="px-10 flex justify-center">{children}</div>
+        <div className="px-10 flex flex-col items-center">{children}</div>
         <Footer />
       </div>
     </>

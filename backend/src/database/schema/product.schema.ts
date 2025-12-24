@@ -33,6 +33,14 @@ const Productschema = new Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
+    description: { type: String, index: "text" },
+    images: {
+      url: String, // Cloudinary URL
+      publicId: String, // For deletion/updates
+      width: Number,
+      height: Number,
+    },
+    ingredients: [String],
   },
   {
     timestamps: true,

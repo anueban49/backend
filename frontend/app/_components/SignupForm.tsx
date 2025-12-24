@@ -28,14 +28,13 @@ export default function SignupForm() {
       confirmpassword: "",
     },
   });
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    signup(form);
+  function onSubmit(data: userFormdata) {
+    signup(data);
   }
   return (
     <div className="flex flex-col gap-4 scale-80">
       <h3 className="text-2xl font-semibold">Create Your Account</h3>
-      <p>Sign up to explore your favourite dishes</p>
+      <p>Sign up to explore your favorite dishes</p>
       <Form {...form}>
         <form
           // onSubmit={form.handleSubmit(onsubmit)}
@@ -92,10 +91,10 @@ export default function SignupForm() {
           />
 
           <Button
-            disabled="true"
+            disabled
             className="w-full"
             type="submit"
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             Let's Go
           </Button>

@@ -6,6 +6,7 @@ export default function HomePage() {
   return (
     <BaseStructucture>
     <DisplayShelf></DisplayShelf>
+    <DisplayShelf></DisplayShelf>
     </BaseStructucture>
     
   )

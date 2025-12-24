@@ -1,6 +1,9 @@
 //a function that is called on POST request
 import type { RequestHandler } from "express";
 import { ProductModel } from "../../database/schema/product.schema.js";
+import cloudinary from "../../database/cloudinary.js";
+import formida
+
 export const createProduct: RequestHandler = async (req, res) => {
   const body = req.body;
   const Product = await ProductModel.create({
