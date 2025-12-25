@@ -1,0 +1,10 @@
+import { Schema, model } from "mongoose";
+
+const userSchema = new Schema(
+  {
+    username: String,
+    password: String,
+  },
+  { timestamps: true }
+);
+export const UserModel = model("User", userSchema);
