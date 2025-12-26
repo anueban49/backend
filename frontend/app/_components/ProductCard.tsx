@@ -24,8 +24,8 @@ export function ProductCard( prop: ProductType) {
             className="w-full h-full object-center object-cover rounded-2xl"
             src={`${process.env.API_IMAGE_URL}${prop.image}`}
           />
-          <Button className=" absolute right-2 bottom-2 bg-white rounded-full aspect-square p-0 flex itemc-center justify-center">
-            <Plus color="red"/>
+          <Button size="icon" className="aspect-square rounded-full absolute right-2 bottom-2 bg-white flex items-center justify-center ">
+          <Plus color="red"/>
           </Button>
         </div>
         <div className="flex justify-between font-medium">

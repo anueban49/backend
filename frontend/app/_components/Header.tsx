@@ -10,8 +10,8 @@ export function Header() {
     <div className="w-screen h-[3em] bg-gray-900 flex items-center p-4 gap-4 ">
       <Logo />
       <DeliveryAddress />
+      <UserProfile/>
       <Cart />
-      <UserProfile />
     </div>
   );
 }

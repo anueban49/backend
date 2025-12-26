@@ -14,7 +14,7 @@ export const createProduct: RequestHandler = async (req, res) => {
   const Product = await ProductModel.create({
     name: body.name,
     price: body.price,
-    image: body.image,
+    image: body.image, //it expects url.
     ingredients: body.ingredients,
   });
   res.status(201).json(Product);

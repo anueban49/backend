@@ -1,11 +1,14 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 export function UserProfile() {
+
   return (
     <>
-      <div className="w-10 aspect-square bg-red-700 rounded-full p-2">
+      <Button size="icon" className="bg-red-500 rounded-full " >
         <User color="white" size={20}/>
-      </div>
+      </Button>
+
     </>
   );
 }
