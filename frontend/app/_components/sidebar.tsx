@@ -28,35 +28,8 @@ import {
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
-let cart: ProductType[] = [];
+const cart: ProductType[] = [];
 
-const items = [
-  {
-    title: "Order detail",
-    url: "#",
-    icon: ShoppingCart,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
 
 interface AddToCartProps {
   product: ProductType; // Pass entire product
@@ -70,38 +43,30 @@ export function AddToCart({ product }: AddToCartProps) {
 //plan:
 //add close button to sidebar header -> implement collapse function
 export function UserSidebar() {
-  const {
-    state,
-    open,
-    setOpen,
-    openMobile,
-    setOpenMobile,
-    isMobile,
-    toggleSidebar,
-  } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   return (
-    <SidebarProvider defaultOpen={true}>
-      <Sidebar side="right" variant="floating">
-        <p>sidebar is {state}</p>
-        <SidebarHeader>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel className="flex justify-between">
-                <ShoppingCart />
-                Order detail
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="rounded-full"
-                  onClick={toggleSidebar}
-                >
-                  <X />
-                </Button>
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <Switch className="w-full">Cart Order</Switch>
-                  {items.map((item) => (
+
+    <Sidebar side="right" variant="floating" collapsible="icon">
+      <p>sidebar is {state}</p>
+      <SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel className="flex justify-between">
+              <ShoppingCart />
+              Order detail
+              <Button
+                size="icon"
+                variant="outline"
+                className="rounded-full"
+                onClick={toggleSidebar}
+              >
+                <X />
+              </Button>
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <Switch className="w-full" >Cart Order</Switch>
+                {/* {items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <a href={item.url}>
@@ -110,13 +75,13 @@ export function UserSidebar() {
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </SidebarHeader>
-      </Sidebar>
-    </SidebarProvider>
+                  ))} */}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </SidebarHeader>
+    </Sidebar>
+
   );
 }

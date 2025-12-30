@@ -7,10 +7,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 export default function HomePage() {
   return (
     <BaseStructucture>
-      <div>this a test</div>
+      
       <DisplayShelf></DisplayShelf>
       <DisplayShelf></DisplayShelf>
-      <SidebarProvider><UserSidebar></UserSidebar></SidebarProvider>
+     
     </BaseStructucture>
   );
 }

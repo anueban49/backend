@@ -6,6 +6,7 @@ export type ProductType = {
   image: string;
   price: number;
   description: string;
+  id: string;
 //   createdAt: Date;
 //   updatedAt: Date;
 //   attrs: string[];
@@ -33,6 +34,7 @@ export function ProductCard( prop: ProductType) {
           <h2 className="text-black">$ {prop.price}</h2>
         </div>
         <p>{prop.description}</p>
+        <p className="hidden">{prop.id}</p>
       </div>
     </div>
   );

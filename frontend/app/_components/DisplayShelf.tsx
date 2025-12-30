@@ -14,10 +14,12 @@ type productShelfProps = {
 export function DisplayShelf<productShelfProps>() {
   return (
     <>
-      <div>Category</div>
+      <div></div>
       <div className="grid grid-cols-3 grid-rows-2 w-full max-w-7xl h-180 ">
-        {products.map((el) => (
+        {products.map((el, index) => (
           <ProductCard
+            key={index}
+            id="id"
             name={el.name}
             image={el.image}
             description={el.description}
