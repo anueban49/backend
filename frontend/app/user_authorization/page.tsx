@@ -36,3 +36,7 @@ export default function userAuth() {
     </div>
   );
 }
+//user aunthentication & user authorization are diff diggah 
+
+//user authentication is supposed to verify that the user it not a bot.
+//user authorization is supposed to verify that the user is registered | unregistered.
