@@ -39,11 +39,11 @@ export function UserSidebar() {
       style={{
         background:"transparent"
       }}
-      className="w-[20vw]"
+      className="overflow-hidden bg-zinc-600"
     >
-      <div className="w-full h-full bg-zinc-600 ">
+      <SidebarContent className="bg-zinc-600 h-full">
         <SidebarHeader >
-          <SidebarContent >
+          
             <SidebarGroup className="flex flex-col gap-2">
               <SidebarGroupLabel className="flex justify-between">
                 <ShoppingCart color="white"/>
@@ -63,9 +63,9 @@ export function UserSidebar() {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-          </SidebarContent>
+          
         </SidebarHeader>
-      </div>
+     </SidebarContent>
     </Sidebar>
   );
 }

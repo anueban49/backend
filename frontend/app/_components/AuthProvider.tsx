@@ -27,7 +27,7 @@ export function useAuth() {
   }
 
   return context;
-} //-> this a custom hook. AI recommended and sait it must be.
+} //-> this a custom hook. AI recommended and said it must be.
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState(() => {
     const stored = sessionStorage.getItem("user");

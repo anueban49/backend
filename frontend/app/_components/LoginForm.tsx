@@ -73,8 +73,8 @@ export default function LoginForm() {
             )}
           />
 
-          <Button disabled="true" className="w-full" type="submit">
-            Let's Go
+          <Button disabled className="w-full" type="submit">
+            Let&apo;s go!
           </Button>
         </form>
       </Form>
