@@ -3,7 +3,7 @@ import cloudinary from "./cloudinary.js";
 import { ProductModel } from "./schema/product.schema.js";
 import { uri } from "./index.js";
 
-//importing existing image from cloudinary to mongodb.
+//
 
 async function getImage() {
   await mongoose.connect(uri);

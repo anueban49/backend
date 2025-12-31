@@ -37,8 +37,6 @@ const Productschema = new Schema(
     images: {
       url: String, // Cloudinary URL
       publicId: String, // For deletion/updates
-      width: Number,
-      height: Number,
     },
     ingredients: [String],
   },

@@ -1,14 +1,16 @@
 import express from "express";
-import "dotenv/config";
+import { config } from "dotenv";
 import { connectToDB } from "./database/index.js";
 import { ProductRouter } from "./routers/product.router.js";
+
+config();
 
 await connectToDB();
 
 const app = express();
 
 app.use(express.json());
-app.use('/product', ProductRouter); 
+app.use("/product", ProductRouter);
 
 const port = 4049;
 
