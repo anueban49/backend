@@ -4,6 +4,10 @@ import { Logo } from "./Logo";
 import { DeliveryAddress } from "./DeliveryAddress";
 import { UserProfile } from "./User";
 import { Cart } from "./Cart";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { CartShell } from "./CartShell";
 
 export function Header() {
   return (
@@ -11,7 +15,7 @@ export function Header() {
       <Logo />
       <DeliveryAddress />
       <UserProfile />
-      <Cart />
+      <CartShell />
     </div>
   );
 }

@@ -7,7 +7,7 @@ export function Cart() {
   const { toggleSidebar } = useSidebar();
   return (
     <>
-      <SidebarProvider>
+
         <Button
           size="icon"
           className="rounded-full bg-white"
@@ -15,7 +15,9 @@ export function Cart() {
         >
           <ShoppingCart color="black" size={20} />
         </Button>
-      </SidebarProvider>
+
     </>
   );
 }
+
+//header -> contain trigger button; but layout has to have the cartcontext

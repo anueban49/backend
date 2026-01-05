@@ -4,11 +4,12 @@ import { PromoBanner } from "./PromoBanner";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { ReactNode } from "react";
+import { Cart } from "./Cart";
 
 type BaseSctructureProps = {
   children: React.ReactNode;
 };
-export default function Homepage({ children }: BaseSctructureProps) {
+export default function BaseStructure({ children }: BaseSctructureProps) {
   return (
     <>
       <div className="flex flex-col">

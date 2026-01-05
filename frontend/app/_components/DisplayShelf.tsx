@@ -2,12 +2,12 @@
 
 //this component -> accepts food api and renders it into product jsx and dipslays it in itself.
 
-import { ProductType } from "./ProductCard";
+import { itemType } from "@/context/CartContext";
 import { ProductCard } from "./ProductCard";
 import { useContext, useState, useEffect } from "react";
 import products from "@/data/products.json";
 type productShelfProps = {
-  product: ProductType;
+  product: itemType;
   name: string;
 };
 
@@ -19,7 +19,7 @@ export function DisplayShelf<productShelfProps>() {
         {products.map((el, index) => (
           <ProductCard
             key={index}
-            id="id"
+            id={el.id}
             name={el.name}
             image={el.image}
             description={el.description}

@@ -1,13 +1,19 @@
 "use client";
 import React, { ReactNode, Children, useState } from "react";
 import { Button } from "@/components/ui/button";
-
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
+import {
+  CartContext,
+  CartProvider,
+  useCart,
+  CartitemsType,
+  itemType,
+} from "@/context/CartContext";
 //Cart display has to render items, and their total price and total item counts.
 //while order has to do with history of orders, order status et cetera/.
 const menuOptions = [
@@ -16,7 +22,7 @@ const menuOptions = [
 ];
 
 //below should indicate the types of unit items INSIDE <CART> element; not the whole CART.
-const CartItemsCard = (props: cartItemtype) => {
+const CartItemsCard = (props: CartitemsType) => {
   return (
     <>
       <img src={props.image} alt={props.name} />
@@ -28,27 +34,49 @@ const CartItemsCard = (props: cartItemtype) => {
 };
 //below IS indicating wtf should cart menu button display
 export type CartMenuDisplayType = {
-  items: Array<cartItemtype> | undefined;
+  items: Array<CartitemsType> | undefined;
   deliveryLocation: string | undefined; //takes input
-  paymentInfo: string | undefined; //takes input (for now)
+  total: number | 0;
 };
 
 //discovery: you can actually write element style as object and call the object later on the element, wtf. | irrelevant info[ignore]
+function totalPriceDisplay(items: CartitemsType) {
+  const getTotalPrice = useCart();
+  const totalPrice = getTotalPrice(items);
+  return;
+  <>
+    <div>$ {totalPrice}</div>
+  </>;
+}
 
-function OptionMenuDisplay(props: CartMenuDisplayType) {
+function CartItemsDisplay(props: CartMenuDisplayType) {
+  const {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    getTotalItems,
+    getTotalPrice,
+  } = useCart();
+  if (cartItems) {
+    console.log("cartItems: ", cartItems);
+  }
   return (
-    <div className="flex flex-col w-full h-fit gap-3">
-      <Card className="p-2">
-        <CardHeader>My Cart</CardHeader>
-        <CardContent>
-          <p>Items in cart</p>
-        </CardContent>
-        <CardHeader>Delivery Location</CardHeader>
-      </Card>
-      <Card>
-        <CardHeader>Payment Info</CardHeader>
-      </Card>
-    </div>
+    <Card>
+      {cartItems.length > 0 ? (
+        <div id="cartitemsDisplay">
+          {cartItems.map((item, quantity) => (
+            <>
+              <div>{item.name}</div>
+              <div>{item.price}</div>
+              <p>{quantity}</p>
+            </>
+          ))}
+        </div>
+      ) : (
+        <div>Empty</div>
+      )}
+    </Card>
   );
 }
 function PaymentMenuDisplay() {
@@ -75,29 +103,25 @@ export function SwitchMenu() {
       <div className="w-full p-1 h-8 rounded-4xl bg-white grid grid-cols-2 grid-rows-1">
         {menuOptions.map((option) => {
           const isActive = active === option.id;
-
           return (
-            <>
-              <button
-                style={isActive ? buttonStyle : {}}
-                onClick={() => {
-                  handleClick(option.id);
-                }}
-                key={option.id}
-              >
-                {option.name}
-              </button>
-            </>
+            <button
+              key={option.id}
+              style={isActive ? buttonStyle : {}}
+              onClick={() => {
+                handleClick(option.id);
+              }}
+            >
+              {option.name}
+            </button>
           );
         })}
       </div>
       <div>
-        {active === 1 && <OptionMenuDisplay></OptionMenuDisplay>}
+        {active === 1 && <CartItemsDisplay></CartItemsDisplay>}
         {active === 2 && <PaymentMenuDisplay></PaymentMenuDisplay>}
       </div>
     </>
   );
 }
-//plan: try making all menu options as array and map it into buttons -> ?
 
 //plan2: const [cart, order] = usestate("order") -> if there's an item with "selected" status, other items will be removed from 'selected' status -. how to implement it
