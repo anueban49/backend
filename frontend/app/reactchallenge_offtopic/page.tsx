@@ -1,9 +1,8 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { AddToCart } from "../_components/UserSidebar";
 import products from "@/data/mockapi.json";
 import { Button } from "@/components/ui/button";
-import { createContext, useContext, useState, Children } from "react";
+import { createContext, useContext, useState, Children, ReactNode } from "react";
 //custom cartcontext & usecart component will be needed.
 //cartcontext will have to pass the item name and price as its context, and cartprovider will have to allow save & delete the items in the cart;
 //adding usecart hook will allow the context to be passed -> the context will have to be passed to sidebar, sessionstorage as long as the user is within the session (logged in | active).
@@ -12,49 +11,92 @@ import { createContext, useContext, useState, Children } from "react";
 type itemType = {
   name: string;
   price: number;
+  image: string;
+  description: string;
   id: number;
-  quantity: number; 
 };
+
+type CartitemsType = itemType & {
+  quantity: number;
+}
+
 interface CartContextType {
-    cartItems: itemType;
-    addToCart: () => void;
-    removeFromCart: () => void;
-    updateQuantity: () => void;
-    getTotalPrice: () => void;
-    getTotalItems: () => void;
+  //state
+  cartItems: CartitemsType[];
+  //actions
+  addToCart: (item: CartitemsType) => void;
+  removeFromCart: (id: number) => void; //it removes the item by its id, and no return
+  updateQuantity: (id: number, quantity: number) => void; // it updates the count by its id and number included.
+  //computed values
+  getTotalPrice: () => number;
+  getTotalItems: () => number;
+  //ui states
+  setIsCartOpen: boolean;
+  isCartOpen: (open: boolean) => void; //-> for toggling the drawer
 }
 //
-//{ } as CartContextType is a type assertion to satisfy TypeScript when no default value exists (provider must supply the real value).
+//{} as CartContextType is a type assertion to satisfy TypeScript when no default value exists (provider must supply the real value).
 export const CartContext = createContext<CartContextType>({} as CartContextType);
 // You must tell TypeScript what the context value looks like.
-export const CartProvider = ({ id, name, price }: itemType) => {
-  const [items, setItems] = useState<itemType[]>([]);
+export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const [items, setItems] = useState<CartitemsType[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const addToCart = (item: itemType) => {
-    setItems((prev) => [...prev, item]);
+  const addToCart = (item: CartitemsType) => {
+    setItems((prev) => {
+      const itemExists = prev.find((i) => i.id === item.id);
+      if (itemExists) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i)
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
   };
 
   const removeFromCart = (id: number) => {
+    //if item.id === i.id; proceed filtering it.
+    if (!id) { return; }
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
+  const updateQuantity = (id: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(id);
+    }
+  }
+  const getTotalItems = () => {
+    return items.reduce((total, item) => {
+      const price = parseFloat(item.price.replace("$", ""))
+      return total + price + item.quantity;
+    }, 0);
+  }
+  const getTotalPrice = (price: CartitemsType) => {
+    return items.reduce((total, item) => total + item.price, 0);
+  }
 
-  const clearTheCart = () => {
-    setItems([]);
-  };
-  //this has to include all the operation within cart, apparently.
+
 
   return (
     <CartContext.Provider
-      value={{ addToCart, removeFromCart, clearTheCart, useCart }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        getTotalItems,
+        getTotalPrice,
+        setIsCartOpen,
+        isCartOpen
+      }}
     >
-      {Children}
+      {children}
     </CartContext.Provider>
   );
 };
 
 export const useCart = () => {
   const context = useContext(CartContext);
-
+  if (!context) { throw new Error("CartProvider must be used within cartContext") }
+  return context;
 };
 
 function addItemToCart() {
@@ -70,7 +112,7 @@ export default function offTopicPage() {
           <Card key={i}>
             {el.name}
             {el.price}
-            <Button onClick={AddToCart(el.price)}>Add to Cart</Button>
+            <Button >Add to Cart</Button>
           </Card>
         ))}
       </div>

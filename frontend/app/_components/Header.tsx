@@ -3,7 +3,6 @@
 import { Logo } from "./Logo";
 import { DeliveryAddress } from "./DeliveryAddress";
 import { UserProfile } from "./User";
-import { CartShell } from "./CartShell";
 import { Cart } from "./Cart";
 
 export function Header() {
@@ -12,7 +11,7 @@ export function Header() {
       <Logo />
       <DeliveryAddress />
       <UserProfile />
-      <CartShell/>
+      <Cart />
     </div>
   );
 }

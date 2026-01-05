@@ -5,7 +5,7 @@ import { Cart } from "./Cart";
 export function CartShell() {
   return (
     <>
-      <SidebarProvider defaultOpen={true}>
+      <SidebarProvider defaultOpen={false}>
         <header className="absolute top-2 right-4">
           <Cart />
         </header>

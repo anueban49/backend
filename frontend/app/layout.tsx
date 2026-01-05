@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { UserSidebar } from "./_components/UserSidebar";
+import { User } from "lucide-react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,11 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body 
+      <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-
-        {children}
+        {children}{" "}
+        <SidebarProvider>
+          {" "}
+          <UserSidebar></UserSidebar>
+        </SidebarProvider>
       </body>
     </html>
   );

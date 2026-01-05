@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ProductType } from "./ProductCard";
 import { ShoppingCart, X } from "lucide-react";
 import { SwitchMenu } from "./SwitchMenu";
+import { useCart, CartContext, CartProvider } from "@/context/CartContext";
 
 const cart: ProductType[] = [];
 
@@ -31,22 +32,29 @@ export function AddToCart({ product }: AddToCartProps) {
 //add close button to sidebar header -> implement collapse function
 export function UserSidebar() {
   const { state, toggleSidebar } = useSidebar();
+  const {
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    getTotalItems,
+    getTotalPrice,
+  } = useCart();
   return (
-    <Sidebar
-      side="right"
-      variant="sidebar"
-      collapsible="offcanvas"
-      style={{
-        background:"transparent"
-      }}
-      className="overflow-hidden bg-zinc-600"
-    >
-      <SidebarContent className="bg-zinc-600 h-full">
-        <SidebarHeader >
-          
+    <CartProvider>
+      <Sidebar
+        side="right"
+        variant="sidebar"
+        collapsible="offcanvas"
+        style={{
+          background: "transparent",
+        }}
+        className="overflow-hidden bg-zinc-600"
+      >
+        <SidebarContent className="bg-zinc-600 h-full">
+          <SidebarHeader>
             <SidebarGroup className="flex flex-col gap-2">
               <SidebarGroupLabel className="flex justify-between">
-                <ShoppingCart color="white"/>
+                <ShoppingCart color="white" />
                 <p className="text-white">Order detail</p>
                 <Button
                   size="icon"
@@ -63,9 +71,9 @@ export function UserSidebar() {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-          
-        </SidebarHeader>
-     </SidebarContent>
-    </Sidebar>
+          </SidebarHeader>
+        </SidebarContent>
+      </Sidebar>
+    </CartProvider>
   );
 }

@@ -1,27 +1,20 @@
 "use client";
 import React, { ReactNode, Children, useState } from "react";
-import { nullish } from "zod";
 import { Button } from "@/components/ui/button";
-import { is } from "zod/v4/locales";
+
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
-
+//Cart display has to render items, and their total price and total item counts.
+//while order has to do with history of orders, order status et cetera/.
 const menuOptions = [
   { id: 1, name: "Cart" },
   { id: 2, name: "Order" },
 ];
 
-export type cartItemtype = {
-  image: string;
-  name: string;
-  description: string;
-  price: number;
-};
-const CartItems = [];
 //below should indicate the types of unit items INSIDE <CART> element; not the whole CART.
 const CartItemsCard = (props: cartItemtype) => {
   return (
@@ -67,7 +60,6 @@ function PaymentMenuDisplay() {
 }
 export function SwitchMenu() {
   const [active, setActive] = useState(1);
-  const [cart, setCart] = useState(null);
 
   const buttonStyle = {
     backgroundColor: active ? "red" : "white",
