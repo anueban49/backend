@@ -4,11 +4,14 @@ const Productschema = new Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
-    description: { type: String, index: "text" },
     images: {
-      url: String, // Cloudinary URL
-      publicId: String, // For deletion/updates
-      required: true,
+      type: [
+        {
+          url: { type: String, required: true }, // Cloudinary URL
+          publicId: { type: String }, // For deletion/updates
+        },
+      ],
+      required: false,
     },
     ingredients: [String],
     categories: [{type: Schema.Types.ObjectId, ref: 'Category', required: true }]
