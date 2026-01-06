@@ -5,5 +5,5 @@ import { createProduct } from "../controllers/product/createProduct.js";
 
 const ProductRouter = Router();
 
-ProductRouter.get("/", getProducts).post("/", createProduct);
+ProductRouter.get("/products", getProducts).post("/products/create", createProduct);
 export { ProductRouter };
