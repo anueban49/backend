@@ -2,6 +2,11 @@ import express from "express";
 import { config } from "dotenv";
 import { connectToDB } from "./database/index.js";
 import { ProductRouter } from "./routers/product.router.js";
+import { CategoryRouter } from "./routers/category.router.js";
+import { UserRouter } from "./routers/user.router.js";
+import { StaffsRouter } from "./routers/staff.router.js";
+import { OrderRouter } from "./routers/order.router.js";
+
 
 config();
 
@@ -9,8 +14,13 @@ await connectToDB();
 
 const app = express();
 
+
 app.use(express.json());
 app.use("/product", ProductRouter);
+app.use("/category", CategoryRouter);
+app.use("/user", UserRouter);
+app.use("/staff", StaffsRouter);
+app.use("/order", OrderRouter);
 
 const port = 4049;
 

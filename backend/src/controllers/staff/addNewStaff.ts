@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { staffModel } from "../../database/schema/staff.schema.js";
 import bcrypt from "bcrypt";
-export const createProduct: RequestHandler = async (req, res) => {
+export const addNewStaff: RequestHandler = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   try {
     const body = req.body;
