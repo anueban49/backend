@@ -14,17 +14,10 @@ import {
 } from "@/components/ui/card";
 import { api } from "@/lib/axios";
 //this is the main site for adding food to the database so staff schema is not necessarily constructed here so im moving this staff schema out
-import { CreateNewDish } from "./addNewCard";
-import { PlusCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
+import { DishesDashboard } from "./order/ManageDishes";
+import { Logo } from "../_components/Logo";
+import { OrdersDashboard } from "./order/ManageOrders";
 export type StaffType = {
   username: string;
   id: number;
@@ -39,7 +32,7 @@ export type ProductType = {
 };
 export type CategoryType = {
   name: string;
-  id: string;
+  _id: string;
 };
 
 interface staffDashboardType {
@@ -54,85 +47,43 @@ export const StaffContext = createContext<staffDashboardType>(
   {} as staffDashboardType
 );
 
-function StaffProvider({ children }: { children: ReactNode }) {
-  const AddNewProduct = () => {};
-}
+// function StaffProvider({ children }: { children: ReactNode }) {
+//   const AddNewProduct = () => { };
+// }
+const operationBtns = [
+  { id: 1, name: "Food Menu" },
+  { id: 2, name: "Orders" },
+];
 
 export default function StaffDashboard() {
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [cathData, setCathData] = useState<CategoryType[]>([]);
-  useEffect(() => {
-    const getData = async () => {
-      const { data } = await api.get<ProductType[]>("product/products");
-      setProducts(data);
-    };
-    getData();
-  }, []);
-
-  useEffect(() => {
-    const getCathData = async () => {
-      const { data } = await api.get<CategoryType[]>("/category/categories");
-      setCathData(data);
-    };
-    getCathData();
-  }, []);
+  const [active, setActive] = useState(1);
+  const handleClick = (id: number) => {
+    setActive(id);
+  };
   return (
     <div className="w-screen h-screen bg-white flex ">
       <div className="w-80 h-full flex flex-col p-8 gap-4">
-        <div>Logo</div>
+        <div className="bg-black"><Logo /></div>
         <div className=" flex flex-col gap-3">
-          <Button className="rounded-full">Food Menu</Button>
-          <Button className="rounded-full">Orders</Button>
+          {operationBtns.map((btn) => {
+            const isActive = active === btn.id;
+            return (
+              <Button
+                onClick={() => {
+                  handleClick(btn.id);
+                }}
+                variant={isActive ? "default" : "outline"}
+                className="rounded-full"
+                key={btn.id}
+              >
+                {btn.name}
+              </Button>
+            );
+          })}
         </div>
       </div>
-      <div className="w-full bg-rose-50 h-full p-8 flex flex-col">
-        <div className="flex flex-col gap-4">
-          {" "}
-          <p className="font-bold">Dishes Category</p>
-          <div className="">
-            {cathData.map((category) => (
-              <Button
-                key={category.id}
-                variant={"outline"}
-                className="m-2 scale-95 rounded-full"
-              >
-                {category.name}
-              </Button>
-            ))}
-          </div>
-        </div>
-        <div className="grid grid-cols-4 p-4 gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                className="w-40 h-40 rounded-2xl flex flex-col items-center justify-center text-red-500"
-                variant={"outline"}
-                onClick={() => {}}
-              >
-                Add New Dish
-                <PlusCircle size={40} />
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent className="h-125 p-8 flex flex-col gap-20">
-              {" "}
-              <DialogHeader className="">
-                <DialogTitle>Create a new dish</DialogTitle>
-              </DialogHeader>
-              <CreateNewDish className="absolute top-30"></CreateNewDish>
-            </DialogContent>
-          </Dialog>
-
-          {products.map((product) => (
-            <Card key={product.id}>
-              <CardContent>
-                <CardHeader>{product.name}</CardHeader>
-                <CardDescription>{product.ingredients}</CardDescription>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      {active === 1 && <DishesDashboard></DishesDashboard>}
+      {active === 2 && <OrdersDashboard></OrdersDashboard>}
     </div>
   );
 }

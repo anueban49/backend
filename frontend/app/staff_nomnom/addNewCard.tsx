@@ -33,6 +33,7 @@ export function CreateNewDish() {
     const getCathData = async () => {
       const { data } = await api.get<CategoryType[]>("/category/categories");
       setCath(data);
+      console.log(data);
     };
     getCathData();
   }, []);
@@ -43,7 +44,7 @@ export function CreateNewDish() {
     mode: "onChange",
     defaultValues: {
       name: "",
-      price: undefined,
+      price: 0.00,
       ingredients: "",
       category: "",
       image: undefined,
@@ -106,8 +107,8 @@ export function CreateNewDish() {
                 <FormLabel>Ingredients</FormLabel>
                 <FormControl>
                   <Input
-                    type="button"
-                    placeholder="Choose Ingredients"
+                    type="ingredients"
+                    placeholder="Type Ingredients"
                     {...field}
                   />
                 </FormControl>
@@ -125,6 +126,7 @@ export function CreateNewDish() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
+                        type={"button"}
                         variant={"outline"}
                         className="w-full justify-start"
                       >
@@ -133,20 +135,24 @@ export function CreateNewDish() {
                           : "Choose Categories"}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-2 z-99">
+                    <PopoverContent className="w-full p-2 z-99 bg-white shadow-md rounded-2xl">
                       <div className="flex flex-col gap-1">
                         {cath.map((el) => {
-                          const isSelected = field.value?.includes(el.id);
+                          const isSelected = field.value?.includes(el._id);
                           return (
                             <Button
-                              key={el.id}
+                              type="button"
+                              key={el._id}
                               variant={isSelected ? "default" : "ghost"}
-                              className="justify-start"
+                              className="justify-start rounded-xl scale-95 text-sm leading-0"
                               onClick={() => {
+
                                 const current = field.value || [];
                                 const updated = isSelected
-                                  ? current.filter((id: string) => id !== el.id)
-                                  : [...current, el.id];
+                                  ? current.filter(
+                                    (id: string) => id !== el._id
+                                  )
+                                  : [...current, el._id];
                                 field.onChange(updated);
                               }}
                             >
@@ -162,8 +168,27 @@ export function CreateNewDish() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Images</FormLabel>
+                <FormControl>
+                  <Input
+                    style={{ aspectRatio: "3/4" }}
 
-          <Button disabled className="w-full" type="submit">
+                    type="file"
+                    placeholder=""
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button className="w-full" type="submit">
             Create
           </Button>
         </form>
