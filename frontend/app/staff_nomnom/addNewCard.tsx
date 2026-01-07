@@ -17,12 +17,18 @@ import { api } from "@/lib/axios";
 import { CategoryType } from "./page";
 
 import { createNewSchema, CreatenewType } from "./CreateNewSchema";
+import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
 
 //Inputs → react-hook-form state → Zod validation → onSubmit(data) → API request
 
 export function CreateNewDish() {
   //this here is just a <CreateNewDish> COMPONENT. its a COMPONENT, not the ACTUAL function.
-  const [cath, setCath] = useState<CategoryType[]>([])
+  const [cath, setCath] = useState<CategoryType[]>([]);
   useEffect(() => {
     const getCathData = async () => {
       const { data } = await api.get<CategoryType[]>("/category/categories");
@@ -85,22 +91,72 @@ export function CreateNewDish() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Price</FormLabel>
-                <FormControl>
+                <FormControl autoCapitalize="words">
                   <Input type="price" step="0.01" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="ingredients"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Add Ingreds</FormLabel>
+                <FormLabel>Ingredients</FormLabel>
                 <FormControl>
-                  <Input type="ingredients" placeholder="" {...field} />
+                  <Input
+                    type="button"
+                    placeholder="Choose Ingredients"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Choose Category</FormLabel>
+                <FormControl>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className="w-full justify-start"
+                      >
+                        {field.value?.length > 0
+                          ? `${field.value.length} selected`
+                          : "Choose Categories"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-2 z-99">
+                      <div className="flex flex-col gap-1">
+                        {cath.map((el) => {
+                          const isSelected = field.value?.includes(el.id);
+                          return (
+                            <Button
+                              key={el.id}
+                              variant={isSelected ? "default" : "ghost"}
+                              className="justify-start"
+                              onClick={() => {
+                                const current = field.value || [];
+                                const updated = isSelected
+                                  ? current.filter((id: string) => id !== el.id)
+                                  : [...current, el.id];
+                                field.onChange(updated);
+                              }}
+                            >
+                              {el.name}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </FormControl>
                 <FormMessage />
               </FormItem>
