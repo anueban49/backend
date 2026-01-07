@@ -1,6 +1,7 @@
 "use client";
 //importing the backend, getting access keys % staff authorization form
 // here should create the C, R, D operations ->
+//this opage mainly focuses on getting data, while add new data component will be on seperate file
 import { ReactNode, Children, useState, useEffect, createContext } from "react";
 import { itemType } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,16 @@ import {
 } from "@/components/ui/card";
 import { api } from "@/lib/axios";
 //this is the main site for adding food to the database so staff schema is not necessarily constructed here so im moving this staff schema out
+import { CreateNewDish } from "./addNewCard";
+import { PlusCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export type StaffType = {
   username: string;
@@ -44,7 +55,7 @@ export const StaffContext = createContext<staffDashboardType>(
 );
 
 function StaffProvider({ children }: { children: ReactNode }) {
-  const AddNewProduct = () => { };
+  const AddNewProduct = () => {};
 }
 
 export default function StaffDashboard() {
@@ -52,23 +63,16 @@ export default function StaffDashboard() {
   const [cathData, setCathData] = useState<CategoryType[]>([]);
   useEffect(() => {
     const getData = async () => {
-      const { data } = await api.get("http://localhost:4049/product/products");
+      const { data } = await api.get<ProductType[]>("product/products");
       setProducts(data);
-      if (data) {
-        console.log("data found successfully");
-      }
     };
     getData();
   }, []);
 
   useEffect(() => {
     const getCathData = async () => {
-      const res = await fetch("http://localhost:4049/category/categories");
-      if (res) {
-        console.log("category data fetched");
-      }
-      const cathData = await res.json();
-      setCathData(cathData);
+      const { data } = await api.get<CategoryType[]>("/category/categories");
+      setCathData(data);
     };
     getCathData();
   }, []);
@@ -82,18 +86,43 @@ export default function StaffDashboard() {
         </div>
       </div>
       <div className="w-full bg-rose-50 h-full p-8 flex flex-col">
-        <div>
+        <div className="flex flex-col gap-4">
           {" "}
-          <p>Dishes Category</p>
+          <p className="font-bold">Dishes Category</p>
           <div className="">
             {cathData.map((category) => (
-              <Button key={category.id} variant={"outline"} className="m-2 scale-95 rounded-full">
+              <Button
+                key={category.id}
+                variant={"outline"}
+                className="m-2 scale-95 rounded-full"
+              >
                 {category.name}
               </Button>
             ))}
           </div>
         </div>
         <div className="grid grid-cols-4 p-4 gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                className="w-40 h-40 rounded-2xl flex flex-col items-center justify-center text-red-500"
+                variant={"outline"}
+                onClick={() => {}}
+              >
+                Add New Dish
+                <PlusCircle size={40} />
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="h-125 p-8 flex flex-col gap-20">
+              {" "}
+              <DialogHeader className="">
+                <DialogTitle>Create a new dish</DialogTitle>
+              </DialogHeader>
+              <CreateNewDish className="absolute top-30"></CreateNewDish>
+            </DialogContent>
+          </Dialog>
+
           {products.map((product) => (
             <Card key={product.id}>
               <CardContent>
