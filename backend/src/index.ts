@@ -6,14 +6,14 @@ import { CategoryRouter } from "./routers/category.router.js";
 import { UserRouter } from "./routers/user.router.js";
 import { StaffsRouter } from "./routers/staff.router.js";
 import { OrderRouter } from "./routers/order.router.js";
-
+import cors from "cors";
 
 config();
 
 await connectToDB();
 
 const app = express();
-
+app.use(cors());
 
 app.use(express.json());
 app.use("/product", ProductRouter);

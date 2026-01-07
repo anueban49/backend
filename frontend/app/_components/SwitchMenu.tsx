@@ -43,13 +43,14 @@ export type CartMenuDisplayType = {
 function totalPriceDisplay(items: CartitemsType) {
   const getTotalPrice = useCart();
   const totalPrice = getTotalPrice(items);
-  return;
-  <>
-    <div>$ {totalPrice}</div>
-  </>;
+  return (
+    <>
+      <div>$ {totalPrice}</div>
+    </>
+  );
 }
 
-function CartItemsDisplay(props: CartMenuDisplayType) {
+export function CartItemsDisplay(items: CartitemsType) {
   const {
     cartItems,
     addToCart,
@@ -58,9 +59,7 @@ function CartItemsDisplay(props: CartMenuDisplayType) {
     getTotalItems,
     getTotalPrice,
   } = useCart();
-  if (cartItems) {
-    console.log("cartItems: ", cartItems);
-  }
+
   return (
     <Card>
       {cartItems.length > 0 ? (
@@ -74,7 +73,7 @@ function CartItemsDisplay(props: CartMenuDisplayType) {
           ))}
         </div>
       ) : (
-        <div>Empty</div>
+        <div className="p-4">Cart is Empty</div>
       )}
     </Card>
   );

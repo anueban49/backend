@@ -4,26 +4,27 @@
 
 import { itemType } from "@/context/CartContext";
 import { ProductCard } from "./ProductCard";
-import { useContext, useState, useEffect } from "react";
 import products from "@/data/products.json";
-type productShelfProps = {
-  product: itemType;
+
+type ShelfType = {
   name: string;
+  items: itemType[];
 };
 
-export function DisplayShelf<productShelfProps>() {
+export function DisplayShelf({ name, items }: ShelfType) {
   return (
     <>
-      <div></div>
+      <div>{name}</div>
       <div className="grid grid-cols-3 grid-rows-2 w-full max-w-7xl h-180 ">
-        {products.map((el, index) => (
+        {items.map((el) => (
           <ProductCard
-            key={index}
+            key={el.id}
             id={el.id}
             name={el.name}
             image={el.image}
             description={el.description}
             price={el.price}
+            quantity={0}
           ></ProductCard>
         ))}
       </div>

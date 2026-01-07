@@ -14,7 +14,9 @@ const Productschema = new Schema(
       required: false,
     },
     ingredients: [String],
-    categories: [{type: Schema.Types.ObjectId, ref: 'Category', required: true }]
+    categories: [
+      { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    ],
   },
   {
     timestamps: true,

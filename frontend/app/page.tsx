@@ -1,14 +1,12 @@
 "use client";
-import BaseStructucture from "./_components/BaseStructure";
-import { PromoBanner } from "./_components/PromoBanner";
-import { DisplayShelf } from "./_components/DisplayShelf";
-import { UserSidebar } from "./_components/UserSidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+
 export default function HomePage() {
+  const router = useRouter();
   return (
     <>
-      <DisplayShelf></DisplayShelf>
-      <DisplayShelf></DisplayShelf>
+      <Button onClick={() => { router.push('/home') }}>Food Delivery Site</Button>
     </>
   );
 }
