@@ -19,10 +19,20 @@ import { CategoryType } from "./page";
 import { createNewSchema, CreatenewType } from "./CreateNewSchema";
 import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectLabel,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
+import Image from "next/image";
 
 //Inputs → react-hook-form state → Zod validation → onSubmit(data) → API request
 
@@ -44,7 +54,7 @@ export function CreateNewDish() {
     mode: "onChange",
     defaultValues: {
       name: "",
-      price: 0.00,
+      price: "",
       ingredients: "",
       category: "",
       image: undefined,
@@ -55,7 +65,7 @@ export function CreateNewDish() {
     try {
       await api.post("product/products/create", {
         name: data.name,
-        price: data.price,
+        price: parseFloat(data.price),
         ingredients: data.ingredients,
         category: data.category,
         image: data.image,
@@ -121,49 +131,58 @@ export function CreateNewDish() {
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Choose Category</FormLabel>
-                <FormControl>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        type={"button"}
-                        variant={"outline"}
-                        className="w-full justify-start"
-                      >
-                        {field.value?.length > 0
-                          ? `${field.value.length} selected`
-                          : "Choose Categories"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-2 z-99 bg-white shadow-md rounded-2xl">
-                      <div className="flex flex-col gap-1">
-                        {cath.map((el) => {
-                          const isSelected = field.value?.includes(el._id);
-                          return (
-                            <Button
-                              type="button"
-                              key={el._id}
-                              variant={isSelected ? "default" : "ghost"}
-                              className="justify-start rounded-xl scale-95 text-sm leading-0"
-                              onClick={() => {
-
-                                const current = field.value || [];
-                                const updated = isSelected
-                                  ? current.filter(
-                                    (id: string) => id !== el._id
-                                  )
-                                  : [...current, el._id];
-                                field.onChange(updated);
-                              }}
-                            >
-                              {el.name}
-                            </Button>
-                          );
-                        })}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </FormControl>
+                <FormLabel>Category</FormLabel>
+                <Select>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose Category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {cath.map((el) => (
+                      <SelectItem value={el._id}>{el.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                  {/* <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type={"button"}
+                          variant={"outline"}
+                          className="w-full justify-start"
+                        >
+                          {field.value?.length > 0
+                            ? `${field.value.length} selected`
+                            : "Choose Categories"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-2 z-99 bg-white shadow-md rounded-2xl">
+                        <div className="flex flex-col gap-1">
+                          {cath.map((el) => {
+                            const isSelected = field.value?.includes(el._id);
+                            return (
+                              <Button
+                                type="button"
+                                key={el._id}
+                                variant={isSelected ? "default" : "ghost"}
+                                className="justify-start rounded-xl scale-95 text-sm leading-0"
+                                onClick={() => {
+                                  const current = field.value;
+                                  const updated = isSelected
+                                    ? current.filter(
+                                        (id: string) => id !== el._id
+                                      )
+                                    : [...current, el._id];
+                                  field.onChange(updated);
+                                }}
+                              >
+                                {el.name}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </PopoverContent>
+                    </Popover> */}
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -175,20 +194,18 @@ export function CreateNewDish() {
               <FormItem>
                 <FormLabel>Images</FormLabel>
                 <FormControl>
-                  <Input
-                    style={{ aspectRatio: "3/4" }}
-
-                    type="file"
-                    placeholder=""
-                    {...field}
-                  />
+                  <Input type="file" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button className="w-full" type="submit">
+          <Button
+            className="w-full"
+            type="submit"
+            onClick={form.handleSubmit(onSubmit)}
+          >
             Create
           </Button>
         </form>

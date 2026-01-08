@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 export const createNewSchema = z.object({
   name: z.string(),
-  price: z.number().max(30.00).min(2.99),
+  price: z.string(),
   ingredients: z.string(),
   category: z.string(),
   image: z
