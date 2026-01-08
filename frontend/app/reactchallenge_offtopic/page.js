@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { CartContext, CartProvider, useCart } from "./CartContext";
 const api = require("./mockapi.json");
-import Button from '@components/ui/button'
+
 export default function Testpage() {
   const [products, setProducts] = useState([]);
   setProducts(api);
@@ -22,7 +22,7 @@ export default function Testpage() {
                     <div>{el.name}</div>
                     <div>{el.price} </div>
                     <div>{el.description}</div>
-                    <Button></Button>
+                    
                   </CartContext>
                 </>
               );
