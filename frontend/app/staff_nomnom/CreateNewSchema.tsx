@@ -1,16 +1,19 @@
-import * as z from 'zod';
+import * as z from "zod";
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 5;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg, image/jpg, image/png, image/webp"];
 
+const ImageSchema = z
+  .instanceof(File, { message: "Insert image of dish" })
+  .refine((file) => file.size <= MAX_UPLOAD_SIZE, `Max size is 5MB.`)
+  .refine(
+    (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+    `jps, jpeg, png, webp are accepted.`
+  );
 export const createNewSchema = z.object({
   name: z.string(),
   price: z.string(),
   ingredients: z.string(),
   category: z.string(),
-  image: z
-    .instanceof(File)
-    .refine((file) => file.size <= 5 * 1024 * 1024, "Max file size is 5 MB")
-    .refine(
-      (file) => ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
-      "jpeg/jpg/png"
-    ),
+  image: ImageSchema,
 });
 export type CreatenewType = z.infer<typeof createNewSchema>;

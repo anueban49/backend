@@ -39,17 +39,7 @@ import Image from "next/image";
 export function CreateNewDish() {
   //this here is just a <CreateNewDish> COMPONENT. its a COMPONENT, not the ACTUAL function.
   const [cath, setCath] = useState<CategoryType[]>([]);
-  useEffect(() => {
-    const getCathData = async () => {
-      const { data } = await api.get<CategoryType[]>("/category/categories");
-      setCath(data);
-      console.log(data);
-    };
-    getCathData();
-  }, []);
-
-  const form = useForm<CreatenewType>({
-    //-> this a react hook form
+  const form = useForm<z.infer<typeof createNewSchema>>({
     resolver: zodResolver(createNewSchema),
     mode: "onChange",
     defaultValues: {
@@ -60,6 +50,15 @@ export function CreateNewDish() {
       image: undefined,
     },
   });
+  useEffect(() => {
+    const getCathData = async () => {
+      const { data } = await api.get<CategoryType[]>("/category/categories");
+      setCath(data);
+      console.log(data);
+    };
+    getCathData();
+  }, []);
+
   const onSubmit = async (data: CreatenewType) => {
     //this has to be where data is created & sent
     try {
@@ -79,7 +78,7 @@ export function CreateNewDish() {
     <div className="absolute ">
       <Form {...form}>
         <form
-          // onSubmit={form.handleSubmit(onsubmit)}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 flex flex-col gap-4"
         >
           <FormField
@@ -194,7 +193,17 @@ export function CreateNewDish() {
               <FormItem>
                 <FormLabel>Images</FormLabel>
                 <FormControl>
-                  <Input type="file" {...field} />
+                  <Input type="file" {...field}>
+                    {field.value ? (
+                      <img
+                        src={URL.createObjectURL(field.value)}
+                        alt="Preview"
+                        className=" object-cover "
+                      />
+                    ) : (
+                      <span className="text-gray-500">{"Upload image"}</span>
+                    )}
+                  </Input>
                 </FormControl>
                 <FormMessage />
               </FormItem>

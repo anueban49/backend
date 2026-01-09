@@ -16,7 +16,6 @@ import { PlusCircle } from "lucide-react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -84,9 +83,9 @@ export const DishesDashboard = () => {
 
                         <DialogContent className="h-125 p-8 flex flex-col gap-20">
                             {" "}
-                            <DialogHeader className="">
+                            {/* <DialogHeader className="">
                                 <DialogTitle>Create a new dish</DialogTitle>
-                            </DialogHeader>
+                            </DialogHeader> */}
                             <CreateNewDish className="absolute top-30"></CreateNewDish>
                         </DialogContent>
                     </Dialog>
