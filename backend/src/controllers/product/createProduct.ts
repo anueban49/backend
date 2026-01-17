@@ -5,22 +5,35 @@ import cloudinary from "../../database/cloudinary.js";
 
 export const createProduct: RequestHandler = async (req, res) => {
   try {
-    const { name, price, image, ingredients, categories } = req.body;
+    const { name, price, ingredient, category, image } = req.body;
     const uploadResult = await cloudinary.uploader.upload(image, {
       folder: "cateringImages",
-      use_filename: true,
-      unique_filename: false,
+      transformation: [
+        { width: 1000, height: 1000, crop: "limit" }, // Limit max dimensions
+        { quality: "auto" }, // Automatic quality optimization
+        { fetch_format: "auto" },
+      ],
     });
     const Product = await ProductModel.create({
       name,
-      price,
-      ingredients,
-      categories,
-      image: uploadResult.secure_url, //it expects url.
+      price: parseFloat(price),
+      ingredient,
+      category,
+      image: uploadResult.secure_url,
+      imgPublicID: uploadResult.public_id,
     });
-    res.status(201).json(Product);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      product: Product,
+    });
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to create product",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 };
 

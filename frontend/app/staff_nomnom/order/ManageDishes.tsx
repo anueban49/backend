@@ -1,8 +1,9 @@
 "use client";
 import { ReactNode, Children, useState, useEffect, createContext } from "react";
+import { useForm, useFormState, Watch } from "react-hook-form";
 import { itemType } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
-import { icons } from "lucide-react";
+
 import {
     Card,
     CardContent,
@@ -20,12 +21,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import Image from "next/image";
+
 export type ProductType = {
     name: string;
-    id: string;
+    _id: string;
     timestamps: string;
     price: number;
     ingredients: string;
+    image: string;
 };
 export type CategoryType = {
     name: string;
@@ -38,6 +42,7 @@ export const DishesDashboard = () => {
         const getData = async () => {
             const { data } = await api.get<ProductType[]>("product/products");
             setProducts(data);
+            console.log(data);
         };
         getData();
     }, []);
@@ -51,7 +56,6 @@ export const DishesDashboard = () => {
     }, []);
     return (
         <div className="w-screen h-screen bg-white flex ">
-
             <div className="w-full bg-rose-50 h-full p-8 flex flex-col">
                 <div className="flex flex-col gap-4">
                     {" "}
@@ -72,7 +76,7 @@ export const DishesDashboard = () => {
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button
-                                className="w-40 h-40 rounded-2xl flex flex-col items-center justify-center text-red-500"
+                                className="w-full h-full rounded-2xl flex flex-col items-center justify-center text-red-500"
                                 variant={"outline"}
                                 onClick={() => { }}
                             >
@@ -82,22 +86,29 @@ export const DishesDashboard = () => {
                         </DialogTrigger>
 
                         <DialogContent className="h-125 p-8 flex flex-col gap-20">
-                            {" "}
-                            {/* <DialogHeader className="">
-                                <DialogTitle>Create a new dish</DialogTitle>
-                            </DialogHeader> */}
                             <CreateNewDish className="absolute top-30"></CreateNewDish>
                         </DialogContent>
                     </Dialog>
 
-                    {products.map((product) => (
-                        <Card key={product.id}>
-                            <CardContent>
-                                <CardHeader>{product.name}</CardHeader>
-                                <CardDescription>{product.ingredients}</CardDescription>
-                            </CardContent>
-                        </Card>
-                    ))}
+                    {products.map((product) => {
+                        return (
+                            <Card key={product._id}>
+                                <CardContent className="w-full h-full aspect-3/2 p-1">
+                                    <img
+                                        className="w-full h-3/5 rounded-2xl"
+                                        src={product.image}
+                                        alt={product.name}
+                                    />
+                                    <CardHeader>{product.name}</CardHeader>
+                                    <CardDescription>
+                                        {Array.isArray(product.ingredients)
+                                            ? product.ingredients.join(", ")
+                                            : product.ingredients}
+                                    </CardDescription>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
                 </div>
             </div>
         </div>
