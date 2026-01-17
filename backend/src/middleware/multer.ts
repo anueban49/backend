@@ -1,10 +1,12 @@
-//this code is for handling image as buffer before sending it to cloudinary.
+// middleware/upload.ts
 import multer from "multer";
 import path from "path";
 
-
+// Use memory storage so files are stored as Buffer in memory
+// This is perfect for uploading directly to Cloudinary
 const storage = multer.memoryStorage();
 
+// File filter to only accept images
 const fileFilter = (
   req: Express.Request,
   file: Express.Multer.File,

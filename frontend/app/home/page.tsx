@@ -5,8 +5,8 @@ export default function HomePage() {
 
   return (
     <>
-      <DisplayShelf></DisplayShelf>
-      <DisplayShelf></DisplayShelf>
+      <DisplayShelf name="Appetizers"></DisplayShelf>
+      <DisplayShelf name="Main Courses"></DisplayShelf>
     </>
   );
 }

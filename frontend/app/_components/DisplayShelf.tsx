@@ -5,6 +5,7 @@
 import { itemType } from "@/context/CartContext";
 import { ProductCard } from "./ProductCard";
 import products from "@/data/products.json";
+import { useState } from "react";
 
 type ShelfType = {
   name: string;
