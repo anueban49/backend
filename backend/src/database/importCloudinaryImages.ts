@@ -5,7 +5,7 @@ import { uri } from "./index.js";
 
 //
 
-async function getImage() {
+export async function getImage() {
   await mongoose.connect(uri);
 
   let resources = [];
@@ -20,8 +20,8 @@ async function getImage() {
       { slug: r.public_id },
       {
         $set: {
-          name: r.public.id,
-          images: {
+          name: r.public_id,
+          image: {
             url: r.secure_url,
             publicId: r.public_id,
             width: r.width,
@@ -29,7 +29,7 @@ async function getImage() {
           },
         },
       },
-      { upsert: true }
+      { upsert: true },
     );
   }
   console.log(`Imported images: ${resources.length}`);

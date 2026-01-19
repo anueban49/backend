@@ -1,5 +1,4 @@
 import { Schema, model, Document } from "mongoose";
-
 const Productschema = new Schema(
   {
     name: { type: String, required: true },
@@ -11,7 +10,7 @@ const Productschema = new Schema(
           publicId: { type: String }, // For deletion/updates
         },
       ],
-      required: false,
+      required: true,
     },
     ingredients: [String],
     categories: [
@@ -20,6 +19,6 @@ const Productschema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 export const ProductModel = model("Product", Productschema);
