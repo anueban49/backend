@@ -60,14 +60,23 @@ export function CreateNewDish() {
   }, []);
 
   const onSubmit = async (data: CreatenewType) => {
-    //this has to be where data is created & sent
+    if (!data.image) {
+      console.log("image needed")
+    }
+    setisUploading(true);
+    // Create FormData to send file as multipart/form-data
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("price", data.price);
+    formData.append("ingredient", data.ingredients); // Note: backend expects 'ingredient'
+    formData.append("category", data.category);
+    formData.append("image", data.image); // Append the file directly
+
     try {
-      await api.post("product/products/create", {
-        name: data.name,
-        price: parseFloat(data.price),
-        ingredients: data.ingredients,
-        category: data.category,
-        image: data.image,
+      const response = await api.post("product/products/create", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
     } catch (error) {
       console.error(error);

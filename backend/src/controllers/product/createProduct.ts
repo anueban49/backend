@@ -2,15 +2,17 @@
 import type { RequestHandler } from "express";
 import { ProductModel } from "../../database/schema/product.schema.js";
 import cloudinary from "../../database/cloudinary.js";
+import { uploadSingle, uploadMultiple } from "../../middleware/multer.js";
 
 export const createProduct: RequestHandler = async (req, res) => {
   try {
-    const { name, price, image, ingredients, categories } = req.body;
-    const uploadResult = await cloudinary.uploader.upload(image, {
-      folder: "cateringImages",
-      use_filename: true,
-      unique_filename: false,
-    });
+    const { name, price, ingredient, category, image } = req.body;
+    const uploadResult = await cloudinary.uploader.upload(
+      `data:${req.file?.mimetype};base64,${req.file?.buffer.toString("base64")}`,
+      {
+        folder: "cateringImages",
+      },
+    );
     const Product = await ProductModel.create({
       name,
       price,

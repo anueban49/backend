@@ -4,7 +4,7 @@ const Productschema = new Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
-    images: {
+    image: {
       type: [
         {
           url: { type: String, required: true }, // Cloudinary URL
@@ -14,9 +14,11 @@ const Productschema = new Schema(
       required: false,
     },
     ingredients: [String],
-    categories: [
-      { type: Schema.Types.ObjectId, ref: "Category", required: true },
-    ],
+    categories: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
   },
   {
     timestamps: true,
