@@ -24,19 +24,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { File, FileInput, X } from "lucide-react";
+import { Upload, X } from "lucide-react";
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const CLOUD_NAME = process.env.CLOUDINARY_CN;
+const UPLOAD_PRESET = "dishImages";
 
-const convertToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
 export function CreateNewDish() {
   //this here is just a <CreateNewDish> COMPONENT. its a COMPONENT, not the ACTUAL function.
   const [cath, setCath] = useState<CategoryType[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [method, setMethod] = useState("");
   const [isUploading, setisUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -48,7 +47,7 @@ export function CreateNewDish() {
       price: "",
       ingredients: "",
       category: "",
-      image: undefined,
+      image: "",
     },
   });
 
@@ -61,33 +60,52 @@ export function CreateNewDish() {
     getCathData();
   }, []);
 
-  const fileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        alert("File size exceeds the 5MB limit");
+        setFile(null);
+        setPreview(null);
+      }
+      if (!file.type.startsWith("image/")) {
+        setError("Please select images only");
+      }
+
+      setFile(file);
+      setPreview(URL.createObjectURL(file));
+      await fileUpload(file);
+    }
+  };
+
+  const fileUpload = async (file: File) => {
     if (!file) return;
     setisUploading(true);
+    setError(null);
+    setMethod("FormData (raw file)");
     try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", UPLOAD_PRESET);
       const res = await fetch(
-        `https://api.cloudinary.com/v1_1/dvpt3lv6t/image/upload`,
+        `https://api.cloudinary.com/v1_1/dbicloi01/image/upload`,
         {
           method: "POST",
-          body: file,
-          headers: {
-            "Content-Type": file.type,
-          },
+          body: formData,
         },
       );
-      if (!res.ok) {
-        const error = await res.json();
-        console.error("Upload error:", error);
-        alert(`Upload failed: ${error.error?.message || "Unknown error"}`);
-        return;
-      }
       const data = await res.json();
-      console.log("uploaded:", data.secure_url);
-      const setUploadedimgURL = data.url;
-      form.setValue("image", setUploadedimgURL);
+      if (res.ok) {
+        setUploadedUrl(data.secure_url);
+        form.setValue("image", data.secure_url);
+        console.log("upload success:", data.secure_url);
+      } else {
+        setError(data.error?.message || "Upload failed");
+      }
     } catch (error) {
       console.error(error);
+    } finally {
+      setisUploading(false);
     }
   };
 
@@ -95,20 +113,24 @@ export function CreateNewDish() {
     if (!data.image) {
       console.log("image needed");
     }
-    setisUploading(true);
-    const base64Image = await convertToBase64(data.image);
-    console.log(base64Image)
+
     try {
       const response = await api.post("product/products/create", {
         name: data.name,
         price: parseFloat(data.price),
         ingredients: data.ingredients,
         category: data.category,
-        image: base64Image,
+        image: {
+          url: data.image,
+          publicId: "",
+        }, //it should be url, string now
       });
-      console.log(response);
+      console.log("created product:", response);
       form.reset();
       setPreview(null);
+      setUploadedUrl(null);
+      setFile(null);
+      setError(null);
       if (!response) {
         console.log("uploading failed");
       }
@@ -117,6 +139,13 @@ export function CreateNewDish() {
     } finally {
       setisUploading(false);
     }
+  };
+
+  const resetUpload = () => {
+    setPreview(null);
+    setUploadedUrl(null);
+    setFile(null);
+    form.setValue("image", "");
   };
 
   return (
@@ -232,26 +261,18 @@ export function CreateNewDish() {
                           </Button>
                         </div>
                       ) : (
-                        <div className="overflow-hidden relative rounded-xl aspect-7/2">
+                        <label className="block cursor-pointer w-full aspect-9/2 border-2 border-dashed rounded-2xl">
+                          <div className=" flex flex-col items-center justify-center h-full w-full text-gray-400 bg-transparent">
+                            Click to upload image
+                            <Upload />
+                          </div>
                           <input
-                            className="w-full h-full flex flex-col align-center justify-center text-white border-solid border-2 rounded-2xl"
+                            className="text-transparent"
                             type="file"
-                              accept="image/*"
-                              onChange={fileUpload}
-                            // onChange={(e) => {
-                            //   const file = e.target.files?.[0];
-                            //   if (file) {
-                            //     const reader = new FileReader();
-                            //     reader.onloadend = () => {
-                            //       setPreview(reader.result as string);
-                            //     };
-                            //     reader.readAsDataURL(file);
-
-                            //     field.onChange(file);
-                            //   }
-                            // }}
+                            accept="image/*"
+                            onChange={handleFileChange}
                           ></input>
-                        </div>
+                        </label>
                       )}
                     </div>
                   </FormControl>
