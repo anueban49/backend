@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { File, FileInput, X } from "lucide-react";
 
 const convertToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -61,9 +61,39 @@ export function CreateNewDish() {
     getCathData();
   }, []);
 
+  const fileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setisUploading(true);
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/dvpt3lv6t/image/upload`,
+        {
+          method: "POST",
+          body: file,
+          headers: {
+            "Content-Type": file.type,
+          },
+        },
+      );
+      if (!res.ok) {
+        const error = await res.json();
+        console.error("Upload error:", error);
+        alert(`Upload failed: ${error.error?.message || "Unknown error"}`);
+        return;
+      }
+      const data = await res.json();
+      console.log("uploaded:", data.secure_url);
+      const setUploadedimgURL = data.url;
+      form.setValue("image", setUploadedimgURL);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
-      console.log("image needed")
+      console.log("image needed");
     }
     setisUploading(true);
     const base64Image = await convertToBase64(data.image);
@@ -75,7 +105,7 @@ export function CreateNewDish() {
         category: data.category,
         image: base64Image,
       });
-      console.log(response)
+      console.log(response);
       form.reset();
       setPreview(null);
       if (!response) {
@@ -91,7 +121,7 @@ export function CreateNewDish() {
   return (
     <>
       {" "}
-      <div className="w-full ">
+      <div className="w-full aspect-2/3">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -202,23 +232,24 @@ export function CreateNewDish() {
                         </div>
                       ) : (
                         <div className="overflow-hidden relative rounded-xl aspect-7/2">
-                          <Input
-                            className="w-full h-full border-none flex flex-col align-center justify-center text-white"
+                          <input
+                            className="w-full h-full flex flex-col align-center justify-center text-white border-solid border-2 rounded-2xl"
                             type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const reader = new FileReader();
-                                reader.onloadend = () => {
-                                  setPreview(reader.result as string);
-                                };
-                                reader.readAsDataURL(file);
+                              accept="image/*"
+                              onChange={fileUpload}
+                            // onChange={(e) => {
+                            //   const file = e.target.files?.[0];
+                            //   if (file) {
+                            //     const reader = new FileReader();
+                            //     reader.onloadend = () => {
+                            //       setPreview(reader.result as string);
+                            //     };
+                            //     reader.readAsDataURL(file);
 
-                                field.onChange(file);
-                              }
-                            }}
-                          />
+                            //     field.onChange(file);
+                            //   }
+                            // }}
+                          ></input>
                         </div>
                       )}
                     </div>
