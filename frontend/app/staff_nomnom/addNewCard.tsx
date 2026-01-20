@@ -97,6 +97,7 @@ export function CreateNewDish() {
     }
     setisUploading(true);
     const base64Image = await convertToBase64(data.image);
+    console.log(base64Image)
     try {
       const response = await api.post("product/products/create", {
         name: data.name,
