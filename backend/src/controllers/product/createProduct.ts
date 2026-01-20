@@ -1,26 +1,16 @@
 //a function that is called on POST request -> is a controller
 import type { RequestHandler } from "express";
 import { ProductModel } from "../../database/schema/product.schema.js";
-import cloudinary from "../../database/cloudinary.js";
 
 export const createProduct: RequestHandler = async (req, res) => {
   try {
-    const { name, price, ingredient, category, image } = req.body;
-    const uploadResult = await cloudinary.uploader.upload(image, {
-      folder: "cateringImages",
-      transformation: [
-        { width: 1000, height: 1000, crop: "limit" }, // Limit max dimensions
-        { quality: "auto" }, // Automatic quality optimization
-        { fetch_format: "auto" },
-      ],
-    });
+    const { name, price, ingredients, category, image } = req.body;
     const Product = await ProductModel.create({
       name,
       price: parseFloat(price),
-      ingredient,
+      ingredients: ingredients.split(',').map((s: string) => s.trim()),
       category,
-      image: uploadResult.secure_url,
-      imgPublicID: uploadResult.public_id,
+      image: image.url,
     });
     res.status(201).json({
       success: true,

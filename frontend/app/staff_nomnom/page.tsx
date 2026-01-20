@@ -18,6 +18,7 @@ import { api } from "@/lib/axios";
 import { DishesDashboard } from "./order/ManageDishes";
 import { Logo } from "../_components/Logo";
 import { OrdersDashboard } from "./order/ManageOrders";
+import { Settings } from "./order/Settings";
 export type StaffType = {
   username: string;
   id: number;
@@ -44,7 +45,7 @@ interface staffDashboardType {
 }
 
 export const StaffContext = createContext<staffDashboardType>(
-  {} as staffDashboardType
+  {} as staffDashboardType,
 );
 
 // function StaffProvider({ children }: { children: ReactNode }) {
@@ -53,6 +54,7 @@ export const StaffContext = createContext<staffDashboardType>(
 const operationBtns = [
   { id: 1, name: "Food Menu" },
   { id: 2, name: "Orders" },
+  { id: 3, name: "Settings" },
 ];
 
 export default function StaffDashboard() {
@@ -62,8 +64,10 @@ export default function StaffDashboard() {
   };
   return (
     <div className="w-screen h-screen bg-white flex ">
-      <div className="w-80 h-full flex flex-col p-8 gap-4">
-        <div className="bg-black"><Logo /></div>
+      <div className="w-80 min-w-80 h-full flex flex-col p-8 gap-4">
+        <div className="bg-black">
+          <Logo />
+        </div>
         <div className=" flex flex-col gap-3">
           {operationBtns.map((btn) => {
             const isActive = active === btn.id;
@@ -84,6 +88,7 @@ export default function StaffDashboard() {
       </div>
       {active === 1 && <DishesDashboard></DishesDashboard>}
       {active === 2 && <OrdersDashboard></OrdersDashboard>}
+      {active === 3 && <Settings></Settings>}
     </div>
   );
 }

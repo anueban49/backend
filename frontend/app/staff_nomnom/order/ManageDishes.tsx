@@ -13,7 +13,7 @@ import {
 import { api } from "@/lib/axios";
 //this is the main site for adding food to the database so staff schema is not necessarily constructed here so im moving this staff schema out
 import { CreateNewDish } from "../addNewCard";
-import { PlusCircle } from "lucide-react";
+import { Pen, PlusCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Image from "next/image";
+import { Icon } from "@radix-ui/react-select";
 
 export type ProductType = {
   name: string;
@@ -30,6 +31,7 @@ export type ProductType = {
   price: number;
   ingredients: string;
   image: string;
+  category: string;
 };
 export type CategoryType = {
   name: string;
@@ -45,7 +47,7 @@ export const DishesDashboard = () => {
       console.log(data);
     };
     getData();
-  }, []);
+  }, [1]);
 
   useEffect(() => {
     const getCathData = async () => {
@@ -72,41 +74,56 @@ export const DishesDashboard = () => {
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-4 p-4 gap-2">
+        <div className="w-full aspect-4/1 grid grid-cols-4 p-4 gap-4 ">
           <Dialog>
             <DialogTrigger asChild>
-              <Button
-                className="w-full h-full rounded-2xl flex flex-col items-center justify-center text-red-500"
-                variant={"outline"}
+              <Card
+                className="w-full aspect-4/3 p-10 rounded-2xl flex flex-col items-center justify-center text-red-500 border-dashed border-1 border-red-300"
                 
               >
                 Add New Dish
-                <PlusCircle size={40} />
-              </Button>
+                <PlusCircle size={40}/>
+              </Card>
             </DialogTrigger>
 
             <DialogContent className="h-125 p-8 flex flex-col gap-20">
-              <CreateNewDish className="absolute top-30"></CreateNewDish>
+              <CreateNewDish></CreateNewDish>
             </DialogContent>
           </Dialog>
 
           {products.map((product) => {
             return (
-              <Card key={product._id}>
-                <CardContent className="w-full h-full aspect-3/2 p-1">
-                  <img
-                    className="w-full h-3/5 rounded-2xl"
-                    src={product.image}
-                    alt={product.name}
-                  />
-                  <CardHeader>{product.name}</CardHeader>
-                  <CardDescription>
-                    {Array.isArray(product.ingredients)
-                      ? product.ingredients.join(", ")
-                      : product.ingredients}
-                  </CardDescription>
+              <div key={product._id} className="bg-white rounded-2xl shadow-md aspect-4/3">
+                <CardContent className="w-full aspect-4/3 h-fit p-0 relative">
+                  <Button
+                    size={"icon"}
+                    className="absolute top-20 right-2 rounded-full"
+                    variant={"secondary"}
+                  >
+                    <Pen color="red"/>
+                  </Button>
+                  <div className="w-full h-4/6 overflow-hidden">
+                    <img
+                      className="object-cover rounded-xl"
+                      src={product.image}
+                      alt={product.name}
+                    />
+                  </div>
+                  <div className="w-full p-2 flex flex-col gap-2">
+                    <div className="p-0 text-sm flex flex-row gap-4 justify-between">
+                      <p>{product.name}</p>
+                      {product.price}
+                    </div>
+
+                    <CardDescription className="text-xs">
+                      {Array.isArray(product.ingredients)
+                        ? product.ingredients.join(", ")
+                        : product.ingredients}
+                    </CardDescription>
+                    
+                  </div>
                 </CardContent>
-              </Card>
+              </div>
             );
           })}
         </div>
