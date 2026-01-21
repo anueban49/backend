@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { api } from "@/lib/axios";
 //this is the main site for adding food to the database so staff schema is not necessarily constructed here so im moving this staff schema out
-import { CreateNewDish } from "../addNewCard";
+import { CreateNewDish } from "../CRUDitemCard";
 import { Pen, PlusCircle } from "lucide-react";
 import {
   Dialog,
@@ -42,7 +42,7 @@ export const DishesDashboard = () => {
   const [cathData, setCathData] = useState<CategoryType[]>([]);
   useEffect(() => {
     const getData = async () => {
-      const { data } = await api.get<ProductType[]>("product/products");
+      const { data } = await api.get<ProductType[]>("/product/products");
       setProducts(data);
       console.log("fetched products:",data);
     };
