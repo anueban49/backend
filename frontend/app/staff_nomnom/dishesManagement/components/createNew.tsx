@@ -14,8 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-import { CategoryType } from "./page";
-import { createNewSchema, CreatenewType } from "./CreateNewSchema";
+import { CategoryType } from "../USR-generalManager";
+import { createNewSchema, CreatenewType } from "../CreateNewSchema";
 import {
   Select,
   SelectContent,
@@ -25,19 +25,20 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { Upload, X } from "lucide-react";
+import { useIMcrud } from "../SSR-inventoryContext";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const CLOUD_NAME = process.env.CLOUDINARY_CN;
 const UPLOAD_PRESET = "dishImages";
 
-export function CreateNewDish() {
-  //this here is just a <CreateNewDish> COMPONENT. its a COMPONENT, not the ACTUAL function.
+export function CreateNew() {
+  //this here is just a <CreateNew> COMPONENT. its a COMPONENT, not the ACTUAL function.
   const [cath, setCath] = useState<CategoryType[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState(null);
   const [error, setError] = useState<string | null>(null);
-  const [method, setMethod] = useState("");
   const [isUploading, setisUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const { createProduct } = useIMcrud();
 
   const form = useForm<z.infer<typeof createNewSchema>>({
     resolver: zodResolver(createNewSchema),
@@ -50,7 +51,13 @@ export function CreateNewDish() {
       image: "",
     },
   });
-
+  const resetUpload = () => {
+    form.reset();
+    setPreview(null);
+    setUploadedUrl(null);
+    setFile(null);
+    form.setValue("image", "");
+  };
   useEffect(() => {
     const getCathData = async () => {
       const { data } = await api.get<CategoryType[]>("/category/categories");
@@ -108,59 +115,19 @@ export function CreateNewDish() {
       setisUploading(false);
     }
   };
-  const editProduct = async (id: string, data: any) => {
-    try {
-      const res = await api.patch(`/product/products/${id}`, data);
-      console.log("updated", res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const deleteProduct = async (id: string) => {
-    try {
-      const res = await api.delete(`/product/products/${id}`);
-      console.log("deleted", res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+
   const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
       console.log("image needed");
     }
-
     try {
-      const response = await api.post("product/products/create", {
-        name: data.name,
-        price: parseFloat(data.price),
-        ingredients: data.ingredients,
-        category: data.category,
-        image: {
-          url: data.image,
-          publicId: "",
-        }, //it should be url, string now
-      });
-      console.log("created product:", response);
-      form.reset();
-      setPreview(null);
-      setUploadedUrl(null);
-      setFile(null);
-      setError(null);
-      if (!response) {
-        console.log("uploading failed");
-      }
+      await createProduct(data);
+      resetUpload();
     } catch (error) {
       console.error(error);
     } finally {
       setisUploading(false);
     }
-  };
-
-  const resetUpload = () => {
-    setPreview(null);
-    setUploadedUrl(null);
-    setFile(null);
-    form.setValue("image", "");
   };
 
   return (

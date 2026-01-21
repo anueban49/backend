@@ -13,3 +13,17 @@ export const getProducts: RequestHandler = async (_req, res) => {
       .json({ message: "Failed to fetch products", error: String(error) });
   }
 };
+export const getProductbyId: RequestHandler = async (req, res) => {
+  try {
+    const item = await ProductModel.findById(req.params.id);
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "item not found",
+      });
+    }
+    res.json(item);
+  } catch (error) {
+    console.error(error);
+  }
+};
