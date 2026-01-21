@@ -108,7 +108,22 @@ export function CreateNewDish() {
       setisUploading(false);
     }
   };
-
+  const editProduct = async (id: string, data: any) => {
+    try {
+      const res = await api.patch(`/product/products/${id}`, data);
+      console.log("updated", res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const deleteProduct = async (id: string) => {
+    try {
+      const res = await api.delete(`/product/products/${id}`);
+      console.log("deleted", res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
       console.log("image needed");
