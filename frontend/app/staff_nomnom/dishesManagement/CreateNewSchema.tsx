@@ -1,7 +1,6 @@
 import * as z from "zod";
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg, image/jpg, image/png, image/webp"];
-
 const ImageSchema = z
   .instanceof(File)
   .refine(

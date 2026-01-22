@@ -17,7 +17,7 @@ export type CrudContextType = {
   updateProduct: (id: string, data: ProductType) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   createProduct: (data: ProductType) => Promise<void>;
-  fetchProductbyID: (id: string) => Promise<void>;
+  fetchProductbyID: (id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
   fetchAllProduct: () => Promise<void>;
 };
 export type CrudProviderProps = {
@@ -34,8 +34,16 @@ export type ProductType = {
   image: string;
   price: number;
   ingredients: string;
-  category: CategoryType
-};
+  category: CategoryType;
+}; //this is a data type when it called from the backend
+
+export type ProductInputType = {
+  name: string;
+  image: string;
+  price: number;
+  ingredients: string;
+  category: CategoryType;
+}; // this is a data type when sending it to the backend
 
 export const CrudContext = createContext<CrudContextType | undefined>(
   undefined,
@@ -44,6 +52,7 @@ export const CrudContext = createContext<CrudContextType | undefined>(
 export const CrudProvider = ({ children }: CrudProviderProps) => {
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
   const [product, setProduct] = useState<ProductType | null>(null);
+  const [products, setProducts] = useState<ProductType[] | null>(null);
 
   const fetchAllProduct = async () => {
     const [allProducts, setAllProducts] = useState<ProductType[]>([]);
@@ -84,16 +93,28 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
     }
     await fetchAllProduct();
   };
-  const updateProduct = async (_id: string, data: ProductType) => {
+  const updateProduct = async (_id: string, data: ProductInputType) => {
     try {
-      const res = await api.patch(`/product/products/${_id}`, data);
+      const res = await api.patch<ProductType>(
+        `/product/products/${_id}`,
+        data,
+      );
       console.log("updated", res.data);
-      setProduct(res.data);
+      setProducts((prevProducts) =>
+        prevProducts.map((item: ProductType) =>
+          item._id === _id ? res.data : item,
+        ),
+      );
     } catch (error) {
       console.error(error);
     }
     await fetchAllProduct();
   };
+  //product._id === _id ? res.data : product - This is a ternary operator that checks:
+
+  // If the current product's _id matches the _id we just updated
+  // Then replace it with the new data from the server (res.data)
+  // Else keep the original product unchanged
   const deleteProduct = async (_id: string) => {
     try {
       const res = await api.delete(`/product/products/${_id}`);
