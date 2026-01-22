@@ -55,7 +55,6 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const [products, setProducts] = useState<ProductType[] | null>(null);
 
   const fetchAllProduct = async () => {
-    const [allProducts, setAllProducts] = useState<ProductType[]>([]);
     try {
       const { data } = await api.get<ProductType[]>(`/product/products`);
       setAllProducts(data);
