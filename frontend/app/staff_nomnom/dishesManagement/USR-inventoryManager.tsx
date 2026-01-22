@@ -2,18 +2,19 @@
 "use client";
 import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { CreateNew } from "./components/createNew";
-import { CrudContext, useIMcrud } from "./SSR-inventoryContext";
+import { CrudContext, ProductType, useIMcrud } from "./SSR-inventoryContext";
 import { Pen, PlusCircle } from "lucide-react";
-import { Card, CardContent, CardDescription} from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { CategoryType } from "../page";
 import { api } from "@/lib/axios";
+import { ItemCard } from "./components/ItemCard";
+
 export function InventoryManager() {
   const [cathData, setCathData] = useState<CategoryType[]>([]);
-
+  const [allItems, setAllItems] = useState<ProductType[]>([]);
   const {
-    product,
     allProducts,
     fetchAllProduct,
     fetchProductbyID,
@@ -21,6 +22,7 @@ export function InventoryManager() {
     updateProduct,
     deleteProduct,
   } = useIMcrud();
+
   useEffect(() => {
     const getCathData = async () => {
       const { data } = await api.get<CategoryType[]>("/category/categories");
@@ -28,6 +30,14 @@ export function InventoryManager() {
     };
     getCathData();
   }, []);
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await api.get<ProductType[]>(`/product/products`);
+      setAllItems(data);
+    };
+    getData();
+  }, []);
+
   return (
     <>
       <div className="w-screen h-screen bg-white flex ">
@@ -56,45 +66,23 @@ export function InventoryManager() {
                 </Card>
               </DialogTrigger>
 
-              <DialogContent className="h-125 p-8 flex flex-col gap-20">
+              <DialogContent className="h-125 p-8 flex flex-col gap-20 bg-white rounded-xl shadow-md">
                 <CreateNew></CreateNew>
               </DialogContent>
             </Dialog>
 
-            {allProducts.map((product) => {
+            {allItems.map((product) => {
               return (
-                <div
+                <ItemCard
                   key={product._id}
-                  className="bg-white rounded-2xl shadow-md aspect-4/3 "
-                >
-                  <CardContent className="w-full aspect-4/3 h-fit p-0 relative">
-                    <Button
-                    onClick={() => {}}
-                      size={"icon"}
-                      className="absolute top-20 right-2 rounded-full"
-                      variant={"secondary"}
-                    >
-                      <Pen color="red" />
-                    </Button>
-                    <div className="w-full h-4/6 overflow-hidden">
-                      <img
-                        className="object-cover rounded-xl"
-                        src={product.image}
-                        alt={product.name}
-                      />
-                    </div>
-                    <div className="w-full p-2 flex flex-col ">
-                      <div className="p-0 text-sm flex flex-row gap-4 justify-between">
-                        <p>{product.name}</p>
-                        {product.price}
-                      </div>
-
-                      <CardDescription className="text-xs">
-                        {product.ingredients}
-                      </CardDescription>
-                    </div>
-                  </CardContent>
-                </div>
+                  name={product.name}
+                  price={product.price}
+                  ingredients={product.ingredients}
+                  image={product.image}
+                  category={product.category}
+                  timestamps={product.timestamps}
+                  _id={product._id}
+                ></ItemCard>
               );
             })}
           </div>

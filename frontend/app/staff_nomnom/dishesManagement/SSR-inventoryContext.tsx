@@ -16,7 +16,7 @@ export type CrudContextType = {
   allProducts: ProductType[];
   updateProduct: (id: string, data: ProductType) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
-  createProduct: (data: CreatenewType) => Promise<void>;
+  createProduct: (data: ProductType) => Promise<void>;
   fetchProductbyID: (id: string) => Promise<void>;
   fetchAllProduct: () => Promise<void>;
 };
@@ -29,7 +29,7 @@ export type CategoryType = {
 };
 export type ProductType = {
   name: string;
-  id: string;
+  _id: string;
   timestamps: string;
   image: string;
   price: number;
@@ -46,9 +46,11 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const [product, setProduct] = useState<ProductType | null>(null);
 
   const fetchAllProduct = async () => {
+    const [allProducts, setAllProducts] = useState<ProductType[]>([]);
     try {
       const { data } = await api.get<ProductType[]>(`/product/products`);
       setAllProducts(data);
+      return allProducts;
     } catch (error) {
       console.error(error);
     }
