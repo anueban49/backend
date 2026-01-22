@@ -3,11 +3,12 @@ import { unique } from "next/dist/build/utils.js";
 
 const userSchema = new Schema(
   {
-    username: {type: String, required: true, unique: true},
-    password: {type: String, required: true,},
-    email: {type: String, required: true, unique: true},
-    address: {type: String, required: false}
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    address: { type: String, required: false },
+    profileImage: { type: String, required: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 export const UserModel = model("User", userSchema);

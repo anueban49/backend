@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-import { CategoryType } from "../USR-generalManager";
+import { CategoryType } from "../SSR-inventoryContext";
 import { createNewSchema, CreatenewType } from "../CreateNewSchema";
 import {
   Select,
