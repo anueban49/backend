@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import { connectToDB } from "./database/index.js";
 import { ProductRouter } from "./routers/product.router.js";
 import { CategoryRouter } from "./routers/category.router.js";
-import { UserRouter } from "./routers/user.router.js";
+import { UserRouter } from "./routers/clientauth.router.js";
 import { StaffsRouter } from "./routers/staff.router.js";
 import { OrderRouter } from "./routers/order.router.js";
 import cors from "cors";

@@ -31,43 +31,72 @@ import {
   useIMcrud,
   CategoryType,
   ProductType,
+  ProductInputType,
 } from "../SSR-inventoryContext";
-
+import { id } from "zod/v4/locales";
+//firt, it fetches data of the item by id.
+//second, it displays the data on the form as its default value
+//onsubmit, it patches the data.
 export function UpdateDialog(_id: string) {
   const [item, setItem] = useState<ProductType | undefined>(undefined);
   const { updateProduct, fetchProductbyID } = useIMcrud();
   const [open, setopen] = useState(false);
-  const loaditemData = async () => {
-    const { data } = await api.get<ProductType>(`/product/products/${_id}`);
-    setItem(data);
-  };
+  const [preview, setPreview] = useState<String | null>(null); // the image will be url.
+
   useEffect(() => {
-    try {
-      const res = await updateProduct(_id, data);
-    } catch (error) {
-      console.error(error);
+    const loadProduct = async () => {
+      try {
+        const data = await fetchProductbyID(_id);
+        setItem(data);
+        if (data.image) {
+          setPreview(data.image);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (_id) {
+      loadProduct();
     }
-  }, []);
+  }, [_id, fetchProductbyID]);
   const form = useForm<z.infer<typeof createNewSchema>>({
     resolver: zodResolver(createNewSchema),
     mode: "onSubmit",
     defaultValues: {
-      name: item?.name,
-      price: item?.price,
-      ingredients: item?.ingredients,
-      category: item?.category,
-      image: item?.image,
-    },
+      name: "",
+      price: 0,
+      ingredients: "",
+      category: "",
+      image: "",
+    }, //AI suggested me toleave the default values blank -> because:
   });
-  function onSubmit(_id: string, data: ProductType) {
-    const res = await api.patch<ProductType>(`/product/products/${_id}`, data);
+  //this code below will handle the role of setting the previous data as its default value:
+  useEffect(() => {
+    if (item) {
+      form.reset({
+        name: item.name,
+        price: item.price,
+        ingredients: item.ingredients,
+        category:
+          typeof item.category === "string" ? item.category : item.category._id,
+        image: item.image,
+      });
+    }
+  }, [item, form]); //called whenever the item or form is changed.
+
+  function onSubmit(data: ProductInputType) {
+    //this function must handle the patch request.
+    if (!item?._id) {
+      return;
+    }
+    updateProduct(_id, data);
   }
   return (
     <>
       <div className="w-full h-fit">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit(data))}
             className="space-y-4 flex flex-col gap-4 w-full h-fit"
           >
             <FormLabel>Add new Dish</FormLabel>
