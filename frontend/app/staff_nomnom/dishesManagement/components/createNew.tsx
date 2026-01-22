@@ -45,7 +45,7 @@ export function CreateNew() {
     mode: "onSubmit",
     defaultValues: {
       name: "",
-      price: "",
+      price: 0,
       ingredients: "",
       category: "",
       image: "",

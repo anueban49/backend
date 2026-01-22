@@ -13,7 +13,7 @@ import {
 import { api } from "@/lib/axios";
 
 
-import { DishesDashboard } from "../order/ManageDishes";
+import { InventoryManager } from "./USR-inventoryManager";
 import { Logo } from "@/app/_components/Logo";
 import { OrdersDashboard } from "../order/ManageOrders";
 import { Settings } from "../order/Settings";
@@ -53,7 +53,7 @@ export function USRgeneralManager() {
           })}
         </div>
       </div>
-      {active === 1 && <DishesDashboard></DishesDashboard>}
+      {active === 1 && <InventoryManager></InventoryManager>}
       {active === 2 && <OrdersDashboard></OrdersDashboard>}
       {active === 3 && <Settings></Settings>}
     </div>
