@@ -1,6 +1,7 @@
 import * as z from "zod";
 export const formSchema = z
   .object({
+    username: z.string().min(5),
     email: z
       .string()
       .email({ message: "Invalid email. Use a format like example@email.com." })

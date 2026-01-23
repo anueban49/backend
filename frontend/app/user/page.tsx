@@ -1,18 +1,19 @@
 "use client";
-
+//this page will be used for mainly profile editing & stuffs
 import SignupForm from "../_components/SignupForm";
 import LoginForm from "../_components/LoginForm";
 import { useState } from "react";
-import { AuthProvider } from "../_components/AuthProvider";
+
 export default function userAuth() {
   const [newUser, setNewUser] = useState(false);
+
   function changeUser() {
-    setNewUser(!newUser)
+    setNewUser(!newUser);
   }
   return (
-    <div className="flex w-screen h-screen ">
+    <div className="flex w-screen h-screen bg-white">
       <div className="w-1/2 p-4 flex flex-col justify-center items-center ">
-        <AuthProvider>{newUser ? <SignupForm /> : <LoginForm />}</AuthProvider>
+        {newUser ? <SignupForm /> : <LoginForm />}
 
         {newUser ? (
           <div className="flex flex-row text-xs gap-4">
@@ -25,7 +26,7 @@ export default function userAuth() {
         ) : (
           <div className="flex flex-row text-xs gap-4">
             <p>New user?</p>
-            <span className="text-blue-500 cursor-pointer" onClick={changeUser} >
+            <span className="text-blue-500 cursor-pointer" onClick={changeUser}>
               Sign Up
             </span>
           </div>
@@ -37,7 +38,7 @@ export default function userAuth() {
     </div>
   );
 }
-//user aunthentication & user authorization are diff diggah 
+//user aunthentication & user authorization are diff diggah
 
 //user authentication is supposed to verify that the user it not a bot.
 //user authorization is supposed to verify that the user is registered | unregistered.

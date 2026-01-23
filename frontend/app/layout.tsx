@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { UserSidebar } from "./_components/UserSidebar";
+import { AppSideBar } from "./_components/AppSideBar";
 import BaseStructure from "./_components/BaseStructure";
 import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "./_components/AuthProvider";
+import { CrudProvider } from "./staff_nomnom/dishesManagement/SSR-inventoryContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,7 +32,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-        {children}
+        <AuthProvider>
+          <CrudProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </CrudProvider>
+        </AuthProvider>
       </body>
     </html>
   );

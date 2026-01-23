@@ -6,7 +6,7 @@ import { itemType, CartitemsType } from "@/context/CartContext";
 
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
-import { AddToCart } from "./UserSidebar";
+import { AddToCart } from "./AppSideBar";
 
 export function ProductCard(item: CartitemsType) {
   const { addToCart, cartItems } = useCart();

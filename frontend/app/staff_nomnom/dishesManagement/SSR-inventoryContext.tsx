@@ -14,7 +14,7 @@ import { api } from "@/lib/axios";
 export type CrudContextType = {
   product: ProductType | null;
   allProducts: ProductType[];
-  updateProduct: (id: string, data: ProductType) => Promise<void>;
+  updateProduct: (id: string, data: ProductInputType) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   createProduct: (data: ProductType) => Promise<void>;
   fetchProductbyID: (id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
@@ -25,11 +25,11 @@ export type CrudProviderProps = {
 };
 export type CategoryType = {
   name: string;
-  _id: string;
+  _id: number;
 };
 export type ProductType = {
   name: string;
-  _id: string;
+  _id: number;
   timestamps: string;
   image: string;
   price: number;
@@ -52,23 +52,25 @@ export const CrudContext = createContext<CrudContextType | undefined>(
 export const CrudProvider = ({ children }: CrudProviderProps) => {
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
   const [product, setProduct] = useState<ProductType | null>(null);
-  const [products, setProducts] = useState<ProductType[] | null>(null);
+  const [products, setProducts] = useState<ProductType[]>([]);
 
-  const fetchAllProduct = async () => {
+  const fetchAllProduct = async (): Promise<void> => {
     try {
       const { data } = await api.get<ProductType[]>(`/product/products`);
       setAllProducts(data);
-      return allProducts;
     } catch (error) {
       console.error(error);
     }
   };
-  const fetchProductbyID = async (_id: string) => {
+  const fetchProductbyID = async (_id: string): Promise<ProductType> => {
     try {
-      const { data } = await api.get<ProductType>(`/product/${_id}`);
+      const { data } = await api.get<ProductType>(`/product/products/${_id}`);
       setProduct(data);
+      console.log("fetchByIDresult:", data);
+      return data;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
   const createProduct = async (data: ProductType) => {
