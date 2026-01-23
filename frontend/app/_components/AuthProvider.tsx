@@ -1,3 +1,4 @@
+"use client";
 import {
   useContext,
   createContext,
@@ -8,7 +9,7 @@ import {
 import { formSchema } from "./userSchema";
 import type { userFormdata } from "./userSchema";
 import { api } from "@/lib/axios";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 type UserType = {
   username: string;
@@ -28,9 +29,7 @@ export type AuthContextType = {
   login: ({ email, password }: UserType) => Promise<void>;
   logout: () => void;
 };
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
-);
+export const AuthContext = createContext({} as AuthContextType);
 export type AuthProviderProps = {
   children: ReactNode;
 };
@@ -44,35 +43,35 @@ export function useAuth() {
   return context;
 } //-> this a custom hook. AI recommended and said it must be.
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<UserType | UserCompleteInfoType | null>(null);
+  const [user, setUser] = useState<UserType | null>(null); //for setting user for one session
   const [error, setError] = useState<Partial<
     Record<keyof userFormdata, string[]>
   > | null>(null);
-  const router = useRouter();
 
   const signup = async (data: UserType) => {
     try {
       await api.post<UserType>("/user/register", data);
       console.log("new user created:");
-      setUser((data) => data)
+      setUser((data) => data);
     } catch (error) {
       console.error(error);
     }
   };
-  const login = async ({ email, password }: UserType) => {
-    try {
-      await api.post("user/login", { email, password });
-    } catch (error) {
-      console.error(error);
-    }
-    router.push("/home");
+
+  const login = async (email: string, password: string) => {
+    const { data } = await api.post("user/login", {
+      email,
+      password,
+    });
+    const user = data;
+    setUser(user);
   };
   function logout() {
     setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, error, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, error, signup, login, logout}}>
       {children}
     </AuthContext.Provider>
   );

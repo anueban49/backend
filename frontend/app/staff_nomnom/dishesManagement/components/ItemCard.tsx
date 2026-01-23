@@ -20,6 +20,7 @@ export function ItemCard(props: ProductType) {
   const getproductdata = async (_id: string) => {
     const { data } = await api.get<ProductType>(`/product/products/${_id}`);
     setItem(data);
+    console.log("got data:", data)
   };
 
   return (
@@ -34,7 +35,7 @@ export function ItemCard(props: ProductType) {
               <Button
                 onClick={() => {
                   setOpen(true);
-                  getproductdata(props._id);
+                  fetchProductbyID(props?._id);
                 }}
                 size={"icon"}
                 className="absolute top-20 right-2 rounded-full"

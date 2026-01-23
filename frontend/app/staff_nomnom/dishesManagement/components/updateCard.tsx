@@ -34,23 +34,29 @@ import {
   ProductInputType,
 } from "../SSR-inventoryContext";
 import { id } from "zod/v4/locales";
+interface UpdateDialogProp {
+  _id: string;
+}
 //firt, it fetches data of the item by id.
 //second, it displays the data on the form as its default value
 //onsubmit, it patches the data.
-export function UpdateDialog(_id: string) {
+export function UpdateDialog({ _id }: UpdateDialogProp) {
   const [item, setItem] = useState<ProductType | undefined>(undefined);
   const { updateProduct, fetchProductbyID } = useIMcrud();
   const [open, setopen] = useState(false);
-  const [preview, setPreview] = useState<String | null>(null); // the image will be url.
+  const [preview, setPreview] = useState<string | null>(null); // the image will be url.
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        const data = await fetchProductbyID(_id);
+        const { data } = await api.get<ProductType>(`/product/products/${_id}`);
         setItem(data);
         if (data.image) {
           setPreview(data.image);
         }
+        console.log("fetched product data:", data);
       } catch (error) {
         console.error(error);
       }
@@ -59,6 +65,18 @@ export function UpdateDialog(_id: string) {
       loadProduct();
     }
   }, [_id, fetchProductbyID]);
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const { data } = await api.get<CategoryType[]>("/category/categories");
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCats();
+  }, []);
   const form = useForm<z.infer<typeof createNewSchema>>({
     resolver: zodResolver(createNewSchema),
     mode: "onSubmit",
@@ -84,22 +102,53 @@ export function UpdateDialog(_id: string) {
     }
   }, [item, form]); //called whenever the item or form is changed.
 
-  function onSubmit(data: ProductInputType) {
+  function onSubmit(data: z.infer<typeof createNewSchema>) {
     //this function must handle the patch request.
     if (!item?._id) {
       return;
     }
-    updateProduct(_id, data);
+    const categoryObj = categories.find((c) => c._id === data.category);
+    if (!categoryObj) return;
+    const inputData: ProductInputType = {
+      name: data.name,
+      price: data.price,
+      ingredients: data.ingredients,
+      category: categoryObj,
+      image: data.image,
+    };
+    updateProduct(_id, inputData);
   }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const response = await api.post<{ url: string }>(
+          "/product/upload",
+          formData,
+        );
+        setPreview(response.data.url);
+        form.setValue("image", response.data.url);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
   return (
     <>
       <div className="w-full h-fit">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit(data))}
+            onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4 flex flex-col gap-4 w-full h-fit"
           >
-            <FormLabel>Add new Dish</FormLabel>
+            <FormLabel>Update Dish</FormLabel>
             <div className="flex gap-6">
               <FormField
                 control={form.control}
@@ -108,7 +157,7 @@ export function UpdateDialog(_id: string) {
                   <FormItem>
                     <FormLabel>Dish Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Name" {...field} />
+                      <Input placeholder={`${item?.name}`} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -123,9 +172,9 @@ export function UpdateDialog(_id: string) {
                     <FormLabel>Price</FormLabel>
                     <FormControl autoCapitalize="words">
                       <Input
-                        type="price"
+                        type="number"
                         step="0.01"
-                        placeholder="type price"
+                        placeholder={`${item?.price}`}
                         {...field}
                       />
                     </FormControl>
@@ -144,7 +193,7 @@ export function UpdateDialog(_id: string) {
                   <FormControl>
                     <Input
                       type="ingredients"
-                      placeholder="Type Ingredients"
+                      placeholder={`${item?.ingredients}`}
                       {...field}
                     />
                   </FormControl>
@@ -161,11 +210,11 @@ export function UpdateDialog(_id: string) {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Choose Category" />
+                        <SelectValue placeholder={`${item?.category}`} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {cath.map((el) => (
+                      {categories.map((el) => (
                         <SelectItem value={el._id} key={el._id}>
                           {el.name}
                         </SelectItem>
@@ -224,7 +273,7 @@ export function UpdateDialog(_id: string) {
             />
 
             <Button className="w-full" type="submit" disabled={isUploading}>
-              {isUploading ? "Creating" : "Create"}
+              {isUploading ? "Updating" : "Update"}
             </Button>
           </form>
         </Form>

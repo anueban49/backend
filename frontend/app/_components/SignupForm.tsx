@@ -16,8 +16,9 @@ import {
   FormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
+import { api } from "@/lib/axios";
 export default function SignupForm() {
+  const [done, setDone] = useState(false);
   const { signup, error } = useAuth();
   const form = useForm<userFormdata>({
     resolver: zodResolver(formSchema),
@@ -26,80 +27,120 @@ export default function SignupForm() {
       email: "",
       password: "",
       confirmpassword: "",
+      username: "",
     },
   });
   function onSubmit(data: userFormdata) {
-    signup(data);
+    api.post<userFormdata>("/user/regitser", data);
   }
+  const PartOne = () => {
+    return (
+      <>
+        {" "}
+        <h3 className="text-2xl font-semibold">Create Your Account</h3>
+        <p>Sign up to explore your favorite dishes</p>
+        <Form {...form}>
+          <form
+            // onSubmit={form.handleSubmit(onsubmit)}
+            className="space-y-4 flex flex-col gap-4"
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your email address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirmpassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Confirm password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              className="w-full"
+              onClick={() => {
+                setDone(true);
+              }}
+            >
+              Next
+            </Button>
+          </form>
+        </Form>
+      </>
+    );
+  };
+  const PartTwo = () => {
+    return (
+      <>
+        <h3 className="text-2xl font-semibold">Create Your Username</h3>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="JohnDoe123" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              className="w-full"
+              type="submit"
+              onSubmit={form.handleSubmit(signup)}
+            >
+              Sign Up
+            </Button>
+          </form>
+        </Form>
+      </>
+    );
+  };
   return (
     <div className="flex flex-col gap-4 scale-80">
-      <h3 className="text-2xl font-semibold">Create Your Account</h3>
-      <p>Sign up to explore your favorite dishes</p>
-      <Form {...form}>
-        <form
-          // onSubmit={form.handleSubmit(onsubmit)}
-          className="space-y-4 flex flex-col gap-4"
-        >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter your email address" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Enter password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="confirmpassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Confirm password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            disabled
-            className="w-full"
-            type="submit"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            Let's Go
-          </Button>
-        </form>
-      </Form>
+      {done ? <PartTwo /> : <PartOne />}
     </div>
   );
 }

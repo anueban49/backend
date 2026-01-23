@@ -7,35 +7,34 @@ import { ProductCard } from "./ProductCard";
 import products from "@/data/products.json";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
+import {
+  CrudProvider,
+  CrudContext,
+  useIMcrud,
+  ProductType,
+} from "../staff_nomnom/dishesManagement/SSR-inventoryContext";
 
 type ShelfType = {
   name: string;
 };
 
 export function DisplayShelf(props: ShelfType) {
-  const [items, setItems] = useState<itemType[]>([]);
+  const { allProducts, fetchAllProduct } = useIMcrud();
   useEffect(() => {
-    const getDate = async () => {
-      try {
-        const { data } = await api.get<itemType[]>("product/products");
-        setItems(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  }, []);
+    fetchAllProduct();
+  }, [fetchAllProduct]);
   return (
     <>
       <div>{props.name}</div>
       <div className="grid grid-cols-3 grid-rows-2 w-full max-w-7xl h-180 ">
-        {items.map((el) => {
+        {allProducts.map((el) => {
           return (
             <ProductCard
-              key={el.id}
-              id={el.id}
+              key={el._id}
+              id={el._id}
               name={el.name}
               image={el.image}
-              description={el.description}
+              description={el.ingredients}
               price={el.price}
               quantity={0}
             ></ProductCard>
