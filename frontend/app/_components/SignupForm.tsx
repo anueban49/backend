@@ -11,14 +11,16 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormDescription,
   FormMessage,
   FormField,
 } from "@/components/ui/form";
+import { Toaster } from "@/components/ui/sonner";
 import { Input } from "@/components/ui/input";
-import { api } from "@/lib/axios";
+import { toast } from "sonner";
+
 export default function SignupForm() {
   const [done, setDone] = useState(false);
+  const [creating, setCreating] = useState(false);
   const { signup, error } = useAuth();
   const form = useForm<userFormdata>({
     resolver: zodResolver(formSchema),
@@ -31,7 +33,9 @@ export default function SignupForm() {
     },
   });
   function onSubmit(data: userFormdata) {
-    api.post<userFormdata>("/user/regitser", data);
+    signup(data);
+    console.log("success");
+    toast.success("account created");
   }
   const PartOne = () => {
     return (
@@ -129,7 +133,7 @@ export default function SignupForm() {
             <Button
               className="w-full"
               type="submit"
-              onSubmit={form.handleSubmit(signup)}
+              onSubmit={form.handleSubmit(onSubmit)}
             >
               Sign Up
             </Button>

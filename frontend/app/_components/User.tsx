@@ -1,27 +1,31 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
-import { AuthProvider, useAuth } from "./AuthProvider";
+import { useAuth } from "./AuthProvider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { UserCompleteInfoType } from "./AuthProvider";
 export function UserProfile() {
-  const { user, login, signup, logout } = useAuth();
-  const [existingUser, setExistingUser] = useState(false);
-
+  const { user } = useAuth();
   const router = useRouter();
   return (
     <>
-      {existingUser ? (
+      {user ? (
         <Button size="icon" className="bg-red-500 rounded-full ">
-          <User color="white" size={20} />
+          {user?.image ? (
+            <User color="white" size={20} />
+          ) : (
+            <img src={user?.image} />
+          )}
         </Button>
       ) : (
         <Button
           onClick={() => {
             router.push("/user");
-          }}
+            }}
+            variant={"outline"}
         >
-          Sign Up
+          Log In
         </Button>
       )}
     </>
