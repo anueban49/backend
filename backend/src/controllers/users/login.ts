@@ -8,7 +8,7 @@ export const login: RequestHandler = async (req, res) => {
   try {
     const { password, email } = req.body;
     //find if the user exists
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email: email });
     if (!user) return res.status(404).json({ message: "User Not Found" });
     //comparing password with hashed password using bcrypt
     const isPasswordValid = await bcrypt.compare(password, user.password);

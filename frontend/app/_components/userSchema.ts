@@ -1,4 +1,5 @@
 import * as z from "zod";
+
 export const formSchema = z
   .object({
     username: z.string().min(5),
@@ -19,3 +20,9 @@ export const formSchema = z
     path: ["confirmpassword"],
   });
 export type userFormdata = z.infer<typeof formSchema>;
+
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+export type LoginType = z.infer<typeof loginSchema>;
