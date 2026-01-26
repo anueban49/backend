@@ -3,15 +3,17 @@ import { Router } from "express";
 import {
   getProductbyId,
   getProducts,
+  getProductsByCategory
 } from "../controllers/product/getProduct.js";
 import { createProduct } from "../controllers/product/createProduct.js";
 import { updateProduct } from "../controllers/product/updateProduct.js";
 import { deleteProduct } from "../controllers/product/deleteProduct.js";
 const ProductRouter = Router();
 
-ProductRouter.get("/products", getProducts)
-  .get(`/products/:id`, getProductbyId)
-  .post("/products/create", createProduct)
-  .patch("/products/:id", updateProduct)
-  .delete("/products/:id", deleteProduct);
+ProductRouter.get("/all", getProducts)
+  .get('/category/:category', getProductsByCategory)
+  .get('/:id', getProductbyId)
+  .post("/create", createProduct)
+  .patch("/:id", updateProduct)
+  .delete("/:id", deleteProduct);
 export { ProductRouter };
