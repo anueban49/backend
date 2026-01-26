@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import { Icon } from "@radix-ui/react-select";
+import { useIMcrud } from "../dishesManagement/SSR-inventoryContext";
 
 export type ProductType = {
   name: string;
@@ -38,16 +38,23 @@ export type CategoryType = {
   _id: string;
 };
 export const DishesDashboard = () => {
+  const {
+    product,
+    allProducts,
+    categories,
+    fetchAllCategories,
+    fetchCategoryByID,
+    updateProduct,
+    deleteProduct,
+    createProduct,
+    fetchAllProduct,
+    fetchProductbyID,
+  } = useIMcrud();
   const [products, setProducts] = useState<ProductType[]>([]);
   const [cathData, setCathData] = useState<CategoryType[]>([]);
   useEffect(() => {
-    const getData = async () => {
-      const { data } = await api.get<ProductType[]>("/product/products");
-      setProducts(data);
-      console.log("fetched products:",data);
-    };
-    getData();
-  }, [1]);
+    fetchAllProduct();
+  }, []);
   const truncateText = (text: string, maxLength: number) => {
     if (text.length > maxLength) {
       return text.slice(0, maxLength) + "...";
@@ -56,11 +63,7 @@ export const DishesDashboard = () => {
   };
 
   useEffect(() => {
-    const getCathData = async () => {
-      const { data } = await api.get<CategoryType[]>("/category/categories");
-      setCathData(data);
-    };
-    getCathData();
+    fetchAllCategories();
   }, []);
   return (
     <div className="w-screen h-screen bg-white flex ">

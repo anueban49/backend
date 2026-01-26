@@ -12,9 +12,12 @@ export default function HomePage() {
   const router = useRouter();
   return (
     <>
-      <BaseStructure>
-        <LandingPage></LandingPage>
-      </BaseStructure>
+      {" "}
+      <div className="w-screen absolute">
+        <BaseStructure>
+          <LandingPage></LandingPage>
+        </BaseStructure>
+      </div>
     </>
   );
 }

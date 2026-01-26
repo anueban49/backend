@@ -24,33 +24,6 @@ export type StaffType = {
   id: number;
 };
 
-export type ProductType = {
-  name: string;
-  id: string;
-  timestamps: string;
-  price: number;
-  ingredients: string;
-};
-export type CategoryType = {
-  name: string;
-  _id: string;
-};
-
-interface staffDashboardType {
-  staff: StaffType;
-  //actions:
-  AddNewProduct: (item: itemType) => void;
-  DeleteProduct: (id: number) => void; //delete product by id
-  UpdateProduct: (id: number) => void;
-}
-
-export const StaffContext = createContext<staffDashboardType>(
-  {} as staffDashboardType,
-);
-
-// function StaffProvider({ children }: { children: ReactNode }) {
-//   const AddNewProduct = () => { };
-// }
 const operationBtns = [
   { id: 1, name: "Food Menu" },
   { id: 2, name: "Orders" },

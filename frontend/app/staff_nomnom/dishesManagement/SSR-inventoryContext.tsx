@@ -7,29 +7,35 @@ import {
   createContext,
   ReactNode,
 } from "react";
-import { useForm, Form } from "react-hook-form";
+import { Toaster } from "@/components/ui/sonner";
 import { api } from "@/lib/axios";
+import { toast } from "sonner";
 //when clicked on the btn, dialog appears, containing the information of the entity. and user will edit it and send it to patch request
 //products data, CRUD operations
 export type CrudContextType = {
+  categories: CategoryType[] | [];
+  fetchAllCategories: () => Promise<void>;
+  fetchCategoryByID: (_id: string) => Promise<CategoryType>;
   product: ProductType | null;
+  productsbyid: ProductType[] | [];
   allProducts: ProductType[];
-  updateProduct: (id: string, data: ProductInputType) => Promise<void>;
-  deleteProduct: (id: string) => Promise<void>;
+  updateProduct: (_id: string, data: ProductInputType) => Promise<void>;
+  deleteProduct: (_id: string) => Promise<void>;
   createProduct: (data: ProductType) => Promise<void>;
   fetchProductbyID: (id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
   fetchAllProduct: () => Promise<void>;
+  fetchProductsbyCategory: (_id: string) => Promise<ProductType[]>;
 };
 export type CrudProviderProps = {
   children: ReactNode;
 };
 export type CategoryType = {
   name: string;
-  _id: number;
+  _id: string;
 };
 export type ProductType = {
   name: string;
-  _id: number;
+  _id: string;
   timestamps: string;
   image: string;
   price: number;
@@ -53,10 +59,30 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
   const [product, setProduct] = useState<ProductType | null>(null);
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [category, setCategory] = useState<CategoryType | null>(null);
 
+  const fetchAllCategories = async () => {
+    try {
+      const { data } = await api.get<CategoryType[]>("/category/all");
+      setCategories(data);
+    } catch (error) {
+      toast.error("Failed to fetch categories");
+      console.error(error);
+    }
+  };
+  const fetchCategoryByID = async (_id: string): Promise<CategoryType> => {
+    try {
+      const { data } = await api.get<CategoryType>(`/category/${_id}`);
+      return data;
+    } catch (error) {
+      toast.error("failed to fetch category");
+      throw error;
+    }
+  };
   const fetchAllProduct = async (): Promise<void> => {
     try {
-      const { data } = await api.get<ProductType[]>(`/product/products`);
+      const { data } = await api.get<ProductType[]>("/product/all");
       setAllProducts(data);
     } catch (error) {
       console.error(error);
@@ -64,7 +90,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   };
   const fetchProductbyID = async (_id: string): Promise<ProductType> => {
     try {
-      const { data } = await api.get<ProductType>(`/product/products/${_id}`);
+      const { data } = await api.get<ProductType>(`/product/${_id}`);
       setProduct(data);
       console.log("fetchByIDresult:", data);
       return data;
@@ -75,7 +101,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   };
   const createProduct = async (data: ProductType) => {
     try {
-      const res = await api.post(`/product/products/create`, {
+      const res = await api.post(`/product/create`, {
         name: data.name,
         price: data.price,
         ingredients: data.ingredients,
@@ -96,10 +122,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   };
   const updateProduct = async (_id: string, data: ProductInputType) => {
     try {
-      const res = await api.patch<ProductType>(
-        `/product/products/${_id}`,
-        data,
-      );
+      const res = await api.patch<ProductType>(`/product/${_id}`, data);
       console.log("updated", res.data);
       setProducts((prevProducts) =>
         prevProducts.map((item: ProductType) =>
@@ -111,14 +134,19 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
     }
     await fetchAllProduct();
   };
-  //product._id === _id ? res.data : product - This is a ternary operator that checks:
+  const fetchProductsbyCategory = async (_id: string): Promise<ProductType[]> => {
+    try {
+      const { data } = await api.get<ProductType[]>(`/product/category/${_id}`);
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
-  // If the current product's _id matches the _id we just updated
-  // Then replace it with the new data from the server (res.data)
-  // Else keep the original product unchanged
   const deleteProduct = async (_id: string) => {
     try {
-      const res = await api.delete(`/product/products/${_id}`);
+      const res = await api.delete(`/product/${_id}`);
       console.log("deleted", res.data);
       if (product?._id === _id) {
         setProduct(null);
@@ -133,11 +161,15 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
       value={{
         product,
         allProducts,
+        categories,
+        fetchAllCategories,
+        fetchCategoryByID,
         updateProduct,
         deleteProduct,
         createProduct,
         fetchAllProduct,
         fetchProductbyID,
+        fetchProductsbyCategory,
       }}
     >
       {children}

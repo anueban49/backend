@@ -27,3 +27,22 @@ export const getProductbyId: RequestHandler = async (req, res) => {
     console.error(error);
   }
 };
+export const getProductsByCategory: RequestHandler = async (req, res) => {
+  try {
+    const { category } = req.params;
+    if (!category) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not Found" });
+    }
+    const products = await ProductModel.find({ category });
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("getProductsByCategory error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch products by category",
+      error: String(error),
+    });
+  }
+};

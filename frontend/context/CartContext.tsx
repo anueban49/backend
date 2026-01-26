@@ -7,7 +7,7 @@ export type itemType = {
   price: number;
   image: string;
   description: string;
-  id: number;
+  id: string;
 };
 
 export type CartitemsType = itemType & {
@@ -18,8 +18,8 @@ export interface CartContextType {
   cartItems: CartitemsType[];
 
   addToCart: (item: CartitemsType) => void;
-  removeFromCart: (id: number) => void; //it removes the item by its id, and no return
-  updateQuantity: (id: number, quantity: number) => void; // it updates the count by its id and number included.
+  removeFromCart: (id: string) => void; //it removes the item by its id, and no return
+  updateQuantity: (id: string, quantity: number) => void; // it updates the count by its id and number included.
 
   getTotalPrice: () => number;
   getTotalItems: () => number;
@@ -55,13 +55,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = (id: string) => {
     if (!id) {
       return;
     }
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(id);
       return;
