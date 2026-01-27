@@ -3,8 +3,6 @@ import { useState, useEffect, Children } from "react";
 import { PromoBanner } from "./PromoBanner";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { ReactNode } from "react";
-import { Cart } from "./Cart";
 
 type BaseSctructureProps = {
   children: React.ReactNode;

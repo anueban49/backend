@@ -4,5 +4,5 @@ import { getStaffsInfo } from "../controllers/staff/getStaffsInfo.js";
 
 const StaffsRouter = Router();
 
-StaffsRouter.get("/staffs", getStaffsInfo).post("/staffs/addnew", addNewStaff);
+StaffsRouter.get("/list", getStaffsInfo).post("/add", addNewStaff);
 export { StaffsRouter };

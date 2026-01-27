@@ -48,7 +48,7 @@ export function AppSideBar() {
     }
   }
   return (
-    <Drawer direction="right" defaultOpen={false} >
+    <Drawer direction="right" defaultOpen={false} onOpenChange={() => {console.log(open)}}>
       <DrawerTrigger asChild>
         <Button size={"icon"} variant="outline" className="rounded-full" onClick={toggleDrawer}>
           <ShoppingCart color="red" />
@@ -57,7 +57,7 @@ export function AppSideBar() {
       <DrawerContent className="rounded-2xl p-4 z-99 bg-gray-200">
         <DrawerHeader className="w-full flex flex-row justify-between">
           <DrawerTitle className="text-black">Order Detail</DrawerTitle>
-          <Button variant={"outline"} size={"icon"} className="rounded-full">
+          <Button variant={"outline"} size={"icon"} className="rounded-full" onClick={() => {setOpen(false)}}>
             <X />
           </Button>
         </DrawerHeader>

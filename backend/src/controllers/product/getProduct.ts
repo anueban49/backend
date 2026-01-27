@@ -22,7 +22,7 @@ export const getProductbyId: RequestHandler = async (req, res) => {
         message: "item not found",
       });
     }
-    res.json(item);
+    res.status(200).json(item);
   } catch (error) {
     console.error(error);
   }

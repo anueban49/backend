@@ -34,6 +34,7 @@ import {
   ProductInputType,
 } from "../../context/SSR-inventoryContext";
 import { id } from "zod/v4/locales";
+import { toast } from "sonner";
 interface UpdateDialogProp {
   _id: string;
 }
@@ -52,6 +53,9 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
   const [preview, setPreview] = useState<string | null>(null); // the image will be url.
   const [isUploading, setIsUploading] = useState(false);
   const [item, setItem] = useState<ProductType | undefined>(undefined);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +76,7 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
     fetchAllCategories();
   }, []);
   const form = useForm<z.infer<typeof createNewSchema>>({
-    resolver: zodResolver(createNewSchema),
+    resolver: zodResolver(createNewSchema) as any,
     mode: "onSubmit",
     defaultValues: {
       name: "",
@@ -84,55 +88,97 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
   });
   //this code below will handle the role of setting the previous data as its default value:
   useEffect(() => {
-    if (product) {
+    if (item) {
       form.reset({
-        name: product.name,
-        price: product.price,
-        ingredients: product.ingredients,
+        name: item?.name,
+        price: item?.price,
+        ingredients: item?.ingredients,
         category:
-          typeof product.category === "string"
-            ? product.category
-            : product.category._id,
-        image: product.image,
+          typeof item?.category === "string"
+            ? item?.category
+            : item?.category._id,
+        image: item?.image,
       });
     }
-  }, [product, form]); //called whenever the item or form is changed.
+    if (item?.image) {
+      setPreview(item?.image);
+    }
+  }, [item, form]); //called whenever the item or form is changed.
 
   function onSubmit(data: z.infer<typeof createNewSchema>) {
     //this function must handle the patch request.
-    if (!product?._id) {
+    if (!_id) {
       return;
     }
-    const categoryObj = categories.find((c) => c._id === data.category);
-    if (!categoryObj) return;
-    const inputData: ProductInputType = {
-      name: data.name,
-      price: data.price,
-      ingredients: data.ingredients,
-      category: categoryObj,
-      image: data.image,
-    };
-    updateProduct(_id, inputData);
+    try {
+      setUpdating(true);
+      const categoryObj = categories.find((c) => c._id === data.category);
+      if (!categoryObj) return;
+      const inputData: ProductInputType = {
+        name: data.name,
+        price: data.price,
+        ingredients: data.ingredients,
+        category: categoryObj,
+        image: data.image,
+      };
+      setUpdating(false);
+      updateProduct(_id, inputData);
+      console.log("updated item:", _id, inputData);
+      toast.success("Update success!")
+    } catch (error) {
+      setUpdating(false);
+      console.error(error);
+    } finally {
+      setUpdating(false);
+    }
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsUploading(true);
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
-        const response = await api.post<{ url: string }>(
-          "/product/upload",
-          formData,
-        );
-        setPreview(response.data.url);
-        form.setValue("image", response.data.url);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsUploading(false);
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size exceeds the 5MB limit");
+        setFile(null);
+        setPreview(null);
       }
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please choose image files only");
+      }
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+
+      setFile(file);
+      setPreview(URL.createObjectURL(file));
+      await fileUpload(file);
+    }
+  };
+  const fileUpload = async (file: File) => {
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "dishImages");
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/dbicloi01/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setUploadedUrl(data.secure_url);
+        form.setValue("image", data.secure_url);
+        console.log("upload success:", data.secure_url);
+      } else {
+        console.error(data.error?.message || "Upload failed");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -268,8 +314,12 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
               )}
             />
 
-            <Button className="w-full" type="submit" disabled={isUploading}>
-              {isUploading ? "Updating" : "Update"}
+            <Button
+              className="w-full"
+              type="submit"
+              disabled={isUploading && updating}
+            >
+              {isUploading ? "Uploading image..." : "Update"}
             </Button>
           </form>
         </Form>
