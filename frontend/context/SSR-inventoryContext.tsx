@@ -23,7 +23,7 @@ export type CrudContextType = {
   createProduct: (data: ProductType) => Promise<void>;
   fetchProductbyID: (id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
   fetchAllProduct: () => Promise<void>;
-  fetchProductsbyCategory: (_id: string) => Promise<ProductType>;
+  fetchProductsbyCategory: (_id: string) => Promise<ProductType[]>;
 };
 export type CrudProviderProps = {
   children: ReactNode;
@@ -90,9 +90,6 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const fetchProductbyID = async (_id: string): Promise<ProductType> => {
     try {
       const { data } = await api.get<ProductType>(`/product/${_id}`);
-
-      setProduct(data);
-
       return data;
     } catch (error) {
       console.error(error);

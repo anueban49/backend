@@ -1,41 +1,34 @@
 //this component has to only work with products.
 "use client";
-import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
-import { CreateNew } from "./components/createNew";
-import { CrudContext, ProductType, useIMcrud } from "./SSR-inventoryContext";
+
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { CreateNew } from "../../_components/createNew";
+import { useIMcrud, ProductType } from "../../../context/SSR-inventoryContext";
 import { Pen, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { CategoryType } from "../page";
+import { CategoryType } from "../../../context/SSR-inventoryContext";
 import { api } from "@/lib/axios";
-import { ItemCard } from "./components/ItemCard";
+import { ItemCard } from "../../_components/ItemCard";
 
 export function InventoryManager() {
   const [cathData, setCathData] = useState<CategoryType[]>([]);
   const [allItems, setAllItems] = useState<ProductType[]>([]);
   const {
     allProducts,
+    categories,
     fetchAllProduct,
+    fetchAllCategories,
     fetchProductbyID,
     createProduct,
-    updateProduct,
-    deleteProduct,
   } = useIMcrud();
 
   useEffect(() => {
-    const getCathData = async () => {
-      const { data } = await api.get<CategoryType[]>("/category/categories");
-      setCathData(data);
-    };
-    getCathData();
+    fetchAllCategories();
   }, []);
   useEffect(() => {
-    const getData = async () => {
-      const { data } = await api.get<ProductType[]>(`/product/products`);
-      setAllItems(data);
-    };
-    getData();
+    fetchAllProduct();
   }, []);
 
   return (
@@ -66,12 +59,12 @@ export function InventoryManager() {
                 </Card>
               </DialogTrigger>
 
-              <DialogContent className="h-125 p-8 flex flex-col gap-20 bg-white rounded-xl shadow-md">
+              <DialogContent className="h-125 p-8 flex flex-col gap-20 bg-white rounded-xl shadow-md ">
                 <CreateNew></CreateNew>
               </DialogContent>
             </Dialog>
 
-            {allItems.map((product) => {
+            {allProducts.map((product) => {
               return (
                 <ItemCard
                   key={product._id}

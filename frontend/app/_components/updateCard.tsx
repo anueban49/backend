@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
-import { createNewSchema, CreatenewType } from "../CreateNewSchema";
+import { createNewSchema } from "../schemas/CreateNewSchema";
 import {
   Select,
   SelectContent,
@@ -32,7 +32,7 @@ import {
   CategoryType,
   ProductType,
   ProductInputType,
-} from "../SSR-inventoryContext";
+} from "../../context/SSR-inventoryContext";
 import { id } from "zod/v4/locales";
 interface UpdateDialogProp {
   _id: string;
@@ -41,41 +41,35 @@ interface UpdateDialogProp {
 //second, it displays the data on the form as its default value
 //onsubmit, it patches the data.
 export function UpdateDialog({ _id }: UpdateDialogProp) {
-  const [item, setItem] = useState<ProductType | undefined>(undefined);
-  const { updateProduct, fetchProductbyID } = useIMcrud();
+  const {
+    updateProduct,
+    fetchProductbyID,
+    fetchAllCategories,
+    categories,
+    product,
+  } = useIMcrud();
   const [open, setopen] = useState(false);
   const [preview, setPreview] = useState<string | null>(null); // the image will be url.
-  const [categories, setCategories] = useState<CategoryType[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [item, setItem] = useState<ProductType | undefined>(undefined);
 
   useEffect(() => {
-    const loadProduct = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await api.get<ProductType>(`/product/products/${_id}`);
+        const data = await fetchProductbyID(_id);
         setItem(data);
-        if (data.image) {
-          setPreview(data.image);
-        }
-        console.log("fetched product data:", data);
       } catch (error) {
-        console.error(error);
+        console.error("Failed to fetch product:", error);
       }
     };
+
     if (_id) {
-      loadProduct();
+      fetchData();
     }
-  }, [_id, fetchProductbyID]);
+  }, [_id]);
 
   useEffect(() => {
-    const fetchCats = async () => {
-      try {
-        const { data } = await api.get<CategoryType[]>("/category/categories");
-        setCategories(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchCats();
+    fetchAllCategories();
   }, []);
   const form = useForm<z.infer<typeof createNewSchema>>({
     resolver: zodResolver(createNewSchema),
@@ -90,21 +84,23 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
   });
   //this code below will handle the role of setting the previous data as its default value:
   useEffect(() => {
-    if (item) {
+    if (product) {
       form.reset({
-        name: item.name,
-        price: item.price,
-        ingredients: item.ingredients,
+        name: product.name,
+        price: product.price,
+        ingredients: product.ingredients,
         category:
-          typeof item.category === "string" ? item.category : item.category._id,
-        image: item.image,
+          typeof product.category === "string"
+            ? product.category
+            : product.category._id,
+        image: product.image,
       });
     }
-  }, [item, form]); //called whenever the item or form is changed.
+  }, [product, form]); //called whenever the item or form is changed.
 
   function onSubmit(data: z.infer<typeof createNewSchema>) {
     //this function must handle the patch request.
-    if (!item?._id) {
+    if (!product?._id) {
       return;
     }
     const categoryObj = categories.find((c) => c._id === data.category);
@@ -157,7 +153,7 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
                   <FormItem>
                     <FormLabel>Dish Name</FormLabel>
                     <FormControl>
-                      <Input placeholder={`${item?.name}`} {...field} />
+                      <Input placeholder={`${product?.name}`} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +170,7 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder={`${item?.price}`}
+                        placeholder={`${product?.price}`}
                         {...field}
                       />
                     </FormControl>
@@ -193,7 +189,7 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
                   <FormControl>
                     <Input
                       type="ingredients"
-                      placeholder={`${item?.ingredients}`}
+                      placeholder={`${product?.ingredients}`}
                       {...field}
                     />
                   </FormControl>
@@ -210,7 +206,7 @@ export function UpdateDialog({ _id }: UpdateDialogProp) {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={`${item?.category}`} />
+                        <SelectValue placeholder={`${product?.category}`} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { AddNewCategory } from "../categories/AddNewCategory";
+import { AddNewCategory } from "../../_components/AddNewCategory";
 import {
   PopoverContent,
   Popover,

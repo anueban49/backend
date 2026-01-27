@@ -23,7 +23,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { ProductType } from "../staff_nomnom/dishesManagement/SSR-inventoryContext";
+import { ProductType } from "../../context/SSR-inventoryContext";
 import { ShoppingCart, X } from "lucide-react";
 import { SwitchMenu } from "./SwitchMenu";
 import { useCart, CartContext, CartProvider } from "@/context/CartContext";

@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import { useIMcrud } from "../dishesManagement/SSR-inventoryContext";
+import { useIMcrud } from "../../../context/SSR-inventoryContext";
 
 export type ProductType = {
   name: string;

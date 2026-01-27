@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { CrudProvider } from "./SSR-inventoryContext";
+import { CrudProvider } from "../../../context/SSR-inventoryContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

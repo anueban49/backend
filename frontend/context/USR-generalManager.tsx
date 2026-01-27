@@ -1,5 +1,7 @@
 "use client";
-//this comp has to display the layout for the landing page.
+//this component is for managing dishes in the inventory;
+//uses CRUD operation on only category and dishes.
+//staff auth might be used in oorde to do so.
 import { ReactNode, Children, useState, useEffect, createContext } from "react";
 import { itemType } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
@@ -13,10 +15,10 @@ import {
 import { api } from "@/lib/axios";
 
 
-import { InventoryManager } from "./USR-inventoryManager";
+import { InventoryManager } from "../app/staff_nomnom/dishesManagement/USR-inventoryManager";
 import { Logo } from "@/app/_components/Logo";
-import { OrdersDashboard } from "../order/ManageOrders";
-import { Settings } from "../order/Settings";
+import { OrdersDashboard } from "../app/staff_nomnom/order/ManageOrders";
+import { Settings } from "../app/staff_nomnom/order/Settings";
 
 const operationBtns = [
   { id: 1, name: "Food Menu" },

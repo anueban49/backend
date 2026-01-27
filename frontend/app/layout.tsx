@@ -6,7 +6,7 @@ import { AppSideBar } from "./_components/AppSideBar";
 import BaseStructure from "./_components/BaseStructure";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "./_components/AuthProvider";
-import { CrudProvider } from "./staff_nomnom/dishesManagement/SSR-inventoryContext";
+import { CrudProvider } from "../context/SSR-inventoryContext";
 import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",

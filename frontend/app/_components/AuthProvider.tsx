@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import type { userFormdata, LoginType } from "./userSchema";
+import type { userFormdata, LoginType } from "../schemas/userSchema";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 

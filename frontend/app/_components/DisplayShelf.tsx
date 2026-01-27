@@ -9,7 +9,7 @@ import {
   useIMcrud,
   ProductType,
   CategoryType,
-} from "../staff_nomnom/dishesManagement/SSR-inventoryContext";
+} from "../../context/SSR-inventoryContext";
 interface DisplayShelfProps {
   _id: string;
   name: string;

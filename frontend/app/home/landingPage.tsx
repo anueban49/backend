@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { DisplayShelf } from "../_components/DisplayShelf";
-import { useIMcrud } from "../staff_nomnom/dishesManagement/SSR-inventoryContext";
+import { useIMcrud } from "../../context/SSR-inventoryContext";
 export function LandingPage() {
   const { fetchAllCategories, categories } = useIMcrud();
   useEffect(() => {
