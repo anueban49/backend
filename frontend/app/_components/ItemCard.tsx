@@ -18,7 +18,7 @@ export function ItemCard(props: ProductType) {
   const { product, fetchProductbyID } = useIMcrud();
 
   const getproductdata = async (_id: string) => {
-    const { data } = await api.get<ProductType>(`/product/products/${_id}`);
+    const { data } = await api.get<ProductType>(`/product/${_id}`);
     setItem(data);
     console.log("got data:", data)
   };
@@ -35,7 +35,7 @@ export function ItemCard(props: ProductType) {
               <Button
                 onClick={() => {
                   setOpen(true);
-                  fetchProductbyID(props?._id);
+                  
                 }}
                 size={"icon"}
                 className="absolute top-20 right-2 rounded-full"
@@ -45,7 +45,7 @@ export function ItemCard(props: ProductType) {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <UpdateDialog key={props._id} _id={props._id} ></UpdateDialog>
+              <UpdateDialog  _id={props._id} ></UpdateDialog>
             </DialogContent>
           </Dialog>
 

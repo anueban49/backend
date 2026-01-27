@@ -10,18 +10,21 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
+import { CreatenewType } from "@/app/schemas/CreateNewSchema";
 //when clicked on the btn, dialog appears, containing the information of the entity. and user will edit it and send it to patch request
 //products data, CRUD operations
 export type CrudContextType = {
   categories: CategoryType[] | [];
+  category: CategoryType | null;
   fetchAllCategories: () => Promise<void>;
   fetchCategoryByID: (_id: string) => Promise<CategoryType>;
   product: ProductType | null;
+  products: ProductType[] | [];
   allProducts: ProductType[];
   updateProduct: (_id: string, data: ProductInputType) => Promise<void>;
   deleteProduct: (_id: string) => Promise<void>;
-  createProduct: (data: ProductType) => Promise<void>;
-  fetchProductbyID: (id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
+  createProduct: (data: CreatenewType) => Promise<void>;
+  fetchProductbyID: (_id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
   fetchAllProduct: () => Promise<void>;
   fetchProductsbyCategory: (_id: string) => Promise<ProductType[]>;
 };
@@ -60,7 +63,13 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [category, setCategory] = useState<CategoryType | null>(null);
+  const [loadingData, setLoadingData] = useState(false);
 
+  if (loadingData == true) {
+    toast.loading("Loading data");
+  } else {
+    toast.success("loaded");
+  }
   const fetchAllCategories = async () => {
     try {
       const { data } = await api.get<CategoryType[]>("/category/all");
@@ -73,7 +82,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const fetchCategoryByID = async (_id: string): Promise<CategoryType> => {
     try {
       const { data } = await api.get<CategoryType>(`/category/${_id}`);
-      return data;
+      setCategory(data);
     } catch (error) {
       toast.error("failed to fetch category");
       throw error;
@@ -96,7 +105,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
       throw error;
     }
   };
-  const createProduct = async (data: ProductType) => {
+  const createProduct = async (data: CreatenewType) => {
     try {
       const res = await api.post(`/product/create`, {
         name: data.name,
@@ -133,8 +142,9 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   };
   const fetchProductsbyCategory = async (_id: string) => {
     try {
-      const { data } = await api.get<ProductType>(`/product/category/${_id}`);
-      return data;
+      const { data } = await api.get<ProductType[]>(`/product/category/${_id}`);
+      setProducts(data);
+      console.log('fetchproductbyCats:', data)
     } catch (error) {
       console.error(error);
       throw error;
@@ -157,8 +167,10 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
     <CrudContext.Provider
       value={{
         product,
+        products,
         allProducts,
         categories,
+        category,
         fetchAllCategories,
         fetchCategoryByID,
         updateProduct,

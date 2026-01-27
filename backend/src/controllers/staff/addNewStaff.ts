@@ -10,7 +10,6 @@ export const addNewStaff: RequestHandler = async (req, res) => {
       id: body._id,
       password: hashedPassword,
       email: body.email,
-      role: body.role,
     });
     res.status(201).json({
         id: Staff._id,

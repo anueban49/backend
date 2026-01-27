@@ -14,14 +14,16 @@ import { ItemCard } from "../../_components/ItemCard";
 
 export function InventoryManager() {
   const [cathData, setCathData] = useState<CategoryType[]>([]);
-  const [allItems, setAllItems] = useState<ProductType[]>([]);
+  const [selectedcategory, setSelectedcategory] = useState<
+    CategoryType | "All"
+  >("All");
   const {
     allProducts,
+    products,
     categories,
     fetchAllProduct,
     fetchAllCategories,
-    fetchProductbyID,
-    createProduct,
+    fetchProductsbyCategory,
   } = useIMcrud();
 
   useEffect(() => {
@@ -30,7 +32,10 @@ export function InventoryManager() {
   useEffect(() => {
     fetchAllProduct();
   }, []);
-
+  const filterProducts = (_id: string, props: CategoryType) => {
+    setSelectedcategory(props);
+    fetchProductsbyCategory(_id);
+  };
   return (
     <>
       <div className="w-screen h-screen bg-white flex ">
@@ -39,11 +44,25 @@ export function InventoryManager() {
             {" "}
             <p className="font-bold">Dishes Category</p>
             <div className="">
-              {cathData.map((category) => (
+              <Button
+                variant={selectedcategory === "All" ? "default" : "outline"}
+                className="m-2 scale-95 rounded-full"
+                onClick={() => {
+                  setSelectedcategory("All");
+                }}
+              >
+                All
+              </Button>
+              {categories.map((category) => (
                 <Button
                   key={category._id}
-                  variant={"outline"}
+                  variant={
+                    selectedcategory === category ? "default" : "outline"
+                  }
                   className="m-2 scale-95 rounded-full"
+                  onClick={() => {
+                    filterProducts(category._id, category);
+                  }}
                 >
                   {category.name}
                 </Button>
@@ -64,20 +83,41 @@ export function InventoryManager() {
               </DialogContent>
             </Dialog>
 
-            {allProducts.map((product) => {
-              return (
-                <ItemCard
-                  key={product._id}
-                  name={product.name}
-                  price={product.price}
-                  ingredients={product.ingredients}
-                  image={product.image}
-                  category={product.category}
-                  timestamps={product.timestamps}
-                  _id={product._id}
-                ></ItemCard>
-              );
-            })}
+            {selectedcategory === "All" ? (
+              <>
+                {allProducts.map((product) => {
+                  return (
+                    <ItemCard
+                      key={product._id}
+                      name={product.name}
+                      price={product.price}
+                      ingredients={product.ingredients}
+                      image={product.image}
+                      category={product.category}
+                      timestamps={product.timestamps}
+                      _id={product._id}
+                    ></ItemCard>
+                  );
+                })}
+              </>
+            ) : (
+              <>
+                {products.map((product) => {
+                  return (
+                    <ItemCard
+                      key={product._id}
+                      name={product.name}
+                      price={product.price}
+                      ingredients={product.ingredients}
+                      image={product.image}
+                      category={product.category}
+                      timestamps={product.timestamps}
+                      _id={product._id}
+                    ></ItemCard>
+                  );
+                })}
+              </>
+            )}
           </div>
         </div>
       </div>

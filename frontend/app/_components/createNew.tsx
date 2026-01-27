@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-import { CategoryType, ProductType } from "../../context/SSR-inventoryContext";
+import { CategoryType } from "../../context/SSR-inventoryContext";
 import { createNewSchema, CreatenewType } from "../schemas/CreateNewSchema";
 import {
   Select,
@@ -41,7 +41,7 @@ export function CreateNew() {
   const { createProduct, fetchAllCategories, categories } = useIMcrud();
 
   const form = useForm<z.infer<typeof createNewSchema>>({
-    resolver: zodResolver(createNewSchema),
+    resolver: zodResolver(createNewSchema) as any,
     mode: "onSubmit",
     defaultValues: {
       name: "",
@@ -64,8 +64,7 @@ export function CreateNew() {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log(file);
-    console.log("uploading:", isUploading);
+
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
         alert("File size exceeds the 5MB limit");
@@ -74,6 +73,9 @@ export function CreateNew() {
       }
       if (!file.type.startsWith("image/")) {
         setError("Please select images only");
+      }
+      if (preview) {
+        URL.revokeObjectURL(preview);
       }
 
       setFile(file);
@@ -112,7 +114,7 @@ export function CreateNew() {
     }
   };
 
-  const onSubmit = async (data: ProductType, file: File) => {
+  const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
       console.log("image needed");
     }
