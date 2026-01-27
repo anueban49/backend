@@ -1,12 +1,8 @@
 "use client";
+//this has to work with only one category types at the time.
 
-//this component -> accepts food api and renders it into product jsx and dipslays it in itself.
-
-import { itemType } from "@/context/CartContext";
 import { ProductCard } from "./ProductCard";
-import products from "@/data/products.json";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/axios";
 import {
   CrudProvider,
   CrudContext,
@@ -14,45 +10,29 @@ import {
   ProductType,
   CategoryType,
 } from "../staff_nomnom/dishesManagement/SSR-inventoryContext";
-
-type ShelfType = {
-  name: string;
+interface DisplayShelfProps {
   _id: string;
-};
-
-export function DisplayShelf(props: ShelfType) {
+  name: string;
+}
+//this is a component when given category id, it fetches all the item belongs to that category.
+export function DisplayShelf(props: DisplayShelfProps) {
   const { fetchProductsbyCategory } = useIMcrud();
-
-  // useEffect(() => {
-  //   const loadData = async (_id: ShelfType) => {
-  //     try {
-  //       const res = fetchProductsbyCategory(props._id);
-  //       console.log(res);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //     loadData;
-  //   };
-  // }, [props._id]);
+  const [items, setItems] = useState<ProductType[]>([]);
   useEffect(() => {
-    console.log(fetchProductsbyCategory)
-  })
-  // useEffect(() => {
-  //   const loadProducts = async (props._id) => {
-  //     try {
-  //       await fetchProductsbyCategory(props._id);
-  //     } catch (error) {
-  //       console.error("Failed to fetch products for category:", error);
-  //     }
-  //   };
-  //   loadProducts();
-  // }, [props._id]);
-
+    const loadData = async () => {
+      const data: ProductType = await fetchProductsbyCategory(props._id);
+      setItems([data]);
+      console.log(data);
+    };
+    loadData();
+  }, [props._id, fetchProductsbyCategory]);
   return (
     <>
-      <div className="w-full">{props.name}</div>
+      <div className="w-full">
+        {props.name}
+      </div>
       <div className="grid grid-cols-3 grid-rows-2 max-w-7xl  w-full h-180 ">
-        {productsbyid.map((el) => {
+        {items.map((el) => {
           return (
             <ProductCard
               key={el._id}

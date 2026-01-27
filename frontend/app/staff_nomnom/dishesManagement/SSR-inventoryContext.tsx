@@ -17,14 +17,13 @@ export type CrudContextType = {
   fetchAllCategories: () => Promise<void>;
   fetchCategoryByID: (_id: string) => Promise<CategoryType>;
   product: ProductType | null;
-  productsbyid: ProductType[] | [];
   allProducts: ProductType[];
   updateProduct: (_id: string, data: ProductInputType) => Promise<void>;
   deleteProduct: (_id: string) => Promise<void>;
   createProduct: (data: ProductType) => Promise<void>;
   fetchProductbyID: (id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
   fetchAllProduct: () => Promise<void>;
-  fetchProductsbyCategory: (_id: string) => Promise<ProductType[]>;
+  fetchProductsbyCategory: (_id: string) => Promise<ProductType>;
 };
 export type CrudProviderProps = {
   children: ReactNode;
@@ -91,8 +90,9 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const fetchProductbyID = async (_id: string): Promise<ProductType> => {
     try {
       const { data } = await api.get<ProductType>(`/product/${_id}`);
+
       setProduct(data);
-      console.log("fetchByIDresult:", data);
+
       return data;
     } catch (error) {
       console.error(error);
@@ -134,9 +134,9 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
     }
     await fetchAllProduct();
   };
-  const fetchProductsbyCategory = async (_id: string): Promise<ProductType[]> => {
+  const fetchProductsbyCategory = async (_id: string) => {
     try {
-      const { data } = await api.get<ProductType[]>(`/product/category/${_id}`);
+      const { data } = await api.get<ProductType>(`/product/category/${_id}`);
       return data;
     } catch (error) {
       console.error(error);
