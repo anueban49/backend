@@ -13,7 +13,7 @@ const ImageSchema = z
   );
 export const createNewSchema = z.object({
   name: z.string(),
-  price: z.number(),
+  price: z.coerce.number().positive("Price must be greater than 0"),
   ingredients: z.string(),
   category: z.string(),
   image: z.string(),

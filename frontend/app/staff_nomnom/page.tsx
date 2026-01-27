@@ -1,7 +1,5 @@
 "use client";
-//importing the backend, getting access keys % staff authorization form
-// here should create the C, R, D operations ->
-//this opage mainly focuses on getting data, while add new data component will be on seperate file
+//this comp has to display the layout for the landing page.
 import { ReactNode, Children, useState, useEffect, createContext } from "react";
 import { itemType } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
@@ -13,16 +11,12 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { api } from "@/lib/axios";
-//this is the main site for adding food to the database so staff schema is not necessarily constructed here so im moving this staff schema out
 
-import { DishesDashboard } from "./order/ManageDishes";
-import { Logo } from "../_components/Logo";
+
+import { InventoryManager } from "./dishesManagement/USR-inventoryManager";
+import { Logo } from "@/app/_components/Logo";
 import { OrdersDashboard } from "./order/ManageOrders";
 import { Settings } from "./order/Settings";
-export type StaffType = {
-  username: string;
-  id: number;
-};
 
 const operationBtns = [
   { id: 1, name: "Food Menu" },
@@ -30,7 +24,7 @@ const operationBtns = [
   { id: 3, name: "Settings" },
 ];
 
-export default function StaffDashboard() {
+export default function USRgeneralManager() {
   const [active, setActive] = useState(1);
   const handleClick = (id: number) => {
     setActive(id);
@@ -59,7 +53,7 @@ export default function StaffDashboard() {
           })}
         </div>
       </div>
-      {active === 1 && <DishesDashboard></DishesDashboard>}
+      {active === 1 && <InventoryManager></InventoryManager>}
       {active === 2 && <OrdersDashboard></OrdersDashboard>}
       {active === 3 && <Settings></Settings>}
     </div>

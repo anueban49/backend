@@ -14,8 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-import { CategoryType } from "../SSR-inventoryContext";
-import { createNewSchema, CreatenewType } from "../CreateNewSchema";
+import { CategoryType, ProductType } from "../../context/SSR-inventoryContext";
+import { createNewSchema, CreatenewType } from "../schemas/CreateNewSchema";
 import {
   Select,
   SelectContent,
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { Upload, X } from "lucide-react";
-import { useIMcrud } from "../SSR-inventoryContext";
+import { useIMcrud } from "../../context/SSR-inventoryContext";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const CLOUD_NAME = process.env.CLOUDINARY_CN;
 const UPLOAD_PRESET = "dishImages";
@@ -38,7 +38,7 @@ export function CreateNew() {
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setisUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
-  const { createProduct } = useIMcrud();
+  const { createProduct, fetchAllCategories, categories } = useIMcrud();
 
   const form = useForm<z.infer<typeof createNewSchema>>({
     resolver: zodResolver(createNewSchema),
@@ -59,16 +59,13 @@ export function CreateNew() {
     form.setValue("image", "");
   };
   useEffect(() => {
-    const getCathData = async () => {
-      const { data } = await api.get<CategoryType[]>("/category/categories");
-      setCath(data);
-      console.log(data);
-    };
-    getCathData();
+    fetchAllCategories();
   }, []);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log(file);
+    console.log("uploading:", isUploading);
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
         alert("File size exceeds the 5MB limit");
@@ -89,7 +86,6 @@ export function CreateNew() {
     if (!file) return;
     setisUploading(true);
     setError(null);
-    setMethod("FormData (raw file)");
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -116,7 +112,7 @@ export function CreateNew() {
     }
   };
 
-  const onSubmit = async (data: CreatenewType) => {
+  const onSubmit = async (data: ProductType, file: File) => {
     if (!data.image) {
       console.log("image needed");
     }
@@ -133,7 +129,7 @@ export function CreateNew() {
   return (
     <>
       {" "}
-      <div className="w-full aspect-2/3">
+      <div className="w-full ">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -205,7 +201,7 @@ export function CreateNew() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {cath.map((el) => (
+                      {categories.map((el) => (
                         <SelectItem value={el._id} key={el._id}>
                           {el.name}
                         </SelectItem>
@@ -263,7 +259,11 @@ export function CreateNew() {
               )}
             />
 
-            <Button className="w-full" type="submit" disabled={isUploading}>
+            <Button
+              className="w-full"
+              type="submit"
+              disabled={isUploading === true}
+            >
               {isUploading ? "Creating" : "Create"}
             </Button>
           </form>

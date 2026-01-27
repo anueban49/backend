@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { userFormdata } from "./userSchema";
+import { userFormdata } from "../schemas/userSchema";
 export const userContext = createContext<userFormdata | undefined>(undefined);
 //using useContext to transfer same data to different components, and componenets render different properties of this.
 //above is appliable for saved datas.

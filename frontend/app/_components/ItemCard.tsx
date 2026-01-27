@@ -8,7 +8,7 @@ import { UpdateDialog } from "./updateCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pen, X } from "lucide-react";
-import { CrudContext, useIMcrud, ProductType } from "../SSR-inventoryContext";
+import { CrudContext, useIMcrud, ProductType } from "../../context/SSR-inventoryContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/lib/axios";
 
