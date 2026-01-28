@@ -3,5 +3,5 @@ import { CreateOrder } from "../controllers/orders/createOrder.js";
 import { getOrders } from "../controllers/orders/getOrder.js";
 
 const OrderRouter = Router();
-OrderRouter.get("/orders", getOrders).post("/orders/create", CreateOrder);
+OrderRouter.get("/all", getOrders).post("/create", CreateOrder);
 export { OrderRouter };
