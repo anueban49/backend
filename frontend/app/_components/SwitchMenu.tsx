@@ -22,16 +22,7 @@ const menuOptions = [
 ];
 
 //below should indicate the types of unit items INSIDE <CART> element; not the whole CART.
-const CartItemsCard = (props: CartitemsType) => {
-  return (
-    <>
-      <img src={props.image} alt={props.name} />
-      <p>{props.name}</p>
-      <p>{props.description}</p>
-      <p>{props.price}</p>
-    </>
-  );
-};
+
 //below IS indicating wtf should cart menu button display
 export type CartMenuDisplayType = {
   items: Array<CartitemsType> | undefined;
@@ -59,25 +50,33 @@ export function CartItemsDisplay(items: CartitemsType) {
     getTotalItems,
     getTotalPrice,
   } = useCart();
-
+console.log('cartIems', cartItems);
   return (
-    <Card>
+    <div className="w-full h-full">
       {cartItems.length > 0 ? (
-        <div id="cartitemsDisplay">
-          {cartItems.map((item, quantity) => (
-            <>
-              <div>{item.name}</div>
-              <div>{item.price}</div>
-              <p>{quantity}</p>
-            </>
+        <div id="cartitemsDisplay" className="flex flex-col gap-4 py-2">
+          {cartItems.map((item, index) => (
+            <div key={item.id} className="grid grid-cols-3 p-1 bg-white rounded-2xl gap-2">
+              <img
+                src={item.image}
+                className="aspect-square object-cover rounded-xl"
+              />
+              <div className="px-2 col-span-2">
+                <p className="text-red-500 font-bold">{item.name}</p>
+                <p className="font-[0.7em]">{item.ingredients}</p>
+                <div>{item.price}</div>
+                <p>Count: {item.quantity}</p>
+              </div>
+            </div>
           ))}
         </div>
       ) : (
         <div className="p-4">Cart is Empty</div>
       )}
-    </Card>
+    </div>
   );
 }
+
 function PaymentMenuDisplay() {
   return (
     <>

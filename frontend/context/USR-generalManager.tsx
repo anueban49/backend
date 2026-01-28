@@ -15,7 +15,7 @@ import {
 import { api } from "@/lib/axios";
 
 
-import { InventoryManager } from "../app/staff_nomnom/dishesManagement/USR-inventoryManager";
+import { InventoryManager } from "../app/staff_nomnom/Management/USR-inventoryManager";
 import { Logo } from "@/app/_components/Logo";
 import { OrdersDashboard } from "../app/staff_nomnom/order/ManageOrders";
 import { Settings } from "../app/staff_nomnom/order/Settings";

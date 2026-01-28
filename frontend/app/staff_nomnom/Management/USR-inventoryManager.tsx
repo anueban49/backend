@@ -38,38 +38,40 @@ export function InventoryManager() {
   };
   return (
     <>
-      <div className="w-screen h-screen bg-white flex ">
+      <div className="w-screen h-screen overflow-scroll bg-white flex ">
         <div className="w-full bg-rose-50 h-full p-8 flex flex-col">
           <div className="flex flex-col gap-4">
             {" "}
-            <p className="font-bold">Dishes Category</p>
-            <div className="">
-              <Button
-                variant={selectedcategory === "All" ? "default" : "outline"}
-                className="m-2 scale-95 rounded-full"
-                onClick={() => {
-                  setSelectedcategory("All");
-                }}
-              >
-                All
-              </Button>
-              {categories.map((category) => (
+            <div className="w-full fixed top-5">
+              <p className="font-bold">Dishes Category</p>
+              <div className="">
                 <Button
-                  key={category._id}
-                  variant={
-                    selectedcategory === category ? "default" : "outline"
-                  }
+                  variant={selectedcategory === "All" ? "default" : "outline"}
                   className="m-2 scale-95 rounded-full"
                   onClick={() => {
-                    filterProducts(category._id, category);
+                    setSelectedcategory("All");
                   }}
                 >
-                  {category.name}
+                  All
                 </Button>
-              ))}
+                {categories.map((category) => (
+                  <Button
+                    key={category._id}
+                    variant={
+                      selectedcategory === category ? "default" : "outline"
+                    }
+                    className="m-2 scale-95 rounded-full"
+                    onClick={() => {
+                      filterProducts(category._id, category);
+                    }}
+                  >
+                    {category.name}
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="w-full aspect-4/1 grid grid-cols-4 p-4 gap-4 ">
+          <div className="relative top-20 w-full grid grid-cols-4 p-4 gap-4 ">
             <Dialog>
               <DialogTrigger asChild>
                 <Card className="w-full aspect-4/3 p-10 rounded-2xl flex flex-col items-center justify-center text-red-500 border-dashed border-1 border-red-300">
