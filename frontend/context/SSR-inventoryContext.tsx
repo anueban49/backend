@@ -83,6 +83,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
     try {
       const { data } = await api.get<CategoryType>(`/category/${_id}`);
       setCategory(data);
+      return data;
     } catch (error) {
       toast.error("failed to fetch category");
       throw error;
@@ -144,7 +145,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
     try {
       const { data } = await api.get<ProductType[]>(`/product/category/${_id}`);
       setProducts(data);
-      console.log('fetchproductbyCats:', data)
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

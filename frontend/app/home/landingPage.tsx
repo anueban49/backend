@@ -14,8 +14,8 @@ export function LandingPage() {
     "696f0b1b81d87f6363a001d3",
     "695d23940826dae39194f058",
   ]; //fetch items belonging to this category first.
+  let selected = [];
   useEffect(() => {
-    let selected = [];
     const fetchSelected = async () => {
       for (const id of CategoryIDs) {
         const data = await fetchCategoryByID(id);
@@ -24,19 +24,16 @@ export function LandingPage() {
         }
       }
       setDisplayCategories(selected);
+      console.log(selected)
     };
     fetchSelected();
   }, []);
 
   return (
     <>
-      {DisplayCategories.map((item) => (
-        <DisplayShelf
-          key={item._id}
-          name={item.name}
-          _id={item._id}
-        ></DisplayShelf>
-      ))}
+      <DisplayShelf key={1} _id="695d23820826dae39194f056" name="Appetizers" />
+      <DisplayShelf key={2} _id="696f0b1b81d87f6363a001d3" name="Lunch Favorites" />
+      <DisplayShelf key={3} _id="695d23940826dae39194f058" name="Salads" />
     </>
   );
 }
