@@ -99,11 +99,12 @@ export const DishesDashboard = () => {
 
           {products.map((product) => {
             return (
-              <div
+              <Card
                 key={product._id}
-                className="bg-white rounded-2xl shadow-md aspect-4/3 "
+                className="w-full rounded-2xl shadow-md aspect-4/3 "
               >
-                <CardContent className="w-full aspect-4/3 h-fit p-0 relative">
+                
+                <div className="w-full aspect-4/3 h-full p-0 relative">
                   <Button
                     size={"icon"}
                     className="absolute top-20 right-2 rounded-full"
@@ -128,8 +129,8 @@ export const DishesDashboard = () => {
                       {truncateText(product.ingredients, 20)}
                     </CardDescription>
                   </div>
-                </CardContent>
-              </div>
+                </div>
+              </Card>
             );
           })}
         </div>

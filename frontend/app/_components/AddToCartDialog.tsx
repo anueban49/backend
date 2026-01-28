@@ -16,44 +16,43 @@ import { ProductType, useIMcrud } from "@/context/SSR-inventoryContext";
 import { useEffect, useState } from "react";
 
 export function AddToCartDialog(_id: string) {
+  // console.log(_id) id pass confirmed.
   const { fetchProductbyID, product } = useIMcrud();
   const [item, setItem] = useState<ProductType | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       try {
         const data = await fetchProductbyID(_id);
         setItem(data);
       } catch (error) {
-        console.log(error);
+        console.error("Failed to fetch product:", error);
       }
     };
-    if (_id)
-  }, []);
+
+    if (_id) {
+      fetchData();
+    }
+  }, [_id]);
+  if (item) {console.log("item found")}
   return (
     <>
-      <DialogHeader>
-        <DialogTitle>{product?.name}</DialogTitle>
-        <DialogDescription>
-          Make changes to your profile here. Click save when you&apos;re done.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="grid gap-4">
-        <div className="grid gap-3">
-          <Label htmlFor="name-1">Name</Label>
-          <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+      <div className="w-full aspect-2/1 grid grid-rows-1 grid-cols-2">
+        <div className="col-span-1 bg-gary-300">
+          <img src={item?.image} className="object-cover" alt={item?.image} />
         </div>
-        <div className="grid gap-3">
-          <Label htmlFor="username-1">Username</Label>
-          <Input id="username-1" name="username" defaultValue="@peduarte" />
+        <div className="flex flex-col justify-between">
+          <div>
+            <p className="text-red-500 text-xl font-bold">{item?.name}</p>
+            <p className="text-[0.7em]">{item?.ingredients}</p>
+          </div>
+          <div className="flex flex-col">
+            <p className="text-[0.7em]">Total Price</p>{" "}
+            <p className="font-bold">${item?.price}</p>
+          </div>
+          <Button>Add to Cart</Button>
         </div>
       </div>
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="outline">Cancel</Button>
-        </DialogClose>
-        <Button type="submit">Save changes</Button>
-      </DialogFooter>
     </>
   );
 }

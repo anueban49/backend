@@ -6,7 +6,7 @@ export type itemType = {
   name: string;
   price: number;
   image: string;
-  description: string;
+  ingredients: string;
   id: string;
 };
 
@@ -35,23 +35,24 @@ export interface CartContextType {
 //discovery: context itself can hold data
 
 export const CartContext = createContext<CartContextType>(
-  {} as CartContextType
+  {} as CartContextType,
 );
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartitemsType[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  //the comp passes item with quantity here
   const addToCart = (item: CartitemsType) => {
     setItems((prev) => {
       const itemExists = prev.find((i) => i.id === item.id);
       if (itemExists) {
         const updated = prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i,
         );
         return updated;
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, item];
     });
   };
 
@@ -67,7 +68,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+      prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
     );
   };
   const getTotalItems = () => {

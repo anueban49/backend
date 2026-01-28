@@ -13,7 +13,7 @@ import {
 import { api } from "@/lib/axios";
 
 
-import { InventoryManager } from "./dishesManagement/USR-inventoryManager";
+import { InventoryManager } from "./Management/USR-inventoryManager";
 import { Logo } from "@/app/_components/Logo";
 import { OrdersDashboard } from "./order/ManageOrders";
 import { Settings } from "./order/Settings";

@@ -43,69 +43,43 @@ export function AddToCart({ product }: AddToCartProps) {
 export function AppSideBar() {
   const [open, setOpen] = useState(false);
   const toggleDrawer = () => {
-    if (open) {setOpen(false)
+    if (open) {
+      setOpen(false);
       return setOpen(true);
     }
-  }
+  };
   return (
-    <Drawer direction="right" defaultOpen={false} onOpenChange={() => {console.log(open)}}>
+    <Drawer
+      direction="right"
+      defaultOpen={false}
+      onOpenChange={() => {
+        console.log(open);
+      }}
+    >
       <DrawerTrigger asChild>
-        <Button size={"icon"} variant="outline" className="rounded-full" onClick={toggleDrawer}>
+        <Button
+          size={"icon"}
+          variant="outline"
+          className="rounded-full"
+          onClick={toggleDrawer}
+        >
           <ShoppingCart color="red" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="rounded-2xl p-4 z-99 bg-gray-200">
         <DrawerHeader className="w-full flex flex-row justify-between">
           <DrawerTitle className="text-black">Order Detail</DrawerTitle>
-          <Button variant={"outline"} size={"icon"} className="rounded-full" onClick={() => {setOpen(false)}}>
-            <X />
-          </Button>
+          <DrawerClose asChild>
+            <Button variant="outline" size={"icon"} className="rounded-full">
+              <X />
+            </Button>
+          </DrawerClose>
         </DrawerHeader>
         <div className="no-scrollbar overflow-y-auto px-4">
           <SwitchMenu></SwitchMenu>
         </div>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
+        <DrawerFooter></DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
 }
-
-//   <Sidebar
-//     side="right"
-//     variant="sidebar"
-//     collapsible="offcanvas"
-//     style={{
-//       background: "transparent",
-//     }}
-//     className="overflow-hidden bg-zinc-600"
-//   >
-//     <SidebarContent className="bg-zinc-600 h-full">
-//       <SidebarHeader>
-//         <SidebarGroup className="flex flex-col gap-2">
-//           <SidebarGroupLabel className="flex justify-between">
-//             <ShoppingCart color="white" />
-//             <p className="text-white">Order detail</p>
-//             <Button
-//               size="icon"
-//               variant="outline"
-//               className="rounded-full"
-//               onClick={toggleSidebar}
-//             >
-//               <X />
-//             </Button>
-//           </SidebarGroupLabel>
-//           <SidebarGroupContent>
-//             <SidebarMenu>
-//               <SwitchMenu></SwitchMenu>
-//             </SidebarMenu>
-//           </SidebarGroupContent>
-//         </SidebarGroup>
-//       </SidebarHeader>
-//     </SidebarContent>
-//   </Sidebar>
-// );

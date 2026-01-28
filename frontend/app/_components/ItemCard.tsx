@@ -27,9 +27,9 @@ export function ItemCard(props: ProductType) {
     <>
       <div
         key={props?._id}
-        className="bg-white rounded-2xl shadow-md aspect-4/3 relative"
+        className="bg-white w-full aspect-4/3 rounded-2xl shadow-md  relative overflow-hidden"
       >
-        <CardContent className="w-full aspect-4/3 h-fit p-0 relative">
+        <div className="w-full aspect-4/3 h-fit p-0 relative">
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -66,7 +66,7 @@ export function ItemCard(props: ProductType) {
               {props.ingredients}
             </CardDescription>
           </div>
-        </CardContent>
+        </div>
       </div>
     </>
   );
