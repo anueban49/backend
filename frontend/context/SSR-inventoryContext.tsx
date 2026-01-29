@@ -144,8 +144,8 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const fetchProductsbyCategory = async (_id: string) => {
     try {
       const { data } = await api.get<ProductType[]>(`/product/category/${_id}`);
-      setProducts(data);
-      return data;
+     
+      return data
     } catch (error) {
       console.error(error);
       throw error;

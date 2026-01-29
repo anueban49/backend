@@ -6,9 +6,22 @@ import { itemType, CartitemsType } from "@/context/CartContext";
 
 import { Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { DialogTrigger } from "@radix-ui/react-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogClose,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 import { useIMcrud } from "@/context/SSR-inventoryContext";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card";
 
 export function ProductCard(item: CartitemsType) {
   const { addToCart, cartItems } = useCart();
@@ -30,20 +43,23 @@ export function ProductCard(item: CartitemsType) {
     addToCart({ ...item, quantity: dialogQuantity });
   };
   return (
-    <div className="flex p-4 ">
-      <div className="w-full h-full rounded-xl bg-white flex flex-col gap-2 p-4">
-        <div className="rounded-xl w-full aspect-5/3 relative overflow-hidden">
-          <img src={item.image} className="w-full object-cover" />
-
+    <>
+      <Card className="w-full p-2 gap-2">
+        <CardContent className="relative p-2 w-full h-2/3 overflow-hidden rounded-2xl">
+          <img
+            src={item.image}
+            className="rounded-xl w-full aspect-4/3 object-center object-cover"
+          />{" "}
           <Dialog>
+            <DialogTitle/>
             <DialogTrigger asChild>
               <Button
                 onClick={() => {
                   loadItemData(item.id);
-                  setDialogQuantity(1); 
+                  setDialogQuantity(1);
                 }}
                 size="icon"
-                className="aspect-square rounded-full absolute right-2 bottom-2 bg-white flex items-center justify-center "
+                className="scale-120 aspect-square rounded-full absolute right-4 bottom-4 bg-white flex items-center justify-center "
               >
                 <Plus color="red" />
               </Button>
@@ -65,7 +81,7 @@ export function ProductCard(item: CartitemsType) {
                     <p className="text-[0.7em]">{product?.ingredients}</p>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-[0.7em]">Total Price </p>{" "}
+                    <p className="text-[0.7em]">Price </p>{" "}
                     <p className="font-bold">${item.price * dialogQuantity}</p>
                   </div>
                   <div className="absolute bottom-1/3 right-8 grid grid-cols-3 scale-90">
@@ -91,26 +107,33 @@ export function ProductCard(item: CartitemsType) {
                       <Plus />
                     </Button>
                   </div>
-                  <Button
-                    onClick={() => {
-                      HandleAddToCart();
-                    }}
-                  >
-                    Add to Cart
-                  </Button>
+                  <DialogFooter className="sm:justify-start">
+                    <DialogClose asChild>
+                      <Button
+                        onClick={() => {
+                          HandleAddToCart();
+                        }}
+                        type="button"
+                      >
+                        Add To Cart
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
-        </div>
-        <div className="flex justify-between">
-          <h2 className="text-red-500">{item.name} </h2>{" "}
-          <h2 className="text-black">$ {item.price}</h2>
-        </div>
-        <p className="text-sm text-black">{item.ingredients}</p>
-
-        <p className="hidden">{item.id}</p>
-      </div>
-    </div>
+        </CardContent>
+        <CardContent className="h-1/3 p-0">
+          <CardHeader className="flex justify-between px-2 py-0">
+            <p className="text-red-500 font-bold text-xl ">{item.name}</p>
+            <p className="text-black font-medium text-xl ">${item.price}</p>
+          </CardHeader>
+          <CardDescription className="px-2 py-0">
+            {item.ingredients}
+          </CardDescription>
+        </CardContent>
+      </Card>
+    </>
   );
 }

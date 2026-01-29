@@ -5,6 +5,7 @@ import { useAuth } from "./AuthProvider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserCompleteInfoType } from "./AuthProvider";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, } from "@/components/ui/dropdown-menu";
 export function UserProfile() {
   const { user } = useAuth();
   const router = useRouter();

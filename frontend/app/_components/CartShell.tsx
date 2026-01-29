@@ -1,24 +1,20 @@
 "use client";
-import {
-  useSidebar,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
+//when user adds item, in other words, whenever the cart state is updated, there should be smol red dot indicating a change.
 import { AppSideBar } from "./AppSideBar";
-import { Cart } from "./Cart";
-import { Button } from "@/components/ui/button";
-import App from "next/app";
-import { ReactNode, Children } from "react";
+import { useCart } from "@/context/CartContext";
 export function CartShell() {
+  const { cartItems } = useCart();
+  const [ring, setRing] = useState(false);
+  useEffect(() => {
+    setRing(true);
+    console.log(cartItems);
+    setRing(false)
+  }, [cartItems])
   return (
     <>
-    <AppSideBar/>
-      {/* <SidebarProvider defaultOpen={false}>
-        <AppSideBar />
-        <main className="absolute top-2 right-4">
-          <Cart/>
-        </main>
-      </SidebarProvider> */}
+    
+      <AppSideBar />
     </>
   );
 }

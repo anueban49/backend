@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
 export type itemType = {
   name: string;
@@ -39,16 +45,16 @@ export const CartContext = createContext<CartContextType>(
 );
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartitemsType[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartitemsType[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
 
   //the comp passes item with quantity here
   const addToCart = (item: CartitemsType) => {
-    setItems((prev) => {
+    setCartItems((prev) => {
       const itemExists = prev.find((i) => i.id === item.id);
       if (itemExists) {
         const updated = prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i,
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
         );
         return updated;
       }
@@ -60,24 +66,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (!id) {
       return;
     }
-    setItems((prev) => prev.filter((item) => item.id !== id));
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(id);
       return;
     }
-    setItems((prev) =>
+    setCartItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
     );
   };
   const getTotalItems = () => {
-    return items.reduce((total, item) => {
+    return cartItems.reduce((total, item) => {
       return total + item.quantity;
     }, 0);
   };
   const getTotalPrice = () => {
-    return items.reduce((total, item) => {
+    return cartItems.reduce((total, item) => {
       return total + item.price * item.quantity;
     }, 0);
   };
@@ -85,7 +91,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   return (
     <CartContext.Provider
       value={{
-        cartItems: items,
+        cartItems,
         addToCart,
         removeFromCart,
         updateQuantity,
