@@ -8,6 +8,7 @@ import {
   ProductType,
   CategoryType,
 } from "../../context/SSR-inventoryContext";
+import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/axios";
 interface DisplayShelfProps {
   _id: string;
@@ -21,27 +22,51 @@ export function DisplayShelf(props: DisplayShelfProps) {
   useEffect(() => {
     setLoading(true);
     fetchProductsbyCategory(props._id);
-    console.log("products fetched by category:", props.name, products);
   }, []);
 
   return (
     <>
-      <div className="w-full text-white max-w-7xl p-4 text-xl">{props.name}</div>
-      <div className="grid grid-cols-3 grid-rows-2 max-w-7xl  w-full h-180 ">
-        {products.map((el) => {
-          return (
-            <ProductCard
-              key={el._id}
-              id={el._id}
-              name={el.name}
-              image={el.image}
-              description={el.ingredients}
-              price={el.price}
-              quantity={0}
-            ></ProductCard>
-          );
-        })}
-      </div>
+      {loading ? (
+        <div className="p-4 flex items-start">
+          <Skeleton className="w-[250] h-4"></Skeleton>
+          <div className="grid grid-cols-3 grid-rows-2 max-w-7xl  w-full h-180 ">
+            {products.map((el) => {
+              return (
+                <ProductCard
+                  key={el._id}
+                  id={el._id}
+                  name={el.name}
+                  image={el.image}
+                  description={el.ingredients}
+                  price={el.price}
+                  quantity={0}
+                ></ProductCard>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="w-full text-white max-w-7xl p-4 text-xl">
+            {props.name}
+          </div>
+          <div className="grid grid-cols-3 grid-rows-2 max-w-7xl  w-full h-180 ">
+            {products.map((el) => {
+              return (
+                <ProductCard
+                  key={el._id}
+                  id={el._id}
+                  name={el.name}
+                  image={el.image}
+                  description={el.ingredients}
+                  price={el.price}
+                  quantity={0}
+                ></ProductCard>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </>
   );
 }
