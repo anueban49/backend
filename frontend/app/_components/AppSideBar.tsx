@@ -53,9 +53,8 @@ export function AppSideBar() {
   useEffect(() => {
     if (cartItems === null || []) {
       setNotify(false);
-    } else {
-      return setNotify(true);
     }
+    setNotify(true);
   }, [cartItems]);
   return (
     <Drawer
@@ -107,7 +106,13 @@ export function AppSideBar() {
                 <HandPlatter />
               </CardContent>
               <CardAction className="w-full flex justify-center">
-                <Button onClick={() => {router.push('/user')}}>Register</Button>
+                <Button
+                  onClick={() => {
+                    router.push("/user");
+                  }}
+                >
+                  Register
+                </Button>
               </CardAction>
             </Card>
           )}

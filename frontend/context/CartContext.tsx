@@ -97,8 +97,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         updateQuantity,
         getTotalItems,
         getTotalPrice,
-        // isCartOpen,
-        // setIsCartOpen,
       }}
     >
       {children}

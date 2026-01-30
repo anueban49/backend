@@ -8,7 +8,7 @@ import { updateUser } from "../controllers/users/updateUser.js";
 const UserRouter = Router();
 UserRouter.post("/signup", register)
   .post("/login", login)
-  .post("/update", updateUser)
+  .patch("/update", updateUser)
   .get("/me", getMe)
   .get("/", getUsers);
 export { UserRouter };
