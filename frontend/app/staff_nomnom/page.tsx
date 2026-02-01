@@ -3,20 +3,11 @@
 import { ReactNode, Children, useState, useEffect, createContext } from "react";
 import { itemType } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
-import { icons } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import { api } from "@/lib/axios";
-
 
 import { InventoryManager } from "./Management/USR-inventoryManager";
+import { OrderManager } from "./Management/USR-orderManager";
+import { Settings } from "./Management/USR-settings";
 import { Logo } from "@/app/_components/Logo";
-import { OrdersDashboard } from "./order/ManageOrders";
-import { Settings } from "./order/Settings";
 
 const operationBtns = [
   { id: 1, name: "Food Menu" },
@@ -54,7 +45,7 @@ export default function USRgeneralManager() {
         </div>
       </div>
       {active === 1 && <InventoryManager></InventoryManager>}
-      {active === 2 && <OrdersDashboard></OrdersDashboard>}
+      {active === 2 && <OrderManager></OrderManager>}
       {active === 3 && <Settings></Settings>}
     </div>
   );

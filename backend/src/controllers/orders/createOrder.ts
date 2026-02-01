@@ -4,12 +4,13 @@ import { OrderModel } from "../../database/schema/order.schema.js";
 export const CreateOrder: RequestHandler = async (req, res) => {
   try {
     const body = req.body;
-
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(401).json({message: "Unathourized"})
+    }
     const Order = await OrderModel.create({
-      userId: body.userId,
-      items: body.items,
-      totalPrice: body.totalPrice,
-      status: "pending",
+      ...body,
+      userId
     });
     res.status(201).json({
       id: Order._id,

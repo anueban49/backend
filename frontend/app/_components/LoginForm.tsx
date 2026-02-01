@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { loginSchema, LoginType } from "../schemas/userSchema";
-import React, { useState } from "react";
 import {
   Form,
   FormItem,
@@ -14,11 +13,9 @@ import {
   FormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 export default function LoginForm() {
   const { login } = useAuth();
-  const router = useRouter();
   const form = useForm<LoginType>({
     resolver: zodResolver(loginSchema),
     mode: "onChange", // ← This makes it validate as you type

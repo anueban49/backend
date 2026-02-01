@@ -1,7 +1,7 @@
 "use client";
 
 import { Logo } from "./Logo";
-import { DeliveryAddress } from "./DeliveryAddress";
+import DeliveryAddress from "./DeliveryAddress";
 import { UserProfile } from "./User";
 
 import { CartShell } from "./CartShell";

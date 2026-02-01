@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSideBar } from "./_components/AppSideBar";
-import BaseStructure from "./_components/BaseStructure";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "./_components/AuthProvider";
 import { CrudProvider } from "../context/SSR-inventoryContext";

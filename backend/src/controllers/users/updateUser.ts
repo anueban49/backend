@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 import { UserModel } from "../../database/schema/user.schema.js";
+import jwt from "jsonwebtoken";
 export const updateUser: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
@@ -16,5 +17,30 @@ export const updateUser: RequestHandler = async (req, res) => {
     res.status(201).json({ success: true, message: "user updated" });
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const updateDeliveryAddress: RequestHandler = async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  try {
+    const updateAddress = UserModel.findByIdAndUpdate(
+      id,
+      { address: data },
+      { new: true, runValidators: true },
+    );
+    if (!updateAddress) {
+      return res.status(404).json({
+        success: false,
+        message: "address failed to update (updateuser.ts)",
+      });
+    }
+    return res.status(200).json({
+      message: "successfully updated, (updateuser.ts)",
+      user: updateAddress,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "fail-error (updateuser.ts)" });
   }
 };

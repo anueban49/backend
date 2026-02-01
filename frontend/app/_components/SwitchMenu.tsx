@@ -13,6 +13,13 @@ import { useCart, CartitemsType } from "@/context/CartContext";
 import { useAuth, UserCompleteInfoType } from "./AuthProvider";
 import { Minus, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
 //Cart display has to render items, and their total price and total item counts.
 //while order has to do with history of orders, order status et cetera/.
 const menuOptions = [
@@ -144,16 +151,36 @@ export function SwitchMenu() {
       </>
     );
   }
-  function DeliveryInfoSection() {
-    //it should handle updating the info of user delivery address.
+  function DeliveryLocationDisplay() {
+    const { user } = useAuth();
     return (
-      <Card>
-        <CardTitle className="px-4">Delivery Location</CardTitle>
-        <CardContent>
-          {user?.address ? <>{user.address}</> : <Input></Input>}
-          
-        </CardContent>
-      </Card>
+      <div className="">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant={"outline"} className="rounded-2xl">
+              Delivery Location:
+              {user?.address ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <span>{user.address}</span>
+                  </DialogTrigger>
+                  <DialogContent>user already has address</DialogContent>
+                </Dialog>
+              ) : (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <span className="text-gray-400">No Location entered</span>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogTitle>Add your delivery address</DialogTitle>
+                    <UpdateDeliveryAddress />
+                  </DialogContent>
+                </Dialog>
+              )}
+            </Button>
+          </DialogTrigger>
+        </Dialog>
+      </div>
     );
   }
   function PaymentInfoDisplay() {
@@ -185,7 +212,9 @@ export function SwitchMenu() {
           </div>
         </CardContent>
 
-        <CardFooter></CardFooter>
+        <CardFooter>
+          {cartItems.length > 0 && <Button>Checkout</Button>}
+        </CardFooter>
       </Card>
     );
   }
@@ -211,7 +240,8 @@ export function SwitchMenu() {
         {active === 1 && <CartItemsDisplay></CartItemsDisplay>}
         {active === 2 && <PaymentMenuDisplay></PaymentMenuDisplay>}
       </div>
-      <DeliveryInfoSection />
+      {/* 
+      <DeliveryLocationDisplay /> */}
       <PaymentInfoDisplay />
     </div>
   );

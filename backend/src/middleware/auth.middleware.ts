@@ -8,6 +8,7 @@ export const authMiddleWare: RequestHandler = (req, res, next) => {
   }
   const token = authorization.split(" ")[1] as string;
   try {
+    //veryfiying the token
     const { user } = jwt.verify(token, "mountain", {
       algorithms: ["HS384"],
     }) as { user: { _id: string } };

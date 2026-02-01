@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { itemType, CartitemsType } from "@/context/CartContext";
-
+import { Toaster } from "@/components/ui/sonner";
 import { Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -22,12 +22,16 @@ import {
   CardContent,
   CardDescription,
 } from "@/components/ui/card";
+import { toast } from "sonner";
+import { useAuth } from "./AuthProvider";
+import { Suggestion } from "./Suggestion";
 
 export function ProductCard(item: CartitemsType) {
   const { addToCart, cartItems } = useCart();
   const [product, setProduct] = useState<itemType | null>(null);
   const [dialogQuantity, setDialogQuantity] = useState<number>(1);
   const { fetchProductbyID } = useIMcrud();
+  const { user } = useAuth();
 
   const truncateText = (text: string[], limit: number) => {
     if (text.length >= limit) {
@@ -41,6 +45,7 @@ export function ProductCard(item: CartitemsType) {
   };
   const HandleAddToCart = () => {
     addToCart({ ...item, quantity: dialogQuantity });
+    toast.success(`Successfully added ${dialogQuantity} ${item.name}('s) to Cart!`);
   };
   return (
     <>
@@ -51,18 +56,22 @@ export function ProductCard(item: CartitemsType) {
             className="rounded-xl w-full aspect-4/3 object-center object-cover"
           />{" "}
           <Dialog>
-            <DialogTitle/>
+            <DialogTitle />
             <DialogTrigger asChild>
-              <Button
-                onClick={() => {
-                  loadItemData(item.id);
-                  setDialogQuantity(1);
-                }}
-                size="icon"
-                className="scale-120 aspect-square rounded-full absolute right-4 bottom-4 bg-white flex items-center justify-center "
-              >
-                <Plus color="red" />
-              </Button>
+              {user ? (
+                <Button
+                  onClick={() => {
+                    loadItemData(item.id);
+                    setDialogQuantity(1);
+                  }}
+                  size="icon"
+                  className="scale-120 aspect-square rounded-full absolute right-4 bottom-4 bg-white flex items-center justify-center "
+                >
+                  <Plus color="red" />
+                </Button>
+              ) : (
+                <Suggestion />
+              )}
             </DialogTrigger>
             <DialogContent>
               <div className="w-full h-fit aspect-2/1 grid grid-rows-1 grid-cols-2 gap-4 ">
@@ -129,7 +138,7 @@ export function ProductCard(item: CartitemsType) {
             <p className="text-red-500 font-bold text-xl ">{item.name}</p>
             <p className="text-black font-medium text-xl ">${item.price}</p>
           </CardHeader>
-          <CardDescription className="px-2 py-0">
+          <CardDescription className="px-2 py-0 no-scrollbar">
             {item.ingredients}
           </CardDescription>
         </CardContent>

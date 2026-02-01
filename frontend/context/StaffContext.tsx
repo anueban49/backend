@@ -10,7 +10,7 @@ export type StaffType = {
 
 export interface StaffContextType {
   staff: StaffType;
-  register: (id: string) => Promise<void>;
+  signup: (id: string) => Promise<void>;
   login: (staffID: string) => Promise<void>;
   logout: () => void;
 }
@@ -19,11 +19,12 @@ export const StaffAuthContext = createContext<StaffContextType | undefined>(
 );
 
 export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
-  const Login = () => {};
-  const LogOut = () => {};
+  const signup = () => {}
+  const login = () => { };
+  const logout = () => {};
 
   return (
-    <StaffAuthContext.Provider value={(register, login, staff)}>
+    <StaffAuthContext.Provider value={(staff, signup, login, logout)}>
       {children}
     </StaffAuthContext.Provider>
   );

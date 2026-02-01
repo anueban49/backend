@@ -6,12 +6,10 @@ import { useEffect, useState } from "react";
 import {
   useIMcrud,
   ProductType,
-  CategoryType,
 } from "../../context/SSR-inventoryContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
-  CardHeader,
   CardContent,
   CardDescription,
 } from "@/components/ui/card";

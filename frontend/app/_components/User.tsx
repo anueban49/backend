@@ -68,7 +68,7 @@ export function UserProfile() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {logout(user._id, user)}}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </>
@@ -86,7 +86,7 @@ export function UserProfile() {
       ) : (
         <Button
           onClick={() => {
-            router.push("/user");
+            router.push("/auth");
           }}
           variant={"outline"}
         >

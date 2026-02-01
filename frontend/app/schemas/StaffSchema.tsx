@@ -6,5 +6,7 @@ export const StaffSchema = z.object({
     firstname: z.string(),
     lastname: z.string(),
     dob: z.date(),
-    id: z.string(),
+    email: z.email(),
 })
+
+export type StaffFormType = z.infer<typeof StaffSchema>

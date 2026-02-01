@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect, Children } from "react";
 import { PromoBanner } from "./PromoBanner";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
