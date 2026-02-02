@@ -13,7 +13,7 @@ import { useCart, CartitemsType } from "@/context/CartContext";
 import { useAuth, UserCompleteInfoType } from "./AuthProvider";
 import { Minus, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
+import { api } from "@/lib/axios";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +53,22 @@ export function SwitchMenu() {
   };
   const handleClick = (id: number) => {
     setActive(id);
+  };
+
+  type OrderType = {
+    items: CartitemsType;
+    userId: string;
+    status: string;
+  };
+
+  const CreateOrder = async (data: OrderType) => {
+    try {
+      const res = await api.post("/order/create", {
+        userId: data.userId,
+        items: {},
+        status: "pending",
+      });
+    } catch (error) {}
   };
 
   function CartItemsDisplay() {
@@ -147,7 +163,10 @@ export function SwitchMenu() {
   function PaymentMenuDisplay() {
     return (
       <>
-        <Card></Card>
+        <Card>
+          <CardHeader>Order History</CardHeader>
+          <CardContent></CardContent>
+        </Card>
       </>
     );
   }
@@ -173,7 +192,6 @@ export function SwitchMenu() {
                   </DialogTrigger>
                   <DialogContent>
                     <DialogTitle>Add your delivery address</DialogTitle>
-                    <UpdateDeliveryAddress />
                   </DialogContent>
                 </Dialog>
               )}
@@ -213,7 +231,9 @@ export function SwitchMenu() {
         </CardContent>
 
         <CardFooter>
-          {cartItems.length > 0 && <Button>Checkout</Button>}
+          {cartItems.length > 0 && (
+            <Button className="bg-red-500 w-full rounded-xl">Checkout</Button>
+          )}
         </CardFooter>
       </Card>
     );

@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const Orderschema = new Schema(
   {
@@ -12,7 +12,7 @@ const Orderschema = new Schema(
     ],
     status: {
       type: String,
-      enum: ["pending", "preparing", "delivering", "completed", "cancelled"],
+      enum: ["pending", "paid", "delivering", "completed", "cancelled"],
       default: "pending",
     },
   },

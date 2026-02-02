@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogDescription,
   DialogTrigger,
   DialogClose,
   DialogFooter,
@@ -45,7 +47,9 @@ export function ProductCard(item: CartitemsType) {
   };
   const HandleAddToCart = () => {
     addToCart({ ...item, quantity: dialogQuantity });
-    toast.success(`Successfully added ${dialogQuantity} ${item.name}('s) to Cart!`);
+    toast.success(
+      `Successfully added ${dialogQuantity} ${item.name}('s) to Cart!`,
+    );
   };
   return (
     <>
@@ -84,10 +88,12 @@ export function ProductCard(item: CartitemsType) {
                 </div>
                 <div className="flex flex-col justify-between">
                   <div>
-                    <p className="text-red-500 text-xl font-bold">
+                    <DialogHeader className="text-red-500 text-xl font-bold">
                       {item?.name}
-                    </p>
-                    <p className="text-[0.7em]">{product?.ingredients}</p>
+                    </DialogHeader>
+                    <DialogDescription className="text-[0.7em]">
+                      {product?.ingredients}
+                    </DialogDescription>
                   </div>
                   <div className="flex flex-col">
                     <p className="text-[0.7em]">Price </p>{" "}

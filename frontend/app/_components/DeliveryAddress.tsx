@@ -51,7 +51,9 @@ export const AddDeliveryAddress = () => {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant={"ghost"} className="text-gray-400">Add Location</Button>
+          <Button variant={"ghost"} className="text-gray-400 rounded-2xl">
+            Add Location
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogTitle>Add Your Delivery Location</DialogTitle>
@@ -135,10 +137,7 @@ export const AddDeliveryAddress = () => {
                 )}
               />
 
-              <Button
-                className="w-full"
-                type="submit"
-              >
+              <Button className="w-full" type="submit">
                 Update
               </Button>
             </form>
@@ -161,18 +160,18 @@ export default function DeliveryAddress() {
     <div className="">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant={"outline"} className="rounded-2xl">
+          <div className="flex bg-white p-4 w-80 gap-2 h-10 items-center justify-center rounded-2xl">
             <MapPin />
             Delivery Location:
             {user.address ? (
               <PopoverContent>
-                <p>{user.address}</p>\
+                <p>{user.address}</p>
                 <Button>Edit Address</Button>
               </PopoverContent>
             ) : (
-                <AddDeliveryAddress/>
+              <AddDeliveryAddress />
             )}
-          </Button>
+          </div>
         </PopoverTrigger>
       </Popover>
     </div>
