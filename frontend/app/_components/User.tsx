@@ -19,8 +19,6 @@ import {
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
-import { email } from "zod";
-import { DialogTitle } from "@/components/ui/dialog";
 import { EditUserProfile } from "./EdituserProfile";
 export function UserProfile() {
   const { user, logout } = useAuth();

@@ -8,10 +8,11 @@ export const authMiddleWare: RequestHandler = (req, res, next) => {
   }
   const token = authorization.split(" ")[1] as string;
   try {
-    //veryfiying the token
+    //veryfying the token
     const { user } = jwt.verify(token, "mountain", {
       algorithms: ["HS384"],
     }) as { user: { _id: string } };
+    //Middleware → Extracts & verifies token, attaches userId to the request object
     req.userId = user._id;
     next();
   } catch (error) {

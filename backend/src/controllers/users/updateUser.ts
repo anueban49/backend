@@ -5,7 +5,7 @@ export const updateUser: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
-    const updatedUser = UserModel.findByIdAndUpdate(id, updateData, {
+    const updatedUser = await UserModel.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     });
@@ -21,15 +21,32 @@ export const updateUser: RequestHandler = async (req, res) => {
 };
 
 export const updateDeliveryAddress: RequestHandler = async (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
+  const userId = req.userId;
+  const address = req.body;
+  if (!userId) {
+    return res.status(401).json({ message: "unauthorized" });
+  }
   try {
-    const updateAddress = UserModel.findByIdAndUpdate(
-      id,
-      { address: data },
-      { new: true, runValidators: true },
+    // normalize incoming payload to an array of strings
+    let newAddress: string[] | null = null;
+    if (typeof address === "string") {
+      newAddress = [address];
+    } else if (Array.isArray(address)) {
+      newAddress = address;
+    } else if (address && typeof (address as any).address === "string") {
+      newAddress = [(address as any).address];
+    } else if (address && Array.isArray((address as any).address)) {
+      newAddress = (address as any).address;
+    } else {
+      return res.status(400).json({ message: "invalid address payload" });
+    }
+
+    const updated = await UserModel.findByIdAndUpdate(
+      userId,
+      { address: newAddress },
+      { new: true },
     );
-    if (!updateAddress) {
+    if (!updated) {
       return res.status(404).json({
         success: false,
         message: "address failed to update (updateuser.ts)",
@@ -37,10 +54,9 @@ export const updateDeliveryAddress: RequestHandler = async (req, res) => {
     }
     return res.status(200).json({
       message: "successfully updated, (updateuser.ts)",
-      user: updateAddress,
+      address: updated.address,
     });
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
     return res.status(500).json({ message: "fail-error (updateuser.ts)" });
   }
 };

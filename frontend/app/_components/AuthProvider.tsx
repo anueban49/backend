@@ -20,8 +20,8 @@ export type UserCompleteInfoType = {
   username: string;
   email: string;
   _id: string;
-  image?: string;
-  address?: string;
+  image: string | null;
+  address: string | null;
 }; //this type is for response data
 export type AuthContextType = {
   user: UserCompleteInfoType | null;
@@ -83,11 +83,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       const { user, accessToken } = data;
-      setUser(user);
       localStorage.setItem("accessToken", accessToken);
+      setUser(user);
+
+      // Refetch user data to ensure it's fully populated
+      await fetchMe(accessToken);
+
       toast.success("Logged In!");
       setLoggingin(false);
-      console.log("logged in:", data.user);
+      console.log("logged in:", user);
 
       router.push("/");
     } catch (error) {
@@ -96,23 +100,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoggingin(false);
     }
   };
+
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const fetchMe = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+    const fetchMe = async (token: string) => {
       try {
         const { data } = await api.get<{ user: LoginResponse }>("/user/me", {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         console.log("fetchedData: [authprovider]", data);
-        setUser(data.user);
+        setUser(data);
       } catch (error) {
         localStorage.removeItem("accessToken");
+        setUser(null);
       }
+      fetchMe;
     };
-    fetchMe();
   }, []);
+
   function logout() {
     localStorage.removeItem("accessToken");
     setUser(null);

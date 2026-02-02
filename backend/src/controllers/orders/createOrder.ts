@@ -14,8 +14,9 @@ export const CreateOrder: RequestHandler = async (req, res) => {
     });
     res.status(201).json({
       id: Order._id,
-      timeStamp: Order.createdAt,
       userId: Order.userId,
+      timeStamp: Order.createdAt,
+      
       status: Order.status,
     });
   } catch (error: any) {

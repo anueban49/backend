@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "./AuthProvider";
@@ -9,7 +9,7 @@ import {
   userAddressSchema,
   AddressFormdata,
 } from "../schemas/userAddressSchema";
-import { useCart } from "@/context/CartContext";
+import { api } from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -44,8 +44,25 @@ export const AddDeliveryAddress = () => {
       additional: "",
     },
   });
-  const onSubmit = (data: AddressFormdata) => {
-    console.log("updated address: ", data);
+  const SubmitAddress = async (data: AddressFormdata) => {
+    const addressParts = [
+      data.state,
+      data.city,
+      data.street,
+      data.door,
+      data.zipcode,
+      data.additional,
+    ].filter(Boolean);
+    const fullAddress = addressParts.join(", ");
+    console.log(fullAddress);
+    try {
+      const res = await api.patch("/user/update/address", {
+        address: fullAddress,
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>
@@ -60,9 +77,22 @@ export const AddDeliveryAddress = () => {
           <Form {...form}>
             <form
               className="flex flex-col gap-4"
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(SubmitAddress)}
             >
               <div className="grid grid-cols-2 grid-rows-2 gap-2">
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>State</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: Texas" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="city"
@@ -150,30 +180,26 @@ export const AddDeliveryAddress = () => {
 };
 export default function DeliveryAddress() {
   const { user } = useAuth();
-
+  console.log("deliveryaddress comp:", user);
   if (!user) {
-    console.log("failed to fetch user");
-    return;
+    return <AddDeliveryAddress />;
   }
 
   return (
-    <div className="">
-      <Popover>
-        <PopoverTrigger asChild>
-          <div className="flex bg-white p-4 w-80 gap-2 h-10 items-center justify-center rounded-2xl">
-            <MapPin />
-            Delivery Location:
-            {user.address ? (
-              <PopoverContent>
-                <p>{user.address}</p>
-                <Button>Edit Address</Button>
-              </PopoverContent>
-            ) : (
-              <AddDeliveryAddress />
-            )}
-          </div>
-        </PopoverTrigger>
-      </Popover>
+    <div>
+      <div className="flex bg-white p-4 w-80 gap-2 h-10 items-center justify-center rounded-2xl">
+        <MapPin />
+        Delivery Location:
+        {user.address ? (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button>{user.address}</Button>
+            </PopoverTrigger>
+          </Popover>
+        ) : (
+          <AddDeliveryAddress />
+        )}
+      </div>
     </div>
   );
 }

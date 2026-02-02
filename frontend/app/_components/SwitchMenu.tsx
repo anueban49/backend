@@ -20,6 +20,7 @@ import {
   DialogTrigger,
   DialogTitle,
 } from "@radix-ui/react-dialog";
+import { toast } from "sonner";
 //Cart display has to render items, and their total price and total item counts.
 //while order has to do with history of orders, order status et cetera/.
 const menuOptions = [
@@ -34,6 +35,7 @@ const menuOptions = [
 //discovery: you can actually write element style as object and call the object later on the element, wtf. | irrelevant info[ignore]
 
 export function SwitchMenu() {
+  const [open, setOpen] = useState(false)
   const { user } = useAuth();
   const [active, setActive] = useState(1);
   const {
@@ -56,19 +58,26 @@ export function SwitchMenu() {
   };
 
   type OrderType = {
-    items: CartitemsType;
-    userId: string;
+    //userId will be get by middleware, as per the fact that each request is sent with headers.
+    items: CartitemsType[];
     status: string;
   };
 
   const CreateOrder = async (data: OrderType) => {
     try {
       const res = await api.post("/order/create", {
-        userId: data.userId,
-        items: {},
+        items: data.items.map((item) => ({
+          foodId: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
         status: "pending",
       });
-    } catch (error) {}
+      toast.success(`Order has been successfully placed!`)
+      //on successful order placing, we need to close the sidebar.
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   function CartItemsDisplay() {
@@ -119,11 +128,11 @@ export function SwitchMenu() {
                               variant={"ghost"}
                               size={"icon"}
                               onClick={() => {
-                                if ((item.quantity = 0)) {
+                                if (item.quantity === 0) {
                                   removeFromCart(item.id);
                                 }
-                                item.quantity = item.quantity - 1;
-                                updateQuantity(item.id, item.quantity);
+
+                                updateQuantity(item.id, item.quantity - 1);
                               }}
                             >
                               <Minus />
@@ -202,6 +211,7 @@ export function SwitchMenu() {
     );
   }
   function PaymentInfoDisplay() {
+    const { user } = useAuth();
     return (
       <Card className="w-full aspect-5/3">
         <CardTitle className="px-4">Payment Info</CardTitle>
@@ -232,7 +242,18 @@ export function SwitchMenu() {
 
         <CardFooter>
           {cartItems.length > 0 && (
-            <Button className="bg-red-500 w-full rounded-xl">Checkout</Button>
+            <Button
+              className="bg-red-500 w-full rounded-xl"
+              onClick={() => {
+                CreateOrder({
+                  userId: user?._id || "",
+                  items: cartItems,
+                  status: "pending",
+                });
+              }}
+            >
+              Checkout
+            </Button>
           )}
         </CardFooter>
       </Card>

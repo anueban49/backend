@@ -108,7 +108,7 @@ export function AppSideBar() {
               <CardAction className="w-full flex justify-center">
                 <Button
                   onClick={() => {
-                    router.push("/user");
+                    router.push("/auth");
                   }}
                 >
                   Register

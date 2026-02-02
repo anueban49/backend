@@ -4,7 +4,7 @@ export const userAddressSchema = z.object({
   state: z.string().min(5),
   city: z.string(),
   street: z.string(),
-  door: z.string().optional(),
+  door: z.string(),
   additional: z.string().optional(),
   zipcode: z.string().min(5).optional(),
 });

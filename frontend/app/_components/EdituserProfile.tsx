@@ -14,6 +14,7 @@ export function EditUserProfile() {
   const { user } = useAuth();
   return (
     <DialogContent>
+      
       <DialogTitle>Hello, {user?.username}</DialogTitle>
     </DialogContent>
   );
