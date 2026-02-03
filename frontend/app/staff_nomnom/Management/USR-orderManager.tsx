@@ -1,6 +1,5 @@
 "use client";
 import { api } from "@/lib/axios";
-import { CheckboxItem } from "@radix-ui/react-dropdown-menu";
 import { useState, useEffect } from "react";
 
 export type OrderType = {
@@ -26,9 +25,11 @@ export const OrderManager = () => {
     };
     getOrderData();
   }, []);
-  return (<>
-    {orders.map((item) => 
-      <div>{item.items}</div>
-    )}</>
+  return (
+    <>
+      {orders.map((item) => (
+        <div>{item.items}</div>
+      ))}
+    </>
   );
 };

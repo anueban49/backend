@@ -1,3 +1,4 @@
+"use client";
 import {
   ReactNode,
   Children,
@@ -5,24 +6,34 @@ import {
   useContext,
   useState,
   use,
+  useEffect,
 } from "react";
 import { api } from "@/lib/axios";
+import { useRouter } from "next/navigation";
+import { StaffLoginFormType, StaffRegistryType } from "@/app/schemas/StaffSchema";
 export type StaffType = {
   StaffId?: string;
   firstname: string;
   lastname: string;
   email: string;
-  password: string;
+  password?: string;
   profileImage?: string;
+  SSN: string;
   _id?: string;
 };
 
-export interface StaffContextType {
+type LoginResponse = {
   staff: StaffType;
-  signup: (id: string) => Promise<void>;
-  login: (staffID: string) => Promise<void>;
+  accessToken: string;
+};
+
+type StaffwithoutPassword = Omit<StaffType, "password">;
+
+export interface StaffContextType {
+  staff: StaffwithoutPassword | null;
+  signup: (data: StaffRegistryType) => Promise<void>;
+  login: (data: StaffLoginFormType) => Promise<void>;
   logout: () => void;
-  useStaffAuth: () => void;
 }
 export const StaffAuthContext = createContext<StaffContextType | undefined>(
   undefined,
@@ -30,44 +41,80 @@ export const StaffAuthContext = createContext<StaffContextType | undefined>(
 
 export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
   const [staff, setStaff] = useState<StaffType | null>(null);
+  const router = useRouter();
 
-  const signup = async ({
-    firstname,
-    lastname,
-    email,
-    password,
-  }: StaffType) => {
-    try {
-      const res = await api.post("/staff/add", {
-        firstname,
-        lastname,
-        email,
-        password,
-      });
-      console.log("response:", res);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const signup = async (input: StaffRegistryType) => {
+  try {
+    const { data } = await api.post<{ staff: StaffType }>(
+      "/staff/add",
+      input,
+    );
+    const { password, ...staffWithoutPassword } = data.staff;
+    setStaff(staffWithoutPassword);
+    console.log("Staff created:", staffWithoutPassword);
+  } catch (error) {
+    console.error("Signup error:", error);
+    throw error; // Re-throw so handleSignup can catch it
+  }
+};
   const login = async ({ StaffId, password }: StaffType) => {
     try {
-      const res = await api.post("/staff/login", { StaffId, password });
+      const { data } = await api.post<LoginResponse>("/staff/login", {
+        StaffId,
+        password,
+      });
+      const { staff, accessToken } = data;
+      setStaff(staff);
+      localStorage.setItem("accesstoken", accessToken);
     } catch (error) {
       console.log(error);
     }
   };
-  const logout = () => {};
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+    if (!token) {
+      router.push("/staff_nomnom/authorization");
+    }
+    const fetchStaff = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        return;
+      }
+      try {
+        const { data } = await api.get<StaffType>("/staff/fetchstaff", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStaff(data);
+      } catch (error) {
+        localStorage.removeItem("accesstoken");
+        console.error(error);
+      }
+    };
+    fetchStaff();
+  }, []);
+
+  const logout = () => {
+    setStaff(null);
+    localStorage.removeItem("accessToken");
+  };
 
   return (
-    <StaffAuthContext.Provider
-      value={(staff, signup, login, logout, )}
-    >
+    <StaffAuthContext.Provider value={{ staff, login, signup, logout }}>
       {children}
     </StaffAuthContext.Provider>
   );
 };
 
-const useStaffAuth = useContext(StaffAuthContext)
+export function useStaffAuth() {
+  const context = useContext(StaffAuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+
+  return context;
+}
 //staff schema includes first, last name etc.
 //let there be default admin that is for adding new staff authorized.
 //when new staff is ready to be registered, let there be a referral code/id.

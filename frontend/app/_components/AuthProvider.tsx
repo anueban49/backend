@@ -67,7 +67,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { user, accessToken } = data;
       localStorage.setItem("accessToken", accessToken);
 
-      setUser(data.user);
+      setUser(user);
 
       toast.success("Account Created!");
       setCreating(false);

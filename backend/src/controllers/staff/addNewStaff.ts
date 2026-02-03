@@ -33,12 +33,13 @@ export const addNewStaff: RequestHandler = async (req, res) => {
       StaffID: staffIdGenerate(),
       firstname: body.firstname,
       lastname: body.lastname,
-      username: body.username,
       password: hashedPassword,
       email: body.email,
       profileImage: body.profileImage ?? null,
+      SSN: body.SSN
     });
     res.status(201).json({
+      Staff,
       StaffID: Staff.StaffID,
     });
   } catch (error: any) {
