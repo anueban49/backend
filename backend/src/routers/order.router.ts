@@ -6,6 +6,6 @@ import { authMiddleWare } from "../middleware/auth.middleware.js";
 
 const OrderRouter = Router();
 OrderRouter.get("/all", getOrders)
-  .post("/create", authMiddleWare, CreateOrder)
+  .post("/create", CreateOrder)
   .get("/:id", getOrderByuserID);
 export { OrderRouter };

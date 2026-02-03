@@ -53,17 +53,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loggingin, setLoggingin] = useState(false);
   const router = useRouter();
 
-  const signup = async ({ email, password, username }: UserType) => {
+  const signup = async (email: string, username: string, password: string) => {
     setCreating(true);
     try {
-      const { data } = await api.post<UserType>("/user/signup", {
+      const { data } = await api.post<LoginResponse>("/user/signup", {
         email,
         username,
         password,
       });
       toast.loading("Creating account...");
+      console.log(data);
 
-      setUser(data.user || (data as any));
+      const { user, accessToken } = data;
+      localStorage.setItem("accessToken", accessToken);
+
+      setUser(data.user);
+
       toast.success("Account Created!");
       setCreating(false);
       router.push("/");
@@ -86,9 +91,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem("accessToken", accessToken);
       setUser(user);
 
-      // Refetch user data to ensure it's fully populated
-      await fetchMe(accessToken);
-
       toast.success("Logged In!");
       setLoggingin(false);
       console.log("logged in:", user);
@@ -102,23 +104,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-    const fetchMe = async (token: string) => {
+    const accessToken = localStorage.getItem("accessToken");
+    const fetchMe = async () => {
       try {
-        const { data } = await api.get<{ user: LoginResponse }>("/user/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const { data } = await api.get<{ user: UserCompleteInfoType }>(
+          "/user/me",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           },
-        });
-        console.log("fetchedData: [authprovider]", data);
-        setUser(data);
+        );
+
+        setUser(data.user);
+        console.log("fetchedData: [authprovider]", user);
       } catch (error) {
         localStorage.removeItem("accessToken");
         setUser(null);
       }
-      fetchMe;
     };
+    fetchMe();
   }, []);
 
   function logout() {

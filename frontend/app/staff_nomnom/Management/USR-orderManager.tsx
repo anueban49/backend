@@ -6,9 +6,9 @@ import { useState, useEffect } from "react";
 export type OrderType = {
   userId: string;
   items: string[];
-  price: number;
   status: string;
-  id: string;
+  _id: string;
+  timestamp: string;
 };
 
 export const OrderManager = () => {
@@ -19,22 +19,16 @@ export const OrderManager = () => {
       try {
         const { data } = await api.get<OrderType[]>("/order/all");
         setOrders(data);
-        console.log(data);
+        console.log("orders:", data);
       } catch (error) {
         console.error(error);
       }
     };
     getOrderData();
   }, []);
-  return (
-    <div>
-      {orders.map((order) => {
-        return (
-          <div key={order.id} className="w-full p-4 ">
-            <CheckboxItem>{order.status}</CheckboxItem>
-          </div>
-        );
-      })}
-    </div>
+  return (<>
+    {orders.map((item) => 
+      <div>{item.items}</div>
+    )}</>
   );
 };

@@ -184,17 +184,23 @@ export default function DeliveryAddress() {
   if (!user) {
     return <AddDeliveryAddress />;
   }
-
+  const truncateText = (array: string, limit: number) => {
+    if (array.length > limit) {
+      return array.slice(0, limit);
+    }
+    return array;
+  };
   return (
     <div>
-      <div className="flex bg-white p-4 w-80 gap-2 h-10 items-center justify-center rounded-2xl">
+      <div className="flex bg-white p-4 w-full gap-2 h-10 items-center justify-center rounded-2xl">
         <MapPin />
-        Delivery Location:
+        <p>Delivery Location:</p>
         {user.address ? (
           <Popover>
             <PopoverTrigger asChild>
-              <Button>{user.address}</Button>
+              <div className="text-sm">{truncateText(user.address, 3)}</div>
             </PopoverTrigger>
+            <PopoverContent>Edit Address</PopoverContent>
           </Popover>
         ) : (
           <AddDeliveryAddress />

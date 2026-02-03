@@ -47,7 +47,7 @@ export function UserProfile() {
                   <Button variant={"outline"}>Edit Profile</Button>
                 </DialogTrigger>
                 <DialogContent className="absolute">
-                  <EditUserProfile/>
+                  <EditUserProfile />
                 </DialogContent>
               </Dialog>
 
@@ -66,7 +66,13 @@ export function UserProfile() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => {logout(user._id, user)}}>Log out</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                logout(user._id, user);
+              }}
+            >
+              Log out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </>
@@ -80,6 +86,8 @@ export function UserProfile() {
           email={user.email}
           _id={user._id}
           username={user.email}
+          address={user.address}
+          image={user.image}
         ></UserMenu>
       ) : (
         <Button

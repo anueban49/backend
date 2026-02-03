@@ -32,8 +32,8 @@ export default function SignupForm() {
       username: "",
     },
   });
-  function onSubmit(data: userFormdata) {
-    signup(data);
+  function onSubmit({ username, email, password }: userFormdata) {
+    signup({ username, email, password });
     console.log("success");
     toast.success("account created");
   }
