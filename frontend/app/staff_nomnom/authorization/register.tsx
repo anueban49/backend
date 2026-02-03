@@ -32,6 +32,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectTrigger } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft } from "lucide-react";
+import { api } from "@/lib/axios";
 
 export default function Staffregister() {
   const [creating, setCreating] = useState(false);
@@ -53,11 +54,12 @@ export default function Staffregister() {
       confirmpassword: "",
     },
   });
-  async function handleSignup(data: StaffRegistryType) {
+  async function handleSignup(input: StaffRegistryType) {
     setCreating(true);
 
     try {
-      await signup(data);
+      const { data } = await api.post<{ StaffId: string }>("/staff/add", input);
+      console.log(data);
       console.log("success");
       toast.success("Account created");
     } catch (error) {
@@ -71,61 +73,55 @@ export default function Staffregister() {
     return (
       <>
         {" "}
-        <Form {...form}>
-          <form className="space-y-4 flex flex-col gap-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="firstname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="lastname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="button"
-              className="w-full  bg-red-500"
-              onClick={() => {
-                setStep((prev) => prev + 1);
-                console.log("step:", step);
-              }}
-            >
-              Next
-            </Button>
-          </form>
-        </Form>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email Address</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="firstname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="lastname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="button"
+          className="w-full  bg-red-500"
+          onClick={() => {
+            setStep((prev) => prev + 1);
+            console.log("step:", step);
+          }}
+        >
+          Next
+        </Button>
       </>
     );
   };
@@ -148,7 +144,7 @@ export default function Staffregister() {
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>();
     const [age, setAge] = React.useState<number | null>(null);
     const [isOldEnough, setIsOldEnough] = React.useState(false);
-
+    const [agreed, setAgreed] = useState(false);
     const handleDateSelect = (date: Date | undefined) => {
       setSelectedDate(date);
 
@@ -163,155 +159,141 @@ export default function Staffregister() {
     };
     return (
       <>
-        <Form {...form}>
-          <form>
-            <FormField
-              control={form.control}
-              name="SSN"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>SSN</FormLabel>
-                  <FormControl>
-                    <InputOTP
-                      maxLength={9}
-                      value={field.value.toString()}
-                      onChange={field.onChange}
-                    >
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                      </InputOTPGroup>
-                      <InputOTPSeparator />
-                      <InputOTPGroup>
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                      </InputOTPGroup>
-                      <InputOTPSeparator />
-                      <InputOTPGroup>
-                        <InputOTPSlot index={5} />
-                        <InputOTPSlot index={6} />
-                        <InputOTPSlot index={7} />
-                        <InputOTPSlot index={8} />
-                      </InputOTPGroup>
-                    </InputOTP>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Date of Birth</label>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={handleDateSelect}
-                className="rounded-lg border"
-                captionLayout="dropdown"
-                fromYear={1940}
-                toYear={new Date().getFullYear()}
-                disabled={(date) => date > new Date()}
-              />
+        <FormField
+          control={form.control}
+          name="SSN"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>SSN</FormLabel>
+              <FormControl>
+                <InputOTP
+                  maxLength={9}
+                  value={field.value.toString()}
+                  onChange={field.onChange}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={5} />
+                    <InputOTPSlot index={6} />
+                    <InputOTPSlot index={7} />
+                    <InputOTPSlot index={8} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Date of Birth</label>
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleDateSelect}
+            className="rounded-lg border"
+            captionLayout="dropdown"
+            fromYear={1940}
+            toYear={new Date().getFullYear()}
+            disabled={(date) => date > new Date()}
+          />
 
-              {age !== null && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600">
-                    Age: <span className="font-semibold">{age} years old</span>
-                  </p>
-                  {!isOldEnough && (
-                    <p className="text-sm text-red-600 mt-1">
-                      You must be at least 18 years old to register.
-                    </p>
-                  )}
-                  {isOldEnough && (
-                    <p className="text-sm text-green-600 mt-1">
-                      ✓ Age requirement met
-                    </p>
-                  )}
-                </div>
+          {age !== null && (
+            <div className="mt-2">
+              <p className="text-sm text-gray-600">
+                Age: <span className="font-semibold">{age} years old</span>
+              </p>
+              {!isOldEnough && (
+                <p className="text-sm text-red-600 mt-1">
+                  You must be at least 18 years old to register.
+                </p>
+              )}
+              {isOldEnough && (
+                <p className="text-sm text-green-600 mt-1">
+                  ✓ Age requirement met
+                </p>
               )}
             </div>
+          )}
+        </div>
 
-            <Button
-              type="button"
-              className="w-full bg-red-500"
-              disabled={!isOldEnough || !selectedDate}
-              onClick={async () => {
-                const isValid = await form.trigger(["SSN"]);
-                if (isValid && isOldEnough) {
-                  setStep((prev) => prev + 1);
-                }
-              }}
-            >
-              Next
-            </Button>
-          </form>
-        </Form>
+        <Button
+          type="button"
+          className="w-full bg-red-500"
+          disabled={!isOldEnough || !selectedDate}
+          onClick={async () => {
+            const isValid = await form.trigger(["SSN"]);
+            if (isValid && isOldEnough) {
+              setStep((prev) => prev + 1);
+            }
+          }}
+        >
+          Next
+        </Button>
       </>
     );
   };
   const PartThree = () => {
     const [agreed, setAgreed] = useState(false);
     return (
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSignup)}>
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Confirm password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+      <>
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Confirm password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmpassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Confirm password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-center items-center gap-2">
+          <Checkbox
+            id="terms-checkbox-2"
+            name="terms-checkbox-2"
+            onCheckedChange={() => {
+              setAgreed(true);
+            }}
           />
-          <FormField
-            control={form.control}
-            name="confirmpassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Confirm password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-center items-center gap-2">
-            <Checkbox
-              id="terms-checkbox-2"
-              name="terms-checkbox-2"
-              onCheckedChange={() => {
-                setAgreed(true);
-              }}
-            />
-            <p>
-              I declare under penalty of perjury under the laws of the State of
-              Alabama that the foregoing is true and correct.
-            </p>
-          </div>
-
-          <Button
-            className="w-full  bg-red-500"
-            type="submit"
-            disabled={!agreed}
-          >
-            Sign Up
-          </Button>
-        </form>
-      </Form>
+          <p>
+            I declare under penalty of perjury under the laws of the State of
+            Alabama that the foregoing is true and correct.
+          </p>
+        </div>
+      </>
     );
   };
   return (
@@ -332,9 +314,26 @@ export default function Staffregister() {
           <ChevronLeft color="red" size={40} />
         </Button>
       </div>
-      {step === 1 && <PartOne />}
-      {step === 2 && <PartTwo />}
-      {step === 3 && <PartThree />}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSignup)}>
+          {step === 1 && <PartOne />}
+          {step === 2 && <PartTwo />}
+          {step === 3 && (
+            <>
+              <PartThree />{" "}
+              <Button
+                className="w-full  bg-red-500"
+                type="submit"
+                onClick={() => {
+                  signup;
+                }}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
+        </form>
+      </Form>
     </div>
   );
 }
