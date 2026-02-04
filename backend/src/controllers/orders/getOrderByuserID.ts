@@ -2,7 +2,7 @@ import type { RequestHandler } from "express";
 import { OrderModel } from "../../database/schema/order.schema.js";
 
 export const getOrderByuserID: RequestHandler = async (req, res) => {
-  const userId = req.userId;
+  const userId = req.params.userId;
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }

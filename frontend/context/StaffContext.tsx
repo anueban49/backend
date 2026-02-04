@@ -10,9 +10,12 @@ import {
 } from "react";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
-import { StaffLoginFormType, StaffRegistryType } from "@/app/schemas/StaffSchema";
+import {
+  StaffLoginFormType,
+  StaffRegistryType,
+} from "@/app/schemas/StaffSchema";
 export type StaffType = {
-  StaffId?: string;
+  StaffID: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -21,7 +24,7 @@ export type StaffType = {
   SSN: string;
   _id?: string;
 };
-
+type StaffSignup = Omit<StaffRegistryType, "confirmpassword" | "dob">;
 type LoginResponse = {
   staff: StaffType;
   accessToken: string;
@@ -31,7 +34,7 @@ type StaffwithoutPassword = Omit<StaffType, "password">;
 
 export interface StaffContextType {
   staff: StaffwithoutPassword | null;
-  signup: (data: StaffRegistryType) => Promise<void>;
+  signup: (data: StaffSignup) => Promise<void>;
   login: (data: StaffLoginFormType) => Promise<void>;
   logout: () => void;
 }
@@ -40,56 +43,58 @@ export const StaffAuthContext = createContext<StaffContextType | undefined>(
 );
 
 export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
-  const [staff, setStaff] = useState<StaffType | null>(null);
+  const [staff, setStaff] = useState<StaffwithoutPassword | null>(null);
   const router = useRouter();
 
-  const signup = async (input: StaffRegistryType) => {
-  try {
-    const { data } = await api.post<{ staff: StaffType }>(
-      "/staff/add",
-      input,
-    );
-    const { password, ...staffWithoutPassword } = data.staff;
-    setStaff(staffWithoutPassword);
-    console.log("Staff created:", staffWithoutPassword);
-  } catch (error) {
-    console.error("Signup error:", error);
-    throw error; // Re-throw so handleSignup can catch it
-  }
-};
-  const login = async ({ StaffId, password }: StaffType) => {
+  const signup = async (input: StaffSignup) => {
+    try {
+      const { data } = await api.post<{ staff: StaffType }>(
+        "/staff/add",
+        input,
+      );
+      const { password, ...staffWithoutPassword } = data.staff;
+      setStaff(staffWithoutPassword);
+      console.log("Staff created:", staffWithoutPassword);
+    } catch (error) {
+      console.error("Signup error:", error);
+      throw error; // Re-throw so handleSignup can catch it
+    }
+  };
+  const login = async ({ StaffID, password }: StaffLoginFormType) => {
     try {
       const { data } = await api.post<LoginResponse>("/staff/login", {
-        StaffId,
+        StaffID,
         password,
       });
       const { staff, accessToken } = data;
       setStaff(staff);
       localStorage.setItem("accesstoken", accessToken);
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
   useEffect(() => {
-    const token = localStorage.getItem("accesstoken");
-    if (!token) {
-      router.push("/staff_nomnom/authorization");
-    }
     const fetchStaff = async () => {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("accesstoken");
       if (!token) {
         return;
       }
       try {
-        const { data } = await api.get<StaffType>("/staff/fetchstaff", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const { data } = await api.get<{ staff: StaffwithoutPassword }>(
+          "/staff/fetchstaff",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
-        setStaff(data);
+        );
+        setStaff(data.staff);
+        console.log("fetchedData: [staffProv]", staff);
       } catch (error) {
         localStorage.removeItem("accesstoken");
-        console.error(error);
+        setStaff(null);
       }
     };
     fetchStaff();
@@ -97,7 +102,7 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setStaff(null);
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("accesstoken");
   };
 
   return (

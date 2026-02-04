@@ -33,8 +33,10 @@ import { Select, SelectContent, SelectTrigger } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronLeft } from "lucide-react";
 import { api } from "@/lib/axios";
+import { useRouter } from "next/navigation";
 
 export default function Staffregister() {
+  const router = useRouter();
   const [creating, setCreating] = useState(false);
 
   const [step, setStep] = useState(1);
@@ -47,21 +49,26 @@ export default function Staffregister() {
     defaultValues: {
       firstname: "",
       lastname: "",
-      dob: undefined,
+      dob: undefined, //it wont be sent to backend, for only age verification.
       SSN: "",
       email: "",
       password: "",
-      confirmpassword: "",
+      confirmpassword: "", //this wont be sent to backend neither
     },
   });
+
+  console.log(form.formState.errors);
+  
   async function handleSignup(input: StaffRegistryType) {
     setCreating(true);
 
     try {
       const { data } = await api.post<{ StaffId: string }>("/staff/add", input);
       console.log(data);
+
       console.log("success");
-      toast.success("Account created");
+      toast.success("Account successfully created");
+      router.push("/staff_nomnom")
     } catch (error) {
       console.error(error);
       toast.error("Failed to create account");
@@ -72,56 +79,57 @@ export default function Staffregister() {
   const PartOne = () => {
     return (
       <>
-        {" "}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email Address</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="firstname"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First Name</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastname"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="button"
-          className="w-full  bg-red-500"
-          onClick={() => {
-            setStep((prev) => prev + 1);
-            console.log("step:", step);
-          }}
-        >
-          Next
-        </Button>
+        <div className="flex flex-col gap-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="firstname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="button"
+            className="w-full  bg-red-500"
+            onClick={() => {
+              setStep((prev) => prev + 1);
+              console.log("step:", step);
+            }}
+          >
+            Next
+          </Button>
+        </div>
       </>
     );
   };
@@ -158,7 +166,7 @@ export default function Staffregister() {
       }
     };
     return (
-      <>
+      <div className="flex flex-col lg:gap-8">
         <FormField
           control={form.control}
           name="SSN"
@@ -239,13 +247,13 @@ export default function Staffregister() {
         >
           Next
         </Button>
-      </>
+      </div>
     );
   };
   const PartThree = () => {
     const [agreed, setAgreed] = useState(false);
     return (
-      <>
+      <div className="flex flex-col lg:gap-8">
         <FormField
           control={form.control}
           name="password"
@@ -293,20 +301,18 @@ export default function Staffregister() {
             Alabama that the foregoing is true and correct.
           </p>
         </div>
-      </>
+      </div>
     );
   };
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-4 justify-center items-center">
+    <div className="flex flex-col gap-4 lg:scale-120">
+      <div className="flex gap-10 justify-center items-center">
         <p>Please fill the form accurately.</p>
         <Button
           variant={"outline"}
           size={"icon"}
+          disabled={step === 1}
           onClick={() => {
-            if (step >= 1) {
-              return;
-            }
             setStep((prev) => prev - 1);
           }}
         >
@@ -321,13 +327,7 @@ export default function Staffregister() {
           {step === 3 && (
             <>
               <PartThree />{" "}
-              <Button
-                className="w-full  bg-red-500"
-                type="submit"
-                onClick={() => {
-                  signup;
-                }}
-              >
+              <Button className="w-full  bg-red-500" type="submit">
                 Sign Up
               </Button>
             </>

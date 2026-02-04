@@ -17,8 +17,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useStaffAuth, StaffType } from "@/context/StaffContext";
+import { api } from "@/lib/axios";
+import { useRouter } from "next/navigation";
 
 export default function Stafflogin() {
+  const router = useRouter();
   const { staff, login } = useStaffAuth();
   const form = useForm<StaffLoginFormType>({
     resolver: zodResolver(StaffLoginSchema),
@@ -28,15 +31,20 @@ export default function Stafflogin() {
       password: "",
     },
   });
-  const onSubmit = (data: StaffLoginFormType) => {
-    login(data);
+  const handleLogin = async (data: StaffLoginFormType) => {
+    const success = await login(data);
+    if (success) {
+      router.push("/staff_nomnom");
+    }
   };
   return (
     <div className="w-80">
       <>
-        
         <Form {...form}>
-          <form className="space-y-4 flex flex-col gap-4">
+          <form
+            className="space-y-4 flex flex-col gap-4"
+            onSubmit={form.handleSubmit(handleLogin)}
+          >
             <FormField
               control={form.control}
               name="StaffID"
@@ -71,11 +79,7 @@ export default function Stafflogin() {
               )}
             />
 
-            <Button
-              className="w-full bg-red-500"
-              type="submit"
-              onClick={form.handleSubmit(onSubmit)}
-            >
+            <Button className="w-full bg-red-500" type="submit">
               Log In
             </Button>
           </form>

@@ -27,20 +27,19 @@ export const addNewStaff: RequestHandler = async (req, res) => {
       const ID = `${firstname}_${lastInitial}#${last4Digits}`;
       return ID;
     };
-    //let the username be something like: David_J#7235 -> firstname, middle/last name initial, first two digits of id
+    const generatedID = staffIdGenerate();
 
-    const Staff = await staffModel.create({
-      StaffID: staffIdGenerate(),
+    const newStaff = await staffModel.create({
+      StaffID: generatedID,
       firstname: body.firstname,
       lastname: body.lastname,
       password: hashedPassword,
       email: body.email,
-      profileImage: body.profileImage ?? null,
-      SSN: body.SSN
+      SSN: body.SSN,
     });
+    const {password: _, ...rest} = newStaff.toObject();
     res.status(201).json({
-      Staff,
-      StaffID: Staff.StaffID,
+      staff: rest,
     });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

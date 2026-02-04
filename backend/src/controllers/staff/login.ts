@@ -33,14 +33,15 @@ export const fetchStaff: RequestHandler = async (req, res) => {
   if (!authorizatition) {
     return res.status(401).json({ message: "Unathourized 401" });
   }
-  const token = authorizatition?.split(" ")[1] as string;
+
+  const accessToken = authorizatition?.split(" ")[1] as string;
   try {
-    const { staff } = jwt.verify(token, "builder") as {
+    const { staff } = jwt.verify(accessToken, "builder") as {
       staff: Omit<typeof staffModel, "password">;
     };
-    return res.status(201).json({ staff });
+    res.status(201).json({ staff });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "Failed to login" });
+    res.status(500).json({ success: false, message: "Failed to login" });
   }
 };

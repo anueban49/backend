@@ -27,6 +27,7 @@ export type CrudContextType = {
   fetchProductbyID: (_id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
   fetchAllProduct: () => Promise<void>;
   fetchProductsbyCategory: (_id: string) => Promise<ProductType[]>;
+  getOrderData: () => Promise<void>
 };
 export type CrudProviderProps = {
   children: ReactNode;
@@ -53,6 +54,12 @@ export type ProductInputType = {
   category: CategoryType;
 }; // this is a data type when sending it to the backend
 
+export type OrderType = {
+  userId: string;
+  items: object[];
+  status: string
+}
+
 export const CrudContext = createContext<CrudContextType | undefined>(
   undefined,
 );
@@ -63,6 +70,7 @@ export const CrudProvider = ({ children }: CrudProviderProps) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [category, setCategory] = useState<CategoryType | null>(null);
+  const [orders, setOrders] = useState()
   const [loadingData, setLoadingData] = useState(false);
 
   if (loadingData == true) {

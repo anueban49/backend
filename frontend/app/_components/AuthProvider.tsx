@@ -53,7 +53,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loggingin, setLoggingin] = useState(false);
   const router = useRouter();
 
-  const signup = async (email: string, username: string, password: string) => {
+  const signup = async ({email, password, username}: UserType) => {
     setCreating(true);
     try {
       const { data } = await api.post<LoginResponse>("/user/signup", {

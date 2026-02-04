@@ -24,7 +24,7 @@ export default function StaffAuthPage() {
   const [fresh, setFresh] = useState(false);
   return (
     <>
-      <div className="w-screen h-screen flex flex-col">
+      <div className="w-screen h-screen flex flex-col bg-white items-center">
         <div className="w-full h-20 bg-zinc-800 flex p-4 justify-between items-center">
           <Logo />
           <div className="flex gap-2">

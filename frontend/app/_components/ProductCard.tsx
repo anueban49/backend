@@ -53,7 +53,7 @@ export function ProductCard(item: CartitemsType) {
   };
   return (
     <>
-      <Card className="w-full p-2 gap-2">
+      <Card className="w-full p-2 gap-2 ">
         <CardContent className="relative p-2 w-full h-2/3 overflow-hidden rounded-2xl">
           <img
             src={item.image}

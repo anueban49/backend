@@ -36,11 +36,11 @@ export function DisplayShelf(props: DisplayShelfProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center w-screen max-w-360">
+      <div className="flex flex-col items-center w-full ">
         {loading ? (
           <div className="w-full flex flex-col gap-4">
             <Skeleton className="title w-[250] h-5 bg-gray-400 "></Skeleton>
-            <div className="grid grid-cols-3 grid-rows-2 max-w-7xl w-full h-180 gap-4 p-4">
+            <div className="grid grid-cols-3 grid-rows-2">
               {Array.from({ length: 6 }).map((_, index) => (
                 <Card
                   key={index}
@@ -61,7 +61,7 @@ export function DisplayShelf(props: DisplayShelfProps) {
           <>
             <h1 className="w-full text-white text-2xl p-4">{props.name}</h1>
 
-            <div className="grid grid-cols-3 grid-rows-2  w-full h-180 gap-4 p-4">
+            <div className="grid grid-cols-3 grid-rows-2  w-full lg:px-16 lg:gap-10 gap-4 p-4">
               {items.map((el) => {
                 return (
                   <ProductCard
