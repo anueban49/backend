@@ -27,7 +27,7 @@ export type CrudContextType = {
   fetchProductbyID: (_id: string) => Promise<ProductType>; //it should return a data with the type of ProductType
   fetchAllProduct: () => Promise<void>;
   fetchProductsbyCategory: (_id: string) => Promise<ProductType[]>;
-  getOrderData: () => Promise<void>
+
 };
 export type CrudProviderProps = {
   children: ReactNode;

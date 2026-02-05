@@ -45,7 +45,8 @@ export const StaffAuthContext = createContext<StaffContextType | undefined>(
 export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
   const [staff, setStaff] = useState<StaffwithoutPassword | null>(null);
   const router = useRouter();
-
+  const token = localStorage.getItem("staffAccessToken");
+  if (!token) {router.push("/staff_nomnom/authorization")}
   const signup = async (input: StaffSignup) => {
     try {
       const { data } = await api.post<{ staff: StaffType }>(
@@ -68,7 +69,7 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
       });
       const { staff, accessToken } = data;
       setStaff(staff);
-      localStorage.setItem("accesstoken", accessToken);
+      localStorage.setItem("staffAccessToken", accessToken);
       return true;
     } catch (error) {
       console.log(error);
@@ -77,7 +78,7 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
   };
   useEffect(() => {
     const fetchStaff = async () => {
-      const token = localStorage.getItem("accesstoken");
+      const token = localStorage.getItem("staffAccessToken");
       if (!token) {
         return;
       }
@@ -93,7 +94,8 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
         setStaff(data.staff);
         console.log("fetchedData: [staffProv]", staff);
       } catch (error) {
-        localStorage.removeItem("accesstoken");
+        console.log("errrererer",error)
+        localStorage.removeItem("staffAccessToken");
         setStaff(null);
       }
     };
@@ -102,7 +104,7 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setStaff(null);
-    localStorage.removeItem("accesstoken");
+    localStorage.removeItem("staffAccessToken");
   };
 
   return (

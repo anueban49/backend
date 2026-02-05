@@ -141,3 +141,8 @@ body {
 body {
   background-color: #404040;
 }
+@layer utilities {
+  @keyframes scroll{
+    
+  }
+} 

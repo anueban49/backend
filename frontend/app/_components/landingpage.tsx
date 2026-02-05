@@ -1,6 +1,5 @@
-"use client";
-
-import { DisplayShelf } from "../_components/DisplayShelf";
+'use client';
+import { DisplayShelf } from "./DisplayShelf";
 export function LandingPage() {
   return (
     <>

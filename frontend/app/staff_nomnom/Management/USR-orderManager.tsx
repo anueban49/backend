@@ -22,6 +22,14 @@ import {
 } from "@/components/ui/table";
 import { itemType } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 export type OrderType = {
   _id: string;
   userId: UserCompleteInfoType;
@@ -87,19 +95,18 @@ export const OrderManager = () => {
     "completed",
     "cancelled",
   ];
-  const UpdateStatus = (props: {status: string}) => {
-    return (
-      <Select>
-        <SelectTrigger asChild>
-          <Button>{props.status}</Button>
-        </SelectTrigger>
-        <SelectContent>
-          {orderStatus.map((i) => (
-            <SelectItem value={i}>{i}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    );
+
+  const UpdateStatus = async (status: string, _id: string) => {
+    console.log("status", status);
+    try {
+      //takes order id to update status
+      const res = await api.patch(`/order/${_id}`, {
+        status: status,
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>
@@ -146,10 +153,29 @@ export const OrderManager = () => {
                       })}
                     </p>
                   </TableCell>
-                  <TableCell>price</TableCell>
-                  <TableCell className="text-right">
-                    <UpdateStatus status={(invoice.status).toString()}></UpdateStatus>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="p-0">
+                        <Button variant={"ghost"} className="p-0">
+                          {invoice.status}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {" "}
+                        {orderStatus.map((status, index) => (
+                          <DropdownMenuItem
+                            key={index}
+                            onClick={() => {
+                              UpdateStatus(status, invoice._id);
+                            }}
+                          >
+                            {status}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
+                  <TableCell className="text-right"></TableCell>
                 </TableRow>
               ))}
             </TableBody>

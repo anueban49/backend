@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/context/CartContext";
-import { AuthProvider } from "./_components/AuthProvider";
-import { CrudProvider } from "../context/SSR-inventoryContext";
-import { Toaster } from "sonner";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
+import { AuthProvider } from "./_components/AuthProvider";
+import { StaffAuthProvider } from "@/context/StaffContext";
+import { CrudProvider } from "@/context/SSR-inventoryContext";
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -28,15 +27,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-      suppressHydrationWarning
-        className={`${geistSans.variable} ${`geistMono`.variable} antialiased `}
+        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <AuthProvider>
-          <CrudProvider>
-            <CartProvider>{children}</CartProvider>
-          </CrudProvider>
+          <div className="w-screen flex flex-col items-center">
+            <div className="max-w-560 flex flex-col ">{children}</div>
+          </div>
         </AuthProvider>
-        <Toaster />
       </body>
     </html>
   );

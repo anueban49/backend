@@ -180,7 +180,6 @@ export const AddDeliveryAddress = () => {
 };
 export default function DeliveryAddress() {
   const { user } = useAuth();
-  console.log("deliveryaddress comp:", user);
   if (!user) {
     return <AddDeliveryAddress />;
   }

@@ -1,12 +1,12 @@
 import type { RequestHandler } from "express";
-import { staffModel } from "../../database/schema/staff.schema.js";
+import { StaffModel } from "../../database/schema/staff.schema.js";
 import bcrypt from "bcrypt";
 export const addNewStaff: RequestHandler = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
   try {
     const body = req.body;
 
-    const staffExists = await staffModel.findOne({
+    const staffExists = await StaffModel.findOne({
       $or: [
         { email: body.email },
         { firstname: body.firstname },
@@ -29,7 +29,7 @@ export const addNewStaff: RequestHandler = async (req, res) => {
     };
     const generatedID = staffIdGenerate();
 
-    const newStaff = await staffModel.create({
+    const newStaff = await StaffModel.create({
       StaffID: generatedID,
       firstname: body.firstname,
       lastname: body.lastname,

@@ -8,5 +8,5 @@ const StaffsRouter = Router();
 StaffsRouter.get("/list", getStaffsInfo)
   .post("/add", addNewStaff)
   .post("/login", login)
-  .get("fetchstaff", fetchStaff);
+  .get("/fetchstaff", fetchStaff);
 export { StaffsRouter };

@@ -2,11 +2,20 @@ import type { RequestHandler } from "express";
 import { OrderModel } from "../../database/schema/order.schema.js";
 
 export const updateOrderStatus: RequestHandler = async (req, res) => {
-  
-  const orderId = req.body._id;
+  const orderId = req.params.id;
   const statustoUpdate = req.body.status;
   if (!orderId) {
-    return res.status(404).json({ message: "order not found [backend]" });
+    return res.status(401).json({ message: "order not found [backend]" });
+  }
+  const validStatuses = [
+    "pending",
+    "paid",
+    "delivering",
+    "completed",
+    "cancelled",
+  ];
+  if (!validStatuses.includes(statustoUpdate)) {
+    return res.status(400).json({ message: "Invalid status" });
   }
   try {
     const updated = await OrderModel.findByIdAndUpdate(

@@ -82,7 +82,7 @@ export function InventoryManager() {
 
               <DialogContent className="h-125 p-8 flex flex-col gap-20 bg-white rounded-xl shadow-md ">
                 <CreateNew></CreateNew>
-              </DialogContent>
+              </DialogContent> 
             </Dialog>
 
             {selectedcategory === "All" ? (

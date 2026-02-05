@@ -31,10 +31,7 @@ export type AuthContextType = {
   logout: (_id: string, data: UserCompleteInfoType) => void;
   editinfo: () => void; //patch request function, that has to update/edit information of the user.
 };
-//in order to update user information, the user must have acessed into the system
-//that basically means the system has to have the token, accesstoken.
-//so it has to get its token in order to confirm it within the middleware
-//and it has to get its id in order to proceed the patch request.
+
 type LoginResponse = {
   user: UserCompleteInfoType;
   accessToken: string;

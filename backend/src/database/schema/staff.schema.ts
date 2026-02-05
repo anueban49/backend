@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const staffSchema = new Schema(
+const StaffSchema = new Schema(
   {
     StaffID: { type: String, required: true },
     firstname: { type: String, required: true },
@@ -12,4 +12,4 @@ const staffSchema = new Schema(
   },
   { timestamps: true },
 );
-export const staffModel = model("Staff", staffSchema);
+export const StaffModel = model("Staff", StaffSchema);

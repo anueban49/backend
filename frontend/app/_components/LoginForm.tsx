@@ -24,8 +24,8 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const onSubmit = (data: LoginType) => {
-    login(data);
+  const onSubmit = async (data: LoginType) => {
+    const res = await login(data);
   };
   return (
     <div className="flex flex-col gap-4 scale-80">

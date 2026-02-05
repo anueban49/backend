@@ -1,12 +1,12 @@
 import type { RequestHandler } from "express";
-import { staffModel } from "../../database/schema/staff.schema.js";
+import { StaffModel } from "../../database/schema/staff.schema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const login: RequestHandler = async (req, res) => {
   const { StaffID, password } = req.body;
   try {
-    const staff = await staffModel.findOne({ StaffID: StaffID });
+    const staff = await StaffModel.findOne({ StaffID: StaffID });
     if (!staff) {
       return res
         .status(401)
@@ -29,19 +29,21 @@ export const login: RequestHandler = async (req, res) => {
 };
 
 export const fetchStaff: RequestHandler = async (req, res) => {
-  const authorizatition = req.headers.authorization;
-  if (!authorizatition) {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
     return res.status(401).json({ message: "Unathourized 401" });
   }
 
-  const accessToken = authorizatition?.split(" ")[1] as string;
+  const accessToken = authorization?.split(" ")[1] as string;
+  console.log("ACC", accessToken)
   try {
     const { staff } = jwt.verify(accessToken, "builder") as {
-      staff: Omit<typeof staffModel, "password">;
+      staff: Omit<typeof StaffModel, "password">;
     };
+    console.log(staff)
     res.status(201).json({ staff });
   } catch (error) {
-    console.error(error);
+    console.error(error,"DGGSAG");
     res.status(500).json({ success: false, message: "Failed to login" });
   }
 };
