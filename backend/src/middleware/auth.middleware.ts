@@ -19,3 +19,22 @@ export const authMiddleWare: RequestHandler = (req, res, next) => {
     return res.status(500).json({ success: false, message: error });
   }
 };
+export const staffMiddleWare: RequestHandler = async (req, res, next) => {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return res
+      .status(401)
+      .json({ success: false, message: "unauthorized [backend]" });
+  }
+
+  try {
+    const accessToken = authorization.split(" ")[1] as string;
+    const { staff } = jwt.verify(accessToken, "builder") as {
+      staff: { _id: string };
+    };
+    req.staffId = staff._id;
+    next();
+  } catch (error) {
+    return res.status(401).json({ success: false, message: error });
+  }
+};
