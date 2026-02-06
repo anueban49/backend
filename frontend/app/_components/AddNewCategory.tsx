@@ -27,7 +27,6 @@ export function AddNewCategory() {
       const res = await api.post("category/categories/create", {
         name: data.name,
       });
-      console.log(res.data);
       form.reset();
     } catch (error) {
       console.log(error);

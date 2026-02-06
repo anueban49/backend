@@ -10,12 +10,9 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import AutoPlay from "embla-carousel-autoplay";
-import { useIMcrud } from "@/context/SSR-inventoryContext";
+
 export const Intro = () => {
-  const { fetchAllProduct, allProducts } = useIMcrud();
-  const res = async () => await fetchAllProduct;
-  console.log("products", allProducts);
-  const [image, setImage] = useState([]);
+
   const router = useRouter();
   useEffect(() => {
     const user = localStorage.getItem("accessToken");
@@ -60,7 +57,10 @@ export const Intro = () => {
         >
           <CarouselContent className="w-full ">
             {bgImgs.map((img, index) => (
-              <CarouselItem className="w-full basis-1/3 rounded-2xl overflow-hidden">
+              <CarouselItem
+                key={index}
+                className="w-full basis-1/3 rounded-2xl overflow-hidden"
+              >
                 <img
                   src={img}
                   className="aspect-square object-cover object-center opacity-20 "

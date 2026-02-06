@@ -14,7 +14,7 @@ export const getUserData: RequestHandler = async (req, res) => {
   const userId = req.body.userId; // getting the userid
 
   try {
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(userId).populate("address");
     if (!user) {
       return res
         .status(401)

@@ -146,3 +146,7 @@ body {
     
   }
 } 
+.btnTransform {
+  /* transform: translateX(-100%); */
+  transition: ease-in-out 0.3s;
+}

@@ -10,18 +10,19 @@ import { toast } from "sonner";
 import type { userFormdata, LoginType } from "../schemas/userSchema";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
-
+import { AddressFormdata } from "../schemas/userAddressSchema";
 type UserType = {
   username: string;
   email: string;
   password: string;
 };
+export type AddressType = AddressFormdata;
 export type UserCompleteInfoType = {
   username: string;
   email: string;
   _id: string;
   image: string | null;
-  address: string | null;
+  address: AddressType | null;
 }; //this type is for response data
 export type AuthContextType = {
   user: UserCompleteInfoType | null;
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loggingin, setLoggingin] = useState(false);
   const router = useRouter();
 
-  const signup = async ({email, password, username}: UserType) => {
+  const signup = async ({ email, password, username }: UserType) => {
     setCreating(true);
     try {
       const { data } = await api.post<LoginResponse>("/user/signup", {
@@ -114,7 +115,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         );
 
         setUser(data.user);
-        console.log("fetchedData: [authprovider]", user);
       } catch (error) {
         localStorage.removeItem("accessToken");
         setUser(null);

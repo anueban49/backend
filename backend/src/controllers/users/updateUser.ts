@@ -27,23 +27,10 @@ export const updateDeliveryAddress: RequestHandler = async (req, res) => {
     return res.status(401).json({ message: "unauthorized" });
   }
   try {
-    // normalize incoming payload to an array of strings
-    let newAddress: string[] | null = null;
-    if (typeof address === "string") {
-      newAddress = [address];
-    } else if (Array.isArray(address)) {
-      newAddress = address;
-    } else if (address && typeof (address as any).address === "string") {
-      newAddress = [(address as any).address];
-    } else if (address && Array.isArray((address as any).address)) {
-      newAddress = (address as any).address;
-    } else {
-      return res.status(400).json({ message: "invalid address payload" });
-    }
 
     const updated = await UserModel.findByIdAndUpdate(
       userId,
-      { address: newAddress },
+      { address: address },
       { new: true },
     );
     if (!updated) {
