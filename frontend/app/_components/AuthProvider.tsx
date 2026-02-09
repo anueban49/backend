@@ -22,7 +22,7 @@ export type UserCompleteInfoType = {
   email: string;
   _id: string;
   image: string | null;
-  address: AddressType | null;
+  address: AddressType | null | string[];
 }; //this type is for response data
 export type AuthContextType = {
   user: UserCompleteInfoType | null;
@@ -31,6 +31,7 @@ export type AuthContextType = {
   login: (data: LoginType) => Promise<void>;
   logout: (_id: string, data: UserCompleteInfoType) => void;
   editinfo: () => void; //patch request function, that has to update/edit information of the user.
+  refreshUser: () => Promise<void>;
 };
 
 type LoginResponse = {
@@ -123,6 +124,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
     fetchMe();
   }, []);
 
+  const refreshUser = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    try {
+      const { data } = await api.get<{ user: UserCompleteInfoType }>(
+        "/user/me",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      setUser(data.user);
+    } catch (error) {
+      console.error("Failed to refresh user:", error);
+    }
+  };
+
   function logout() {
     localStorage.removeItem("accessToken");
     setUser(null);
@@ -131,7 +149,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, error, signup, login, logout, editinfo }}
+      value={{ user, error, signup, login, logout, editinfo, refreshUser }}
     >
       {children}
     </AuthContext.Provider>

@@ -2,11 +2,12 @@ import type { RequestHandler } from "express";
 import { OrderModel } from "../../database/schema/order.schema.js";
 
 export const getOrderByuserID: RequestHandler = async (req, res) => {
-  const userId = req.params.userId;
-  if (!userId) {
+  const { id } = req.params;
+  const userId = req.body.userId
+  if (!id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  const orders = await OrderModel.find({ userId })
+  const orders = await OrderModel.findOne({ userId })
     .populate("items.foodId")
     .populate("userId")
     .populate("status");

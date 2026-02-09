@@ -21,16 +21,16 @@ export const updateUser: RequestHandler = async (req, res) => {
 };
 
 export const updateDeliveryAddress: RequestHandler = async (req, res) => {
+  const { id } = req.params;
   const userId = req.userId;
-  const address = req.body;
-  if (!userId) {
+  const updatedAddress = req.body;
+  if (userId !== id) {
     return res.status(401).json({ message: "unauthorized" });
   }
   try {
-
     const updated = await UserModel.findByIdAndUpdate(
-      userId,
-      { address: address },
+      id,
+      { address: updatedAddress },
       { new: true },
     );
     if (!updated) {

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useCart, CartitemsType } from "@/context/CartContext";
 import { useAuth, UserCompleteInfoType } from "./AuthProvider";
-import { Minus, Plus, X } from "lucide-react";
+import { MapPin, Minus, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/axios";
 import {
@@ -35,7 +35,7 @@ const menuOptions = [
 //discovery: you can actually write element style as object and call the object later on the element, wtf. | irrelevant info[ignore]
 
 export function SwitchMenu() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const { user } = useAuth();
   const [active, setActive] = useState(1);
   const {
@@ -73,7 +73,7 @@ export function SwitchMenu() {
         })),
         status: "pending",
       });
-      toast.success(`Order has been successfully placed!`)
+      toast.success(`Order has been successfully placed!`);
       //on successful order placing, we need to close the sidebar.
     } catch (error) {
       console.log(error);
@@ -85,11 +85,11 @@ export function SwitchMenu() {
       <div className="w-full h-full ">
         {cartItems.length > 0 ? (
           <div>
-            <Card className="p-2 gap-0 max-h-2/3 relative overflow-scroll">
+            <Card className="p-2 gap-0 max-h-2/3 relative overflow-scroll no-scrollbar">
               <CardHeader className="p-2 text-[15px] font-bold">
                 My Cart
               </CardHeader>
-              <CardContent className="p-0 flex flex-col gap-4 aspect-square overflow-scroll">
+              <CardContent className="p-0 flex flex-col gap-4 aspect-square overflow-scroll no-scrollbar">
                 {cartItems.map((item) => (
                   <div className="flex flex-col items-center">
                     <Card
@@ -116,7 +116,7 @@ export function SwitchMenu() {
                             <X color="red" />
                           </Button>
                         </CardHeader>
-                        <CardDescription className="font-[0.7em] w-full px-2 overflow-scroll h-2/5">
+                        <CardDescription className="font-[0.7em] w-full px-2 overflow-scroll h-2/5 no-scrollbar">
                           {item.ingredients}
                         </CardDescription>
                         <div className="w-full flex justify-between items-center">
@@ -170,6 +170,25 @@ export function SwitchMenu() {
   }
 
   function PaymentMenuDisplay() {
+    const { user } = useAuth();
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const getOrder = async (_id: string) => {
+          const res = await api.get(`/order/${_id}`);
+          console.log("response data:", res.data);
+        };
+        getOrder(user?._id);
+      } catch (e) {
+        console.log(error);
+      }
+    }, []);
     return (
       <>
         <Card>
@@ -181,33 +200,25 @@ export function SwitchMenu() {
   }
   function DeliveryLocationDisplay() {
     const { user } = useAuth();
+    const address = Object.values(user?.address || {}).join(", ");
+    const displayAddress = address.split(", ").slice(0, 5).join(", ");
+    console.log(displayAddress);
     return (
-      <div className="">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant={"outline"} className="rounded-2xl">
-              Delivery Location:
-              {user?.address ? (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <span>{user.address}</span>
-                  </DialogTrigger>
-                  <DialogContent>user already has address</DialogContent>
-                </Dialog>
-              ) : (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <span className="text-gray-400">No Location entered</span>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogTitle>Add your delivery address</DialogTitle>
-                  </DialogContent>
-                </Dialog>
-              )}
-            </Button>
-          </DialogTrigger>
-        </Dialog>
-      </div>
+      <Card className="gap-2">
+        <CardTitle className="px-4 flex gap-2 items-center">
+          <MapPin />
+          Delivery Location:
+        </CardTitle>
+        <CardContent className="text-sm text-gray-500">
+          {user?.address ? (
+            displayAddress
+          ) : (
+            <span className="hover:underline" onClick={() => {}}>
+              No Address Set
+            </span>
+          )}
+        </CardContent>
+      </Card>
     );
   }
   function PaymentInfoDisplay() {
@@ -281,8 +292,8 @@ export function SwitchMenu() {
         {active === 1 && <CartItemsDisplay></CartItemsDisplay>}
         {active === 2 && <PaymentMenuDisplay></PaymentMenuDisplay>}
       </div>
-      {/* 
-      <DeliveryLocationDisplay /> */}
+
+      <DeliveryLocationDisplay />
       <PaymentInfoDisplay />
     </div>
   );

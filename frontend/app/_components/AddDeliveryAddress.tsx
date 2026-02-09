@@ -3,7 +3,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "./AuthProvider";
+import { AddressType, useAuth } from "./AuthProvider";
 
 import { useForm } from "react-hook-form";
 import {
@@ -27,8 +27,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 export const AddDeliveryAddress = () => {
+  const { user, refreshUser } = useAuth();
+  const [open, setOpen] = useState(false);
+
   //a function for adding a new delivery address to the database.
   const form = useForm<AddressFormdata>({
     resolver: zodResolver(userAddressSchema),
@@ -42,25 +47,23 @@ export const AddDeliveryAddress = () => {
       additional: "",
     },
   });
+
   const SubmitAddress = async (data: AddressFormdata) => {
     console.log("sent data", data);
     try {
-      const res = await api.patch("/user/update/address", data);
+      const res = await api.patch(`/user/update/address/${user?._id}`, data);
       console.log(res.data);
+      toast.success("Your address has been updated!");
+      await refreshUser();
     } catch (error) {
       console.log(error);
+      toast.error("Failed to update address");
     }
   };
+
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
-          <span className="text-gray-500 hover:underline cursor-pointer">
-            No Selected Location: Add Location
-          </span>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogTitle>Add Your Delivery Location</DialogTitle>
+
           <Form {...form}>
             <form
               className="flex flex-col gap-4"
@@ -160,11 +163,8 @@ export const AddDeliveryAddress = () => {
             </form>
           </Form>
           <div className="flex gap-4 align-center"></div>{" "}
-          <DialogDescription>
-            Your order will be delivered to the address you provided.
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
+
+
     </>
   );
 };

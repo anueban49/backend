@@ -13,7 +13,7 @@ const UserRouter = Router();
 UserRouter.post("/signup", register)
   .post("/login", login)
   .patch("/update", authMiddleWare, updateUser)
-  .patch("/update/address", authMiddleWare, updateDeliveryAddress)
+  .patch("/update/address/:id", authMiddleWare, updateDeliveryAddress)
   .get("/me", getMe)
   .get("/", getUsers)
   .get("/:id", getUserData);

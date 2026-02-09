@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { UserModel } from "../../database/schema/user.schema.js";
 import bcrypt from "bcrypt"; //-> note: Because of ts installed, I had to install its type as well
-
+import jwt from "jsonwebtoken";
 export const register: RequestHandler = async (req, res) => {
   try {
     const { username, password, email } = req.body;
@@ -19,8 +19,12 @@ export const register: RequestHandler = async (req, res) => {
     });
     //then remove the password from response
     const { password: _, ...rest } = newUser.toObject();
+    const accessToken = jwt.sign({ user: rest }, "mountain", {
+      algorithm: "HS384",
+    });
     res.status(201).json({
-        user: rest
+      user: rest,
+      accessToken,
     });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

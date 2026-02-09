@@ -51,9 +51,7 @@ export function AppSideBar() {
   const [notify, setNotify] = useState(false);
   const router = useRouter();
   useEffect(() => {
-    if (cartItems === null || []) {
-      setNotify(false);
-    }
+    cartItems === null || [] ? setNotify(false) : setNotify(true);
     setNotify(true);
   }, [cartItems]);
   return (
@@ -64,12 +62,6 @@ export function AppSideBar() {
         setNotify(false);
       }}
     >
-      {notify === true ? (
-        <div className="notifDot z-99 w-3.5 aspect-square bg-red-500 rounded-full absolute top-3 right-3"></div>
-      ) : (
-        <></>
-      )}
-
       <DrawerTrigger asChild>
         <Button
           size={"icon"}
@@ -80,12 +72,17 @@ export function AppSideBar() {
           }}
         >
           <ShoppingCart color="red" />
+          {notify ? (
+            <div className="notifDot z-99 w-3.5 aspect-square bg-red-500 rounded-full absolute left-6 bottom-6"></div>
+          ) : (
+            <></>
+          )}
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent className="rounded-2xl py-4 z-99 bg-neutral-700">
-        <DrawerHeader className="w-full flex flex-row justify-between">
-          <DrawerTitle className="text-white flex gap-4">
+      <DrawerContent className="rounded-2xl py-4 z-99 bg-neutral-700 no-scrollbar">
+        <DrawerHeader className="w-full flex flex-row justify-between no-scrollbar">
+          <DrawerTitle className="text-white flex gap-4 no-scrollbar">
             <ShoppingCart color="white" />
             Order Detail
           </DrawerTitle>
