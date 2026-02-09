@@ -9,7 +9,7 @@ import {
 import { updateOrderStatus } from "../controllers/orders/updateOrderStatus.js";
 const OrderRouter = Router();
 OrderRouter.get("/all", getOrders)
-  .post("/create", CreateOrder)
+  .post("/create/:id", authMiddleWare,CreateOrder)
   .get("/:id", authMiddleWare, getOrderByuserID)
   .patch("/:id", staffMiddleWare, updateOrderStatus);
 export { OrderRouter };

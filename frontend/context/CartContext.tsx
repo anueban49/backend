@@ -30,8 +30,7 @@ export interface CartContextType {
   getTotalPrice: () => number;
   getTotalItems: () => number;
 
-  // setIsCartOpen: boolean;
-  // isCartOpen: (open: boolean) => void; //-> for toggling the drawer // which is irrevalant considering that I'm going to use this component inside another component.
+  clearCart: () => void;
 }
 //1. User clicks "Add to Cart" → addToCart() updates context
 //2.  User clicks cart icon → Drawer opens
@@ -87,7 +86,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return total + item.price * item.quantity;
     }, 0);
   };
-
+  const clearCart = () => {
+    setCartItems([]);
+    return cartItems;
+  };
   return (
     <CartContext.Provider
       value={{
@@ -97,6 +99,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         updateQuantity,
         getTotalItems,
         getTotalPrice,
+        clearCart,
       }}
     >
       {children}

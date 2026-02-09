@@ -7,7 +7,10 @@ import {
   updateUser,
   updateDeliveryAddress,
 } from "../controllers/users/updateUser.js";
-import { authMiddleWare } from "../middleware/auth.middleware.js";
+import {
+  authMiddleWare,
+  staffMiddleWare,
+} from "../middleware/auth.middleware.js";
 
 const UserRouter = Router();
 UserRouter.post("/signup", register)
@@ -15,6 +18,6 @@ UserRouter.post("/signup", register)
   .patch("/update", authMiddleWare, updateUser)
   .patch("/update/address/:id", authMiddleWare, updateDeliveryAddress)
   .get("/me", getMe)
-  .get("/", getUsers)
+  .get("/all", staffMiddleWare, getUsers)
   .get("/:id", getUserData);
 export { UserRouter };

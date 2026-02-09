@@ -292,6 +292,7 @@ export default function Staffregister() {
           <Checkbox
             id="terms-checkbox-2"
             name="terms-checkbox-2"
+            disabled={agreed}
             onCheckedChange={() => {
               setAgreed(true);
             }}

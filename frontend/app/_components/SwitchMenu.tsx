@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@radix-ui/react-dialog";
 import { toast } from "sonner";
+import { useOrder } from "./OrderContext";
 //Cart display has to render items, and their total price and total item counts.
 //while order has to do with history of orders, order status et cetera/.
 const menuOptions = [
@@ -38,6 +39,7 @@ export function SwitchMenu() {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
   const [active, setActive] = useState(1);
+  const { createOrderByClient } = useOrder();
   const {
     cartItems,
     getTotalPrice,
@@ -45,6 +47,7 @@ export function SwitchMenu() {
     addToCart,
     removeFromCart,
     updateQuantity,
+    clearCart,
   } = useCart();
   const totalPrice = getTotalPrice();
   const totalItem = getTotalItems();
@@ -62,23 +65,25 @@ export function SwitchMenu() {
     items: CartitemsType[];
     status: string;
   };
-
-  const CreateOrder = async (data: OrderType) => {
-    try {
-      const res = await api.post("/order/create", {
-        items: data.items.map((item) => ({
-          foodId: item.id,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        status: "pending",
-      });
-      toast.success(`Order has been successfully placed!`);
-      //on successful order placing, we need to close the sidebar.
-    } catch (error) {
-      console.log(error);
-    }
+  const CreateOrder = () => {
+    createOrderByClient(cartItems, user?._id);
   };
+  // const CreateOrder = async (data: OrderType) => {
+  //   try {
+  //     const res = await api.post(`/order/create/${user?._id}`, {
+  //       items: data.items.map((item) => ({
+  //         foodId: item.id,
+  //         quantity: item.quantity,
+  //         price: item.price,
+  //       })),
+  //       status: "pending",
+  //     });
+  //     toast.success(`Order has been successfully placed!`);
+  //     //on successful order placing, we need to close the sidebar.
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   function CartItemsDisplay() {
     return (
@@ -261,6 +266,7 @@ export function SwitchMenu() {
                   items: cartItems,
                   status: "pending",
                 });
+                clearCart();
               }}
             >
               Checkout

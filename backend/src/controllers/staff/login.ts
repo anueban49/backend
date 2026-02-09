@@ -31,7 +31,7 @@ export const login: RequestHandler = async (req, res) => {
 export const fetchStaff: RequestHandler = async (req, res) => {
   const authorization = req.headers.authorization;
   if (!authorization) {
-    return res.status(401).json({ message: "Unathourized 401" });
+    return res.status(401).json({ message: "Authorization header missing [login.ts staffrouter line34]" });
   }
 
   const accessToken = authorization?.split(" ")[1] as string;

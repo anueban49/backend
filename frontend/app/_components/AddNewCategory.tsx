@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-
+import { useIMcrud } from "@/context/SSR-inventoryContext";
 type Categorytype = {
   name: string;
 };
@@ -21,6 +21,8 @@ type Categorytype = {
 export function AddNewCategory() {
   const [isCreating, setIsCreating] = useState(false);
   //using axios api to patch/put datas of category to backend
+  const { categories} = useIMcrud();
+  const totalCats = categories.length
   const onsubmit = async (data: Categorytype) => {
     setIsCreating(true);
     try {
@@ -31,7 +33,7 @@ export function AddNewCategory() {
     } catch (error) {
       console.log(error);
     } finally {
-        setIsCreating(false);
+      setIsCreating(false);
     }
   };
   const form = useForm<Categorytype>({
@@ -42,25 +44,32 @@ export function AddNewCategory() {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onsubmit)}>
-          <FormLabel>Add new category</FormLabel>
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input 
-                  placeholder="type category name..." {...field} 
-                  disabled={isCreating}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <Button type="submit" disabled={isCreating}>
-            {isCreating ? "Adding..." : "Add"}
-          </Button>
+        <form
+          onSubmit={form.handleSubmit(onsubmit)}
+          className="flex flex-col gap-2"
+        >
+          <FormLabel>Create new category</FormLabel>
+          <div className="flex flex-row gap-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                    className="w-80"
+                      placeholder={`Add to total ${totalCats} categories...`}
+                      {...field}
+                      disabled={isCreating}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button type="submit" disabled={isCreating}>
+              {isCreating ? "Adding..." : "Add"}
+            </Button>
+          </div>
         </form>
       </Form>
     </>

@@ -29,6 +29,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 export type OrderType = {
   _id: string;
@@ -49,45 +50,39 @@ export type OrderItemType = {
 export const OrderManager = () => {
   const [invoices, setInvoices] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(false);
-  console.log(loading);
   const [clients, setClients] = useState<UserCompleteInfoType[]>([]);
 
-  useEffect(() => {
-    const getOrderData = async () => {
-      const token = localStorage.getItem("staffAccessToken");
-      try {
-        setLoading(true);
-        const { data } = await api.get<OrderResponseType>("/order/all", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log("orders:", data);
-        if (Array.isArray(data)) {
-          setInvoices(data);
-        } else if (data.orders && Array.isArray(data.orders)) {
-          setInvoices(data.orders);
-        } else {
-          console.error("Unexpected data format:", data);
-          setInvoices([]);
-        }
-      } catch (error) {
-        setLoading(false);
-        console.error(error);
-      } finally {
-        setLoading(false);
+  const getOrderData = async () => {
+    const token = localStorage.getItem("staffAccessToken");
+    try {
+      setLoading(true);
+      const { data } = await api.get<OrderResponseType>("/order/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (Array.isArray(data)) {
+        setInvoices(data);
+      } else if (data.orders && Array.isArray(data.orders)) {
+        setInvoices(data.orders);
+      } else {
+        console.error("Unexpected data format:", data);
+        setInvoices([]);
       }
-    };
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     getOrderData();
     //for unit client info
     //plan is getting the email data everytime the order sends userID
-  }, [1500]);
-  const calcPriceOfOrders = (item: OrderItemType) => {
-    if (item._id) {
-      const total: number = item.price * item.quantity;
-      return total;
-    }
-  };
+  }, [1000]);
+
   const orderStatus = [
     "pending",
     "paid",
@@ -97,13 +92,12 @@ export const OrderManager = () => {
   ];
 
   const UpdateStatus = async (status: string, _id: string) => {
-    console.log("status", status);
     try {
       //takes order id to update status
       const res = await api.patch(`/order/${_id}`, {
         status: status,
       });
-      console.log(res.data);
+      toast.success("Status updated! wait for 1 second...");
     } catch (error) {
       console.log(error);
     }
@@ -124,20 +118,23 @@ export const OrderManager = () => {
       </>
     );
   };
+
   const ShowOrders = () => {
     return (
       <>
-        {invoices.map((invoice: OrderType) => (
+        {invoices.map((invoice: OrderType, index) => (
           <TableRow key={invoice._id} className="items-center">
+            <TableCell>{index + 1}</TableCell>
             <TableCell className="font-medium flex flex-col">
-              {invoice.userId.email}
+              <p>{invoice.userId.email}</p>
+              <p>{invoice.userId.username}</p>
             </TableCell>
             <TableCell>{invoice._id}</TableCell>
             <TableCell>
               {invoice.items &&
                 (Array.isArray(invoice.items) ? invoice.items.length : 0)}
             </TableCell>
-            <TableCell className="flex flex-col gap-2">
+            <TableCell className="">
               <p>
                 {new Date(invoice.createdAt).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -146,36 +143,40 @@ export const OrderManager = () => {
                 })}
               </p>
             </TableCell>
-            <TableCell className="text-right">
-              {invoice.items && Array.isArray(invoice.items)
-                ? invoice.items.reduce(
-                    (total, item) =>
-                      total + (item.quantity || 0) * (item.price || 0),
-                    0,
-                  )
-                : 0}
+            <TableCell>
+              <p>
+                {invoice.items && Array.isArray(invoice.items)
+                  ? invoice.items.reduce(
+                      (total, item) =>
+                        total + (item.quantity || 0) * (item.price || 0),
+                      0,
+                    )
+                  : 0}
+              </p>
             </TableCell>
             <TableCell>
-              <DropdownMenu>
-                <DropdownMenuTrigger className="p-0">
-                  <Button variant={"ghost"} className="p-0">
-                    {invoice.status}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {" "}
-                  {orderStatus.map((status, index) => (
-                    <DropdownMenuItem
-                      key={index}
-                      onClick={() => {
-                        UpdateStatus(status, invoice._id);
-                      }}
-                    >
-                      {status}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {invoice.status !== "completed" ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger suppressHydrationWarning className="p-0">
+                    <span className="p-0">{invoice.status}</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {orderStatus.map((status, index) => (
+                      <DropdownMenuItem
+                        key={index}
+                        onClick={() => {
+                          UpdateStatus(status, invoice._id);
+                          getOrderData();
+                        }}
+                      >
+                        {status}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <p className="text-gray-500">Completed</p>
+              )}
             </TableCell>
           </TableRow>
         ))}
@@ -188,6 +189,7 @@ export const OrderManager = () => {
         <Table className="w-full p-4">
           <TableHeader>
             <TableRow>
+              <TableHead>No.</TableHead>
               <TableHead>Client</TableHead>
               <TableHead>Order ID</TableHead>
               <TableHead>Items</TableHead>

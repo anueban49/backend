@@ -67,16 +67,22 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
         password,
       });
       const { staff, accessToken } = data;
+
+      localStorage.setItem("staffAccessToken", accessToken);
+      console.log("login staff", staff);
       setStaff(staff);
-      localStorage.setItem("accesstoken", accessToken);
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     const fetchStaff = async () => {
-      const token = localStorage.getItem("accesstoken");
+      const token = localStorage.getItem("staffAccessToken");
+      
+      localStorage.removeItem("accessToken");
       if (!token) {
+        console.log("token not found")
+        router.push("/staff_nomnom/authorization");
         return;
       }
       try {
@@ -88,19 +94,20 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
             },
           },
         );
+        console.log("respone", data.staff);
         setStaff(data.staff);
-        console.log("fetchedData: [staffProv]", staff);
+        router.push("/staff_nomnom");
       } catch (error) {
-        localStorage.removeItem("accesstoken");
+        localStorage.removeItem("staffAccessToken");
         setStaff(null);
       }
     };
     fetchStaff();
-  }, []);
+  }, [router]);
 
   const logout = () => {
     setStaff(null);
-    localStorage.removeItem("accesstoken");
+    localStorage.removeItem("staffAccessToken");
   };
 
   return (

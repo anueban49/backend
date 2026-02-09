@@ -4,9 +4,10 @@ import { OrderModel } from "../../database/schema/order.schema.js";
 export const CreateOrder: RequestHandler = async (req, res) => {
   try {
     const body = req.body;
+    const {id} = req.params
     const userId = req.userId;
-    if (!userId) {
-      return res.status(401).json({message: "Unathourized"})
+    if (userId !== id) {
+      return res.status(401).json({message: "Unauthorized [backend]"})
     }
     const Order = await OrderModel.create({
       ...body,
@@ -16,7 +17,6 @@ export const CreateOrder: RequestHandler = async (req, res) => {
       id: Order._id,
       userId: Order.userId,
       timeStamp: Order.createdAt,
-      
       status: Order.status,
     });
   } catch (error: any) {
