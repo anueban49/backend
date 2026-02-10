@@ -4,7 +4,7 @@ import { OrderModel } from "../../database/schema/order.schema.js";
 export const getOrderByuserID: RequestHandler = async (req, res) => {
   const { id } = req.params;
   const userId = req.body.userId
-  if (!id) {
+  if (id !== userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
   const orders = await OrderModel.findOne({ userId })

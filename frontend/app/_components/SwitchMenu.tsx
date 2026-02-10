@@ -65,8 +65,8 @@ export function SwitchMenu() {
     items: CartitemsType[];
     status: string;
   };
-  const CreateOrder = () => {
-    createOrderByClient(cartItems, user?._id);
+  const handleOrder = async() => {
+    await createOrderByClient(cartItems, user?._id as string);
   };
   // const CreateOrder = async (data: OrderType) => {
   //   try {
@@ -173,7 +173,7 @@ export function SwitchMenu() {
       </div>
     );
   }
-
+//getting order history belonged to userId.
   function PaymentMenuDisplay() {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
@@ -226,6 +226,9 @@ export function SwitchMenu() {
       </Card>
     );
   }
+
+  const billing: number = 0.99 + totalPrice
+
   function PaymentInfoDisplay() {
     const { user } = useAuth();
     return (
@@ -251,7 +254,7 @@ export function SwitchMenu() {
           <div className="w-full flex justify-between items-center">
             <p className="text-gray-600 text-md">Total</p>
             <h2 className="font-bold text-xl flex">
-              ${cartItems.length === 0 ? <p>-</p> : totalPrice + 0.99}
+              ${cartItems.length === 0 ? <p>-</p> : billing}
             </h2>
           </div>
         </CardContent>
@@ -261,11 +264,7 @@ export function SwitchMenu() {
             <Button
               className="bg-red-500 w-full rounded-xl"
               onClick={() => {
-                CreateOrder({
-                  userId: user?._id || "",
-                  items: cartItems,
-                  status: "pending",
-                });
+                handleOrder()
                 clearCart();
               }}
             >
