@@ -28,4 +28,4 @@ export const StaffRegistySchema = z
     path: ["confirmpassword"],
   });
 
-export type StaffRegistryType = z.infer<typeof StaffRegistySchema>;
+export type StaffRegistry = z.infer<typeof StaffRegistySchema>;

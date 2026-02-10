@@ -8,7 +8,7 @@ const StaffSchema = new Schema(
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     profileImage: { type: String, required: false },
-    SSN: {type: String, required: true},
+    SSN: { type: String, required: true },
   },
   { timestamps: true },
 );

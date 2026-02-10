@@ -3,10 +3,8 @@
 import { useForm, ControllerRenderProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import {
-  StaffRegistySchema,
-  StaffRegistryType,
-} from "@/app/schemas/StaffSchema";
+import { StaffRegistySchema, StaffRegistry } from "@/app/schemas/StaffSchema";
+import { StaffSignup } from "@/context/StaffContext";
 import { useState } from "react";
 import {
   Form,
@@ -20,7 +18,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { CheckboxItem } from "@radix-ui/react-dropdown-menu";
-import { useStaffAuth } from "@/context/StaffContext";
+import { StaffType, useStaffAuth } from "@/context/StaffContext";
 import * as React from "react";
 import {
   InputOTP,
@@ -43,7 +41,7 @@ export default function Staffregister() {
   //when done is true, set step +1.
 
   const { staff, signup } = useStaffAuth();
-  const form = useForm<StaffRegistryType>({
+  const form = useForm<StaffRegistry>({
     resolver: zodResolver(StaffRegistySchema),
     mode: "onSubmit",
     defaultValues: {
@@ -58,17 +56,15 @@ export default function Staffregister() {
   });
 
   console.log(form.formState.errors);
-  
-  async function handleSignup(input: StaffRegistryType) {
+
+  async function handleSignup(input: StaffSignup) {
     setCreating(true);
-
     try {
-      const { data } = await api.post<{ StaffId: string }>("/staff/add", input);
+      const { data } = await api.post<StaffType>("/staff/add", input);
       console.log(data);
-
       console.log("success");
       toast.success("Account successfully created");
-      router.push("/staff_nomnom")
+      router.push("/staff_nomnom");
     } catch (error) {
       console.error(error);
       toast.error("Failed to create account");
@@ -76,6 +72,9 @@ export default function Staffregister() {
       setCreating(false);
     }
   }
+
+  const [agreed, setAgreed] = useState(false); //for checkbox and final submit button
+
   const PartOne = () => {
     return (
       <>
@@ -152,7 +151,7 @@ export default function Staffregister() {
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>();
     const [age, setAge] = React.useState<number | null>(null);
     const [isOldEnough, setIsOldEnough] = React.useState(false);
-    const [agreed, setAgreed] = useState(false);
+
     const handleDateSelect = (date: Date | undefined) => {
       setSelectedDate(date);
 
@@ -251,7 +250,6 @@ export default function Staffregister() {
     );
   };
   const PartThree = () => {
-    const [agreed, setAgreed] = useState(false);
     return (
       <div className="flex flex-col lg:gap-8">
         <FormField
@@ -263,7 +261,7 @@ export default function Staffregister() {
               <FormControl>
                 <Input
                   type="password"
-                  placeholder="Confirm password"
+                  placeholder="Please make password for your account"
                   {...field}
                 />
               </FormControl>
@@ -280,7 +278,7 @@ export default function Staffregister() {
               <FormControl>
                 <Input
                   type="password"
-                  placeholder="Confirm password"
+                  placeholder="Retype password"
                   {...field}
                 />
               </FormControl>
@@ -292,10 +290,7 @@ export default function Staffregister() {
           <Checkbox
             id="terms-checkbox-2"
             name="terms-checkbox-2"
-            disabled={agreed}
-            onCheckedChange={() => {
-              setAgreed(true);
-            }}
+            onClick={() => setAgreed(true)}
           />
           <p>
             I declare under penalty of perjury under the laws of the State of
@@ -328,7 +323,11 @@ export default function Staffregister() {
           {step === 3 && (
             <>
               <PartThree />{" "}
-              <Button className="w-full  bg-red-500" type="submit">
+              <Button
+                className="w-full  bg-red-500"
+                type="submit"
+                disabled={!agreed}
+              >
                 Sign Up
               </Button>
             </>

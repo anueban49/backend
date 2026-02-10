@@ -51,7 +51,6 @@ export function Settings() {
       try {
         setloading(true);
         const { data } = await api.get<ClientType[]>("/user/all");
-        console.log("response", data);
         setClients(data);
         setloading(false);
       } catch (error) {
@@ -162,9 +161,9 @@ export function Settings() {
                 </div>
               </CardTitle>
               <div>
-                <p>Address: </p>
+                <p>Current Delivery Address: </p>
                 <p className="text-gray-500 text-sm">
-                  {cleanAddress(c.address)}
+                  {cleanAddress(c.address as AddressType)}
                 </p>
               </div>
             </CardContent>

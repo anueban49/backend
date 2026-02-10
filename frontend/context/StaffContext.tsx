@@ -12,26 +12,23 @@ import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import {
   StaffLoginFormType,
-  StaffRegistryType,
+  StaffRegistry,
 } from "@/app/schemas/StaffSchema";
 export type StaffType = {
   StaffID: string;
   firstname: string;
   lastname: string;
   email: string;
-  password?: string;
   profileImage?: string;
   SSN: string;
   _id?: string;
 };
-type StaffSignup = Omit<StaffRegistryType, "confirmpassword" | "dob">;
+type StaffwithoutPassword = Omit<StaffType, "password">;
+export type StaffSignup = Omit<StaffRegistry, "confirmpassword" | "dob">;
 type LoginResponse = {
   staff: StaffwithoutPassword;
   accessToken: string;
 };
-
-type StaffwithoutPassword = Omit<StaffType, "password">;
-type StaffSignupType = Omit<StaffRegistryType, "confirmpassword">;
 export interface StaffContextType {
   staff: StaffwithoutPassword | null;
   signup: (data: StaffSignup) => Promise<void>;
@@ -43,18 +40,13 @@ export const StaffAuthContext = createContext<StaffContextType | undefined>(
 );
 
 export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
-  const [staff, setStaff] = useState<StaffwithoutPassword | null>(null);
+  const [staff, setStaff] = useState<StaffType | null>(null);
   const router = useRouter();
 
   const signup = async (input: StaffSignup) => {
     try {
-      const { data } = await api.post<{ staff: StaffType }>(
-        "/staff/add",
-        input,
-      );
-      const { password, ...staffWithoutPassword } = data.staff;
-      setStaff(staffWithoutPassword);
-      console.log("Staff created:", staffWithoutPassword);
+      const res = await api.post<{ staff: StaffType }>("/staff/add", input);
+      console.log(res);
     } catch (error) {
       console.error("Signup error:", error);
       throw error; // Re-throw so handleSignup can catch it
@@ -70,20 +62,21 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("staffAccessToken", accessToken);
       console.log("login staff", staff);
       setStaff(staff);
-      if (staff) {router.push("/staff_nomnom")}
+      if (staff) {
+        router.push("/staff_nomnom");
+      }
     } catch (error) {
-      setStaff(null)
-      localStorage.removeItem("staffAccessToken")
+      setStaff(null);
+      localStorage.removeItem("staffAccessToken");
       console.log(error);
     }
   };
   useEffect(() => {
     const fetchStaff = async () => {
       const token = localStorage.getItem("staffAccessToken");
-      
       localStorage.removeItem("accessToken");
       if (!token) {
-        console.log("token not found")
+        console.log("token not found");
         router.push("/staff_nomnom/authorization");
         return;
       }

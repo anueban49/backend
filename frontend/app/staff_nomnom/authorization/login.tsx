@@ -32,9 +32,10 @@ export default function Stafflogin() {
     },
   });
   const handleLogin = async (data: StaffLoginFormType) => {
-    const success = await login(data);
-    if (success) {
-      router.push("/staff_nomnom");
+    try {
+      await login(data);
+    } catch (error) {
+      console.error(error);
     }
   };
   return (
