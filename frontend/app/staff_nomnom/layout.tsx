@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { StaffAuthProvider } from "@/context/StaffContext";
 import { CrudProvider } from "@/context/SSR-inventoryContext";
+import { OrderProvider } from "../_components/OrderContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,7 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <StaffAuthProvider>
-      <CrudProvider>{children}</CrudProvider>
+      <OrderProvider>
+        <CrudProvider>{children}</CrudProvider>
+      </OrderProvider>
     </StaffAuthProvider>
   );
 }

@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { useIMcrud } from "@/context/SSR-inventoryContext";
+import { ProductType, useIMcrud } from "@/context/SSR-inventoryContext";
 import {
   Card,
   CardHeader,
@@ -30,7 +30,7 @@ import { Suggestion } from "./Suggestion";
 
 export function ProductCard(item: CartitemsType) {
   const { addToCart, cartItems } = useCart();
-  const [product, setProduct] = useState<itemType | null>(null);
+  const [product, setProduct] = useState<ProductType>();
   const [dialogQuantity, setDialogQuantity] = useState<number>(1);
   const { fetchProductbyID } = useIMcrud();
   const { user } = useAuth();

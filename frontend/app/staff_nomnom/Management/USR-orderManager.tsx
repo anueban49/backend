@@ -16,6 +16,7 @@ import {
 import { itemType } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useOrder } from "@/app/_components/OrderContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,27 +45,12 @@ export const OrderManager = () => {
   const [invoices, setInvoices] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState<UserCompleteInfoType[]>([]);
+  const { getAllOrdersforStaff, allOrders } = useOrder();
 
-  const getOrderData = async () => {
-    const token = localStorage.getItem("staffAccessToken");
-    try {
-      setLoading(true);
-      const { data } = await api.get<OrderType[]>("/order/all", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setInvoices(data);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
-    getOrderData();
-  }, [1000]);
+    getAllOrdersforStaff();
+    setInvoices(allOrders);
+  }, []);
 
   const orderStatus = [
     "pending",
@@ -130,7 +116,9 @@ export const OrderManager = () => {
             <TableCell>
               <p>
                 {invoice.items.reduce(
-                  (total, item) => total + item.quantity * item.price, 0)}
+                  (total, item) => total + item.quantity * item.price,
+                  0,
+                )}
               </p>
             </TableCell>
             <TableCell>
@@ -145,7 +133,6 @@ export const OrderManager = () => {
                         key={index}
                         onClick={() => {
                           UpdateStatus(status, invoice._id);
-                          getOrderData();
                         }}
                       >
                         {status}

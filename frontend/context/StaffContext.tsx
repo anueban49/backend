@@ -67,11 +67,13 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
         password,
       });
       const { staff, accessToken } = data;
-
       localStorage.setItem("staffAccessToken", accessToken);
       console.log("login staff", staff);
       setStaff(staff);
+      if (staff) {router.push("/staff_nomnom")}
     } catch (error) {
+      setStaff(null)
+      localStorage.removeItem("staffAccessToken")
       console.log(error);
     }
   };
@@ -94,7 +96,6 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
             },
           },
         );
-        console.log("respone", data.staff);
         setStaff(data.staff);
         router.push("/staff_nomnom");
       } catch (error) {

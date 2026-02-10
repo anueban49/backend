@@ -47,6 +47,7 @@ export function SwitchMenu() {
     getOrderByClient,
     ordersByClient,
     deleteOrderByClient,
+    refreshOrderByClient,
   } = useOrder();
   const [orderHistory, setOrderHistory] = useState<OrderType[]>([]);
   const {
@@ -164,7 +165,6 @@ export function SwitchMenu() {
   //getting order history belonged to userId.
   function PaymentMenuDisplay() {
     const { user } = useAuth();
-    const [dialogOpen, setDialogOpen] = useState(false);
 
     const handleDelete = async (orderId: string) => {
       await deleteOrderByClient(orderId);
@@ -213,6 +213,10 @@ export function SwitchMenu() {
                           size={"xs"}
                           className="bg-red rounded-2xl p-2 "
                           variant={"outline"}
+                          onClick={() => {
+                            deleteOrderByClient(pastOrder._id);
+                            refreshOrderByClient(user?._id as string);
+                          }}
                         >
                           Cancel Order
                         </Button>

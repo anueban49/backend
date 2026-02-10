@@ -130,6 +130,7 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
       console.error("Failed to refresh user:", error);
     }
   };
+
   return (
     <OrderContext.Provider
       value={{

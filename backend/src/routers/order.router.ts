@@ -9,9 +9,9 @@ import {
 } from "../middleware/auth.middleware.js";
 import { updateOrderStatus } from "../controllers/orders/updateOrderStatus.js";
 const OrderRouter = Router();
-OrderRouter.get("/all", getOrders)
-  .post("/create/:id", authMiddleWare,CreateOrder)
+OrderRouter.get("/all", staffMiddleWare, getOrders)
+  .post("/create/:id", authMiddleWare, CreateOrder)
   .get("/:id", authMiddleWare, getOrderByuserID)
   .patch("/:id", staffMiddleWare, updateOrderStatus)
-  .delete("/:id", authMiddleWare, deleteOrderByUser)
+  .delete("/:id", authMiddleWare, deleteOrderByUser);
 export { OrderRouter };
