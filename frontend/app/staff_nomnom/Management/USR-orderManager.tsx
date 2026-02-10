@@ -4,13 +4,6 @@ import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserCompleteInfoType } from "@/app/_components/AuthProvider";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableHead,
   TableBody,
@@ -34,7 +27,7 @@ import { toast } from "sonner";
 export type OrderType = {
   _id: string;
   userId: UserCompleteInfoType;
-  items: OrderItemType[] | OrderItemType;
+  items: OrderItemType[];
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -56,20 +49,12 @@ export const OrderManager = () => {
     const token = localStorage.getItem("staffAccessToken");
     try {
       setLoading(true);
-      const { data } = await api.get<OrderResponseType>("/order/all", {
+      const { data } = await api.get<OrderType[]>("/order/all", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (Array.isArray(data)) {
-        setInvoices(data);
-      } else if (data.orders && Array.isArray(data.orders)) {
-        setInvoices(data.orders);
-      } else {
-        console.error("Unexpected data format:", data);
-        setInvoices([]);
-      }
+      setInvoices(data);
     } catch (error) {
       setLoading(false);
       console.error(error);
@@ -79,8 +64,6 @@ export const OrderManager = () => {
   };
   useEffect(() => {
     getOrderData();
-    //for unit client info
-    //plan is getting the email data everytime the order sends userID
   }, [1000]);
 
   const orderStatus = [
@@ -118,7 +101,7 @@ export const OrderManager = () => {
       </>
     );
   };
-
+  console.log(invoices);
   const ShowOrders = () => {
     return (
       <>
@@ -132,7 +115,8 @@ export const OrderManager = () => {
             <TableCell>{invoice._id}</TableCell>
             <TableCell>
               {invoice.items &&
-                (Array.isArray(invoice.items) ? invoice.items.length : 0)}
+                Array.isArray(invoice.items) &&
+                invoice.items.length}
             </TableCell>
             <TableCell className="">
               <p>
@@ -145,13 +129,8 @@ export const OrderManager = () => {
             </TableCell>
             <TableCell>
               <p>
-                {invoice.items && Array.isArray(invoice.items)
-                  ? invoice.items.reduce(
-                      (total, item) =>
-                        total + (item.quantity || 0) * (item.price || 0),
-                      0,
-                    )
-                  : 0}
+                {invoice.items.reduce(
+                  (total, item) => total + item.quantity * item.price, 0)}
               </p>
             </TableCell>
             <TableCell>

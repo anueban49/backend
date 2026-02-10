@@ -11,17 +11,20 @@ import {
 } from "@/components/ui/card";
 import { useCart, CartitemsType } from "@/context/CartContext";
 import { useAuth, UserCompleteInfoType } from "./AuthProvider";
-import { MapPin, Minus, Plus, X } from "lucide-react";
+import { DollarSignIcon, MapPin, Minus, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/axios";
+
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
   DialogTitle,
-} from "@radix-ui/react-dialog";
+  DialogClose,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { useOrder } from "./OrderContext";
+import { OrderType, useOrder } from "./OrderContext";
+import { DialogDescription } from "@radix-ui/react-dialog";
 //Cart display has to render items, and their total price and total item counts.
 //while order has to do with history of orders, order status et cetera/.
 const menuOptions = [
@@ -39,18 +42,23 @@ export function SwitchMenu() {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
   const [active, setActive] = useState(1);
-  const { createOrderByClient } = useOrder();
+  const {
+    createOrderByClient,
+    getOrderByClient,
+    ordersByClient,
+    deleteOrderByClient,
+  } = useOrder();
+  const [orderHistory, setOrderHistory] = useState<OrderType[]>([]);
   const {
     cartItems,
-    getTotalPrice,
-    getTotalItems,
+    totalItemsQuantity,
+    totalPrice,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
   } = useCart();
-  const totalPrice = getTotalPrice();
-  const totalItem = getTotalItems();
+
   const buttonStyle = {
     backgroundColor: active ? "red" : "white",
     color: active ? "white" : "black",
@@ -59,31 +67,6 @@ export function SwitchMenu() {
   const handleClick = (id: number) => {
     setActive(id);
   };
-
-  type OrderType = {
-    //userId will be get by middleware, as per the fact that each request is sent with headers.
-    items: CartitemsType[];
-    status: string;
-  };
-  const handleOrder = async() => {
-    await createOrderByClient(cartItems, user?._id as string);
-  };
-  // const CreateOrder = async (data: OrderType) => {
-  //   try {
-  //     const res = await api.post(`/order/create/${user?._id}`, {
-  //       items: data.items.map((item) => ({
-  //         foodId: item.id,
-  //         quantity: item.quantity,
-  //         price: item.price,
-  //       })),
-  //       status: "pending",
-  //     });
-  //     toast.success(`Order has been successfully placed!`);
-  //     //on successful order placing, we need to close the sidebar.
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   function CartItemsDisplay() {
     return (
@@ -95,8 +78,8 @@ export function SwitchMenu() {
                 My Cart
               </CardHeader>
               <CardContent className="p-0 flex flex-col gap-4 aspect-square overflow-scroll no-scrollbar">
-                {cartItems.map((item) => (
-                  <div className="flex flex-col items-center">
+                {cartItems.map((item, index) => (
+                  <div className="flex flex-col items-center" key={index + 1}>
                     <Card
                       key={item.id}
                       className="border-b border-dashed w-full aspect-3/1 overflow-hidden gap-0 p-0 bg-white rounded-2xl flex flex-row border-transparent shadow-none"
@@ -148,7 +131,6 @@ export function SwitchMenu() {
                               size={"icon"}
                               onClick={() => {
                                 addToCart(item);
-                                console.log(cartItems);
                               }}
                             >
                               <Plus />
@@ -173,32 +155,74 @@ export function SwitchMenu() {
       </div>
     );
   }
-//getting order history belonged to userId.
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    getOrderByClient(user?._id as string);
+    setLoading(false);
+  }, [user?._id, getOrderByClient]);
+  //getting order history belonged to userId.
   function PaymentMenuDisplay() {
     const { user } = useAuth();
-    const [loading, setLoading] = useState(false);
-    useEffect(() => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        return;
-      }
+    const [dialogOpen, setDialogOpen] = useState(false);
 
-      try {
-        setLoading(true);
-        const getOrder = async (_id: string) => {
-          const res = await api.get(`/order/${_id}`);
-          console.log("response data:", res.data);
-        };
-        getOrder(user?._id);
-      } catch (e) {
-        console.log(error);
-      }
-    }, []);
+    const handleDelete = async (orderId: string) => {
+      await deleteOrderByClient(orderId);
+    };
     return (
       <>
         <Card>
           <CardHeader>Order History</CardHeader>
-          <CardContent></CardContent>
+          <CardContent className="flex flex-col gap-4">
+            {loading ? (
+              <div className="w-full aspect-square text-2xl text-gray-400 flex justify-center items-center">
+                Loading...
+              </div>
+            ) : (
+              <>
+                {ordersByClient.map((pastOrder) => (
+                  <Card key={pastOrder._id} className="p-2 gap-2 ">
+                    <div className="flex gap-2 justify-between">
+                      <div className="text-sm text-gray-500 flex gap-2">
+                        {new Date(pastOrder.updatedAt).toLocaleString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                        <p>Items: {pastOrder.items.length}</p>
+                      </div>
+
+                      <p className="text-sm text-gray-500">
+                        {pastOrder.status === "paid"
+                          ? "In delivery"
+                          : pastOrder.status}
+                      </p>
+                    </div>
+
+                    {pastOrder.status === "pending" && (
+                      <div className="flex justify-between">
+                        <Button
+                          size={"xs"}
+                          className="bg-green rounded-2xl p-2 "
+                          variant={"outline"}
+                        >
+                          <DollarSignIcon color="green" />
+                          <p className="text-green-700">Pending Payment</p>
+                        </Button>
+                        <Button
+                          size={"xs"}
+                          className="bg-red rounded-2xl p-2 "
+                          variant={"outline"}
+                        >
+                          Cancel Order
+                        </Button>
+                      </div>
+                    )}
+                  </Card>
+                ))}
+              </>
+            )}
+          </CardContent>
         </Card>
       </>
     );
@@ -207,7 +231,7 @@ export function SwitchMenu() {
     const { user } = useAuth();
     const address = Object.values(user?.address || {}).join(", ");
     const displayAddress = address.split(", ").slice(0, 5).join(", ");
-    console.log(displayAddress);
+
     return (
       <Card className="gap-2">
         <CardTitle className="px-4 flex gap-2 items-center">
@@ -227,8 +251,12 @@ export function SwitchMenu() {
     );
   }
 
-  const billing: number = 0.99 + totalPrice
-
+  const billing: number = 0.99 + totalPrice;
+  function handleCheckout() {
+    createOrderByClient(cartItems, user?._id as string);
+    clearCart();
+    getOrderByClient(user?._id as string);
+  }
   function PaymentInfoDisplay() {
     const { user } = useAuth();
     return (
@@ -264,8 +292,7 @@ export function SwitchMenu() {
             <Button
               className="bg-red-500 w-full rounded-xl"
               onClick={() => {
-                handleOrder()
-                clearCart();
+                handleCheckout();
               }}
             >
               Checkout

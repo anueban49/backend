@@ -20,24 +20,15 @@ export type CartitemsType = itemType & {
   quantity: number;
 };
 
-export interface CartContextType {
+interface CartContextType {
   cartItems: CartitemsType[];
-
   addToCart: (item: CartitemsType) => void;
   removeFromCart: (id: string) => void; //it removes the item by its id, and no return
   updateQuantity: (id: string, quantity: number) => void; // it updates the count by its id and number included.
-
-  getTotalPrice: () => number;
-  getTotalItems: () => number;
-
+  totalPrice: number;
+  totalItemsQuantity: number;
   clearCart: () => void;
 }
-//1. User clicks "Add to Cart" → addToCart() updates context
-//2.  User clicks cart icon → Drawer opens
-//3. CartDrawer uses useCart() to get cartItems and renders them
-//4. User can update quantities or remove items
-
-//discovery: context itself can hold data
 
 export const CartContext = createContext<CartContextType>(
   {} as CartContextType,
@@ -46,6 +37,8 @@ export const CartContext = createContext<CartContextType>(
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartitemsType[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalItemsQuantity, setTotalItemsQuantity] = useState(0);
 
   //the comp passes item with quantity here
   const addToCart = (item: CartitemsType) => {
@@ -88,8 +81,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
   const clearCart = () => {
     setCartItems([]);
-    return cartItems;
   };
+  useEffect(() => {
+    const price = getTotalPrice();
+    const count = getTotalItems();
+    setTotalPrice(price);
+    setTotalItemsQuantity(count);
+  }, [cartItems]);
   return (
     <CartContext.Provider
       value={{
@@ -97,8 +95,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToCart,
         removeFromCart,
         updateQuantity,
-        getTotalItems,
-        getTotalPrice,
+        totalPrice,
+        totalItemsQuantity,
         clearCart,
       }}
     >

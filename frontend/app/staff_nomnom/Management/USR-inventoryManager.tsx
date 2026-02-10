@@ -4,12 +4,11 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { CreateNew } from "../../_components/createNew";
 import { useIMcrud, ProductType } from "../../../context/SSR-inventoryContext";
-import { Pen, PlusCircle } from "lucide-react";
+import {  PlusCircle } from "lucide-react";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { CategoryType } from "../../../context/SSR-inventoryContext";
-import { api } from "@/lib/axios";
 import { ItemCard } from "../../_components/ItemCard";
 
 export function InventoryManager() {

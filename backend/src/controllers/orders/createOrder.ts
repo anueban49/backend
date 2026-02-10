@@ -3,15 +3,16 @@ import { OrderModel } from "../../database/schema/order.schema.js";
 
 export const CreateOrder: RequestHandler = async (req, res) => {
   try {
-    const body = req.body;
+    const { data, status } = req.body;
     const {id} = req.params
     const userId = req.userId;
     if (userId !== id) {
       return res.status(401).json({message: "Unauthorized [backend]"})
     }
     const Order = await OrderModel.create({
-      ...body,
-      userId
+      userId,
+      items: data,
+      status
     });
     res.status(201).json({
       id: Order._id,

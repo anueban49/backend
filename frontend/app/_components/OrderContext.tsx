@@ -18,7 +18,7 @@ export type OrderType = {
   updatedAt: string;
 }; //for getting a
 export interface OrderResponseType {
-  orders: OrderType;
+  orders: OrderType[];
 }
 export type OrderItemType = {
   _id: string;
@@ -35,11 +35,13 @@ import { UserCompleteInfoType } from "./AuthProvider";
 import { api } from "@/lib/axios";
 export interface OrderContextType {
   allOrders: OrderType[];
-  ordersByClient: OrderType | OrderType[];
+  ordersByClient: OrderType[];
   createOrderByClient: (data: CartitemsType[], _id: string) => Promise<void>;
   updateOrder: () => Promise<void>;
-  getAllOrdersforStaff: () => Promise<OrderType>;
-  getOrderByClient: () => Promise<void>;
+  getAllOrdersforStaff: () => Promise<void>;
+  getOrderByClient: (userId: string) => Promise<void>;
+  deleteOrderByClient: (orderId: string) => Promise<void>;
+  refreshOrderByClient: (userId: string) => Promise<void>;
 }
 import { toast } from "sonner";
 import { itemType } from "@/context/CartContext";
@@ -47,17 +49,18 @@ import { itemType } from "@/context/CartContext";
 export const OrderContext = createContext({} as OrderContextType);
 export const OrderProvider = ({ children }: OrderProviderProps) => {
   const [allOrders, setAllOrders] = useState<OrderType[]>([]);
-  const [ordersByClient, setOrdersbyClient] = useState([]);
+  const [ordersByClient, setOrdersbyClient] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(false);
 
   const createOrderByClient = async (data: CartitemsType[], _id: string) => {
     // it uses authmiddleware, which checks and processes accesstoken.
     try {
       const res = await api.post(`/order/create/${_id}`, {
+        userId: _id,
         data: data.map((item) => ({
           foodId: item.id,
           quantity: item.quantity,
-          price: item.price, 
+          price: item.price,
         })),
         status: "pending",
       });
@@ -98,7 +101,35 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
     }
   };
 
-  const getOrderByClient = async () => {};
+  const getOrderByClient = async (userId: string) => {
+    if (!userId) {
+      return;
+    }
+    try {
+      const { data } = await api.get<OrderResponseType>(`/order/${userId}`);
+
+      setOrdersbyClient(data.orders);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const deleteOrderByClient = async (orderId: string) => {
+    try {
+      const res = await api.delete(`/order/${orderId}`);
+      console.log("sent order id", orderId);
+      console.log("Order deleted:", res);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const refreshOrderByClient = async (userId: string) => {
+    try {
+      const { data } = await api.get<OrderResponseType>(`/order/${userId}`);
+      setOrdersbyClient(data.orders);
+    } catch (error) {
+      console.error("Failed to refresh user:", error);
+    }
+  };
   return (
     <OrderContext.Provider
       value={{
@@ -108,6 +139,8 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
         getAllOrdersforStaff,
         getOrderByClient,
         updateOrder,
+        deleteOrderByClient,
+        refreshOrderByClient,
       }}
     >
       {children}

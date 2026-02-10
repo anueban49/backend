@@ -46,22 +46,12 @@ export function AddToCart({ product }: AddToCartProps) {
 //this has to only design the component of sidebar.
 export function AppSideBar() {
   const [open, setOpen] = useState(false);
-  const { cartItems } = useCart();
+  const { cartItems, totalItemsQuantity } = useCart();
   const { user } = useAuth();
-  const [notify, setNotify] = useState(false);
   const router = useRouter();
-  useEffect(() => {
-    cartItems === null || [] ? setNotify(false) : setNotify(true);
-    setNotify(true);
-  }, [cartItems]);
+
   return (
-    <Drawer
-      direction="right"
-      defaultOpen={false}
-      onOpenChange={() => {
-        setNotify(false);
-      }}
-    >
+    <Drawer direction="right" defaultOpen={false}>
       <DrawerTrigger asChild>
         <Button
           size={"icon"}
@@ -72,8 +62,10 @@ export function AppSideBar() {
           }}
         >
           <ShoppingCart color="red" />
-          {notify ? (
-            <div className="notifDot z-99 w-3.5 aspect-square bg-red-500 rounded-full absolute left-6 bottom-6"></div>
+          {cartItems.length > 0 ? (
+            <div className="notifDot z-99 w-3.5 aspect-square bg-red-500 rounded-full absolute left-6 bottom-6 text-[10px] text-white">
+              {cartItems.length}
+            </div>
           ) : (
             <></>
           )}
@@ -84,7 +76,8 @@ export function AppSideBar() {
         <DrawerHeader className="w-full flex flex-row justify-between no-scrollbar">
           <DrawerTitle className="text-white flex gap-4 no-scrollbar">
             <ShoppingCart color="white" />
-            Order Detail
+            Order Detail{" "}
+            {cart.length <= 0 ? <></> : <p>{totalItemsQuantity}</p>}
           </DrawerTitle>
           <DrawerClose asChild>
             <Button variant="outline" size={"icon"} className="rounded-full">
