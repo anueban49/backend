@@ -7,6 +7,7 @@ export const api = axios.create({
 
 // Add authorization header to all requests
 api.interceptors.request.use((config) => {
+  config.headers = config.headers || {};
   const clientToken = localStorage.getItem("accessToken");
   const staffToken = localStorage.getItem("staffAccessToken");
   const token = clientToken || staffToken;
