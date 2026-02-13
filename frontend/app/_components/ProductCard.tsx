@@ -2,8 +2,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
-import { itemType, CartitemsType } from "@/context/CartContext";
-import { Toaster } from "@/components/ui/sonner";
+import { CartitemsType } from "@/context/CartContext";
 import { Minus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -16,8 +15,8 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-import { ProductType, useIMcrud } from "@/context/SSR-inventoryContext";
+import { FooditemType } from "@/context/CartContext";
+import { useIMcrud } from "@/context/SSR-inventoryContext";
 import {
   Card,
   CardHeader,
@@ -30,7 +29,7 @@ import { Suggestion } from "./Suggestion";
 
 export function ProductCard(item: CartitemsType) {
   const { addToCart, cartItems } = useCart();
-  const [product, setProduct] = useState<ProductType>();
+  const [product, setProduct] = useState<FooditemType>();
   const [dialogQuantity, setDialogQuantity] = useState<number>(1);
   const { fetchProductbyID } = useIMcrud();
   const { user } = useAuth();
@@ -65,7 +64,7 @@ export function ProductCard(item: CartitemsType) {
               {user ? (
                 <Button
                   onClick={() => {
-                    loadItemData(item.id);
+                    loadItemData(item._id);
                     setDialogQuantity(1);
                   }}
                   size="icon"

@@ -8,15 +8,15 @@ import {
   useEffect,
 } from "react";
 
-export type itemType = {
+export type FooditemType = {
   name: string;
   price: number;
   image: string;
   ingredients: string;
-  id: string;
+  _id: string;
 };
 
-export type CartitemsType = itemType & {
+export type CartitemsType = FooditemType & {
   quantity: number;
 };
 
@@ -40,13 +40,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItemsQuantity, setTotalItemsQuantity] = useState(0);
 
+  useEffect(() => {
+    const price = getTotalPrice();
+    const count = getTotalItems();
+    setTotalPrice(price);
+    setTotalItemsQuantity(count);
+  }, [cartItems]);
   //the comp passes item with quantity here
   const addToCart = (item: CartitemsType) => {
     setCartItems((prev) => {
-      const itemExists = prev.find((i) => i.id === item.id);
+      const itemExists = prev.find((i) => i._id === item._id);
       if (itemExists) {
         const updated = prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
+          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i,
         );
         return updated;
       }
@@ -58,7 +64,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (!id) {
       return;
     }
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+    setCartItems((prev) => prev.filter((item) => item._id !== id));
   };
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
@@ -66,7 +72,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     setCartItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
+      prev.map((item) => (item._id === id ? { ...item, quantity } : item)),
     );
   };
   const getTotalItems = () => {
@@ -82,12 +88,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const clearCart = () => {
     setCartItems([]);
   };
-  useEffect(() => {
-    const price = getTotalPrice();
-    const count = getTotalItems();
-    setTotalPrice(price);
-    setTotalItemsQuantity(count);
-  }, [cartItems]);
+
   return (
     <CartContext.Provider
       value={{
