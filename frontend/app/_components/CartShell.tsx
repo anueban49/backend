@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { AppSideBar } from "./AppSideBar";
 import { useCart } from "@/context/CartContext";
 export function CartShell() {
-  const { cartItems } = useCart();
+  const { cart } = useCart();
   const [ring, setRing] = useState(false);
   useEffect(() => {
     setRing(true);
-    console.log(cartItems);
+    console.log(cart);
     setRing(false)
-  }, [cartItems])
+  }, [cart])
   return (
     <>
     
