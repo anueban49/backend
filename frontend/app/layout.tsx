@@ -7,8 +7,6 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 import { AuthProvider } from "./_components/AuthProvider";
-import { StaffAuthProvider } from "@/context/StaffContext";
-import { CrudProvider } from "@/context/SSR-inventoryContext";
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],

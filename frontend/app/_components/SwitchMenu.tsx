@@ -30,7 +30,6 @@ export function SwitchMenu() {
     cart,
     totalItemsQuantity,
     totalPrice,
-    addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,

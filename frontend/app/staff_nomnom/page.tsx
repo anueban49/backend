@@ -1,7 +1,7 @@
 "use client";
 //this comp has to display the layout for the landing page.
-import { ReactNode, Children, useState, useEffect, createContext } from "react";
-import { itemType } from "@/context/CartContext";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 
 import { InventoryManager } from "./Management/USR-inventoryManager";

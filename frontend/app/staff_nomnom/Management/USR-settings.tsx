@@ -1,14 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { AddNewCategory } from "../../_components/AddNewCategory";
-import {
-  PopoverContent,
-  Popover,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useState, useEffect } from "react";
-import { StaffAuthProvider, useStaffAuth } from "@/context/StaffContext";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import {  useStaffAuth } from "@/context/StaffContext";
+
 import {
   Drawer,
   DrawerClose,
@@ -36,7 +31,6 @@ import { useIMcrud } from "@/context/SSR-inventoryContext";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardTitle,
 } from "@/components/ui/card";
 type ClientType = Omit<UserCompleteInfoType, "password">;

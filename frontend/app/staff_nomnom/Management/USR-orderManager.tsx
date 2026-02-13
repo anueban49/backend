@@ -7,15 +7,10 @@ import {
   Table,
   TableHead,
   TableBody,
-  TableCaption,
   TableCell,
   TableRow,
-  TableFooter,
   TableHeader,
 } from "@/components/ui/table";
-import { itemType } from "@/context/CartContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useOrder } from "@/app/_components/OrderContext";
 import {
   DropdownMenu,
@@ -44,7 +39,6 @@ export type OrderItemType = {
 export const OrderManager = () => {
   const [invoices, setInvoices] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [clients, setClients] = useState<UserCompleteInfoType[]>([]);
   const { getAllOrdersforStaff, allOrders } = useOrder();
 
   useEffect(() => {

@@ -73,7 +73,7 @@ export function InventoryManager() {
           <div className="relative top-20 w-full grid grid-cols-4 p-4 gap-4 ">
             <Dialog>
               <DialogTrigger asChild>
-                <Card className="w-full aspect-4/3 p-10 rounded-2xl flex flex-col items-center justify-center text-red-500 border-dashed border-1 border-red-300">
+                <Card className="w-full aspect-4/3 p-10 rounded-2xl flex flex-col items-center justify-center text-red-500 border-dashed border border-red-300">
                   Add New Dish
                   <PlusCircle size={40} />
                 </Card>
