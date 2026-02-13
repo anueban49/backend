@@ -28,7 +28,7 @@ import { useAuth } from "./AuthProvider";
 import { Suggestion } from "./Suggestion";
 
 export function ProductCard(item: CartitemsType) {
-  const { addToCart, cartItems } = useCart();
+  const { addToCart} = useCart();
   const [product, setProduct] = useState<FooditemType>();
   const [dialogQuantity, setDialogQuantity] = useState<number>(1);
   const { fetchProductbyID } = useIMcrud();

@@ -27,7 +27,7 @@ export type OrderItemType = {
 };
 export type OrderPlaceType = {
   userId: string;
-  items: itemType[];
+  items: FooditemType[];
   status: string;
 };
 import { CartitemsType } from "@/context/CartContext";
@@ -44,7 +44,7 @@ export interface OrderContextType {
   refreshOrderByClient: (userId: string) => Promise<void>;
 }
 import { toast } from "sonner";
-import { itemType } from "@/context/CartContext";
+import { FooditemType } from "@/context/CartContext";
 
 export const OrderContext = createContext({} as OrderContextType);
 export const OrderProvider = ({ children }: OrderProviderProps) => {
@@ -58,7 +58,7 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
       const res = await api.post(`/order/create/${_id}`, {
         userId: _id,
         data: data.map((item) => ({
-          foodId: item.id,
+          foodId: item._id,
           quantity: item.quantity,
           price: item.price,
         })),

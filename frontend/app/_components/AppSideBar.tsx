@@ -1,23 +1,12 @@
 "use client";
 //on click to add item (+) -> it should pass the price, name, description parameter and display it as list on the side bar
 //udner the hood-> should calculate the total price
-import {
-  useSidebar,
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-} from "@/components/ui/sidebar";
 import { useState, useEffect } from "react";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -25,11 +14,9 @@ import {
 import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProductType } from "../../context/SSR-inventoryContext";
-import { Bell, HandPlatter, ShoppingCart, X } from "lucide-react";
+import { HandPlatter, ShoppingCart, X } from "lucide-react";
 import { SwitchMenu } from "./SwitchMenu";
-import { useCart, CartContext, CartProvider } from "@/context/CartContext";
-import { Dot } from "lucide-react";
-import { Toaster } from "@/components/ui/sonner";
+import { useCart } from "@/context/CartContext";
 import { useAuth } from "./AuthProvider";
 import { useRouter } from "next/navigation";
 const cart: ProductType[] = [];
@@ -46,9 +33,9 @@ export function AddToCart({ product }: AddToCartProps) {
 //this has to only design the component of sidebar.
 export function AppSideBar() {
   const [open, setOpen] = useState(false);
-  const { cartItems, totalItemsQuantity } = useCart();
   const { user } = useAuth();
   const router = useRouter();
+  const { addToCart, removeFromCart, totalItemsQuantity, totalPrice } = useCart();
 
   return (
     <Drawer direction="right" defaultOpen={false}>
@@ -62,9 +49,9 @@ export function AppSideBar() {
           }}
         >
           <ShoppingCart color="red" />
-          {cartItems.length > 0 ? (
+          {cart.length > 0 ? (
             <div className="notifDot z-99 w-3.5 aspect-square bg-red-500 rounded-full absolute left-6 bottom-6 text-[10px] text-white">
-              {cartItems.length}
+              {cart.length}
             </div>
           ) : (
             <></>

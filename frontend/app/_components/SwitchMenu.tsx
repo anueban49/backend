@@ -9,39 +9,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCart, CartitemsType } from "@/context/CartContext";
-import { useAuth, UserCompleteInfoType } from "./AuthProvider";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "./AuthProvider";
 import { DollarSignIcon, MapPin, Minus, Plus, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { api } from "@/lib/axios";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { toast } from "sonner";
 import { OrderType, useOrder } from "./OrderContext";
-import { DialogDescription } from "@radix-ui/react-dialog";
 //Cart display has to render items, and their total price and total item counts.
 //while order has to do with history of orders, order status et cetera/.
-const menuOptions = [
-  { id: 1, name: "Cart" },
-  { id: 2, name: "Order" },
-];
-
-//below should indicate the types of unit items INSIDE <CART> element; not the whole CART.
-
-//below IS indicating wtf should cart menu button display
-
-//discovery: you can actually write element style as object and call the object later on the element, wtf. | irrelevant info[ignore]
 
 export function SwitchMenu() {
-  const [open, setOpen] = useState(false);
   const { user } = useAuth();
-  const [active, setActive] = useState(1);
   const {
     createOrderByClient,
     getOrderByClient,
@@ -49,9 +26,8 @@ export function SwitchMenu() {
     deleteOrderByClient,
     refreshOrderByClient,
   } = useOrder();
-  const [orderHistory, setOrderHistory] = useState<OrderType[]>([]);
   const {
-    cartItems,
+    cart,
     totalItemsQuantity,
     totalPrice,
     addToCart,
@@ -59,30 +35,23 @@ export function SwitchMenu() {
     updateQuantity,
     clearCart,
   } = useCart();
-
-  const buttonStyle = {
-    backgroundColor: active ? "red" : "white",
-    color: active ? "white" : "black",
-    borderRadius: "20px",
-  };
-  const handleClick = (id: number) => {
-    setActive(id);
-  };
-
-  function CartItemsDisplay() {
+  type activeBtn = "Order detail" | "Order History";
+  const switchBtns: activeBtn[] = ["Order detail", "Order History"];
+  const [active, setActive] = useState<activeBtn>("Order detail");
+  function OrderDetail() {
     return (
       <div className="w-full h-full ">
-        {cartItems.length > 0 ? (
+        {cart.length > 0 ? (
           <div>
             <Card className="p-2 gap-0 max-h-2/3 relative overflow-scroll no-scrollbar">
               <CardHeader className="p-2 text-[15px] font-bold">
                 My Cart
               </CardHeader>
               <CardContent className="p-0 flex flex-col gap-4 aspect-square overflow-scroll no-scrollbar">
-                {cartItems.map((item, index) => (
+                {cart.map((item, index) => (
                   <div className="flex flex-col items-center" key={index + 1}>
                     <Card
-                      key={item.id}
+                      key={item._id}
                       className="border-b border-dashed w-full aspect-3/1 overflow-hidden gap-0 p-0 bg-white rounded-2xl flex flex-row border-transparent shadow-none"
                     >
                       <CardContent className="w-1/3 p-0 aspect-square">
@@ -96,7 +65,7 @@ export function SwitchMenu() {
                           <p className="text-red-500 font-bold">{item.name}</p>
                           <Button
                             onClick={() => {
-                              removeFromCart(item.id);
+                              removeFromCart(item._id);
                             }}
                             size={"icon"}
                             className="rounded-full scale-95"
@@ -118,10 +87,10 @@ export function SwitchMenu() {
                               size={"icon"}
                               onClick={() => {
                                 if (item.quantity === 0) {
-                                  removeFromCart(item.id);
+                                  removeFromCart(item._id);
                                 }
 
-                                updateQuantity(item.id, item.quantity - 1);
+                                updateQuantity(item._id, item.quantity - 1);
                               }}
                             >
                               <Minus />
@@ -131,7 +100,7 @@ export function SwitchMenu() {
                               variant={"ghost"}
                               size={"icon"}
                               onClick={() => {
-                                addToCart(item);
+                                updateQuantity(item._id, item.quantity + 1);
                               }}
                             >
                               <Plus />
@@ -156,15 +125,15 @@ export function SwitchMenu() {
       </div>
     );
   }
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(true);
-    getOrderByClient(user?._id as string);
-    setLoading(false);
-  }, [user?._id, getOrderByClient]);
-  //getting order history belonged to userId.
-  function PaymentMenuDisplay() {
+
+  function OrderHistory() {
     const { user } = useAuth();
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+      setLoading(true);
+      getOrderByClient(user?._id as string);
+      setLoading(false);
+    }, []);
 
     const handleDelete = async (orderId: string) => {
       await deleteOrderByClient(orderId);
@@ -231,6 +200,16 @@ export function SwitchMenu() {
       </>
     );
   }
+
+  const RenderContent = () => {
+    switch (active) {
+      case "Order detail":
+        return <OrderDetail />;
+      case "Order History":
+        return <OrderHistory />;
+    }
+  };
+
   function DeliveryLocationDisplay() {
     const { user } = useAuth();
     const address = Object.values(user?.address || {}).join(", ");
@@ -257,10 +236,11 @@ export function SwitchMenu() {
 
   const billing: number = 0.99 + totalPrice;
   function handleCheckout() {
-    createOrderByClient(cartItems, user?._id as string);
+    createOrderByClient(cart, user?._id as string);
     clearCart();
     getOrderByClient(user?._id as string);
   }
+
   function PaymentInfoDisplay() {
     const { user } = useAuth();
     return (
@@ -271,13 +251,13 @@ export function SwitchMenu() {
           <div className="w-full flex justify-between items-center">
             <p className="text-gray-600">Items</p>
             <h2 className="font-bold ">
-              ${cartItems.length === 0 ? <p>-</p> : totalPrice}
+              ${cart.length === 0 ? <p>-</p> : totalPrice}
             </h2>
           </div>
           <div className="w-full flex justify-between items-center">
             <p className="text-gray-600">Shipping</p>
             <h2 className="font-bold flex">
-              ${cartItems.length === 0 ? <p>-</p> : <p>0.99</p>}
+              ${cart.length === 0 ? <p>-</p> : <p>0.99</p>}
             </h2>
           </div>
           <p className="text-gray-400">
@@ -286,13 +266,13 @@ export function SwitchMenu() {
           <div className="w-full flex justify-between items-center">
             <p className="text-gray-600 text-md">Total</p>
             <h2 className="font-bold text-xl flex">
-              ${cartItems.length === 0 ? <p>-</p> : billing}
+              ${cart.length === 0 ? <p>-</p> : billing}
             </h2>
           </div>
         </CardContent>
 
         <CardFooter>
-          {cartItems.length > 0 && (
+          {cart.length > 0 && (
             <Button
               className="bg-red-500 w-full rounded-xl"
               onClick={() => {
@@ -309,26 +289,18 @@ export function SwitchMenu() {
   return (
     <div className="flex flex-col gap-2">
       <div className="w-full p-1 h-8 rounded-4xl bg-white grid grid-cols-2 grid-rows-1">
-        {menuOptions.map((option) => {
-          const isActive = active === option.id;
-          return (
-            <button
-              key={option.id}
-              style={isActive ? buttonStyle : {}}
-              onClick={() => {
-                handleClick(option.id);
-              }}
-            >
-              {option.name}
-            </button>
-          );
-        })}
-      </div>
-      <div>
-        {active === 1 && <CartItemsDisplay></CartItemsDisplay>}
-        {active === 2 && <PaymentMenuDisplay></PaymentMenuDisplay>}
+        {switchBtns.map((btn, index) => (
+          <button
+            className={`w-full rounded-full flex justify-center items-center text-sm ease-in-out duration-300 ${active === btn ? "bg-red-500 text-white" : ""}`}
+            key={index}
+            onClick={() => setActive(btn)}
+          >
+            {btn}
+          </button>
+        ))}
       </div>
 
+      <RenderContent />
       <DeliveryLocationDisplay />
       <PaymentInfoDisplay />
     </div>
