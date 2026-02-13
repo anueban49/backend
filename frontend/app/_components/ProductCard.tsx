@@ -143,7 +143,7 @@ export function ProductCard(item: CartitemsType) {
             <p className="text-red-500 font-bold text-xl ">{item.name}</p>
             <p className="text-black font-medium text-xl ">${item.price}</p>
           </CardHeader>
-          <CardDescription className="px-2 py-0 no-scrollbar">
+          <CardDescription className="px-2 py-0 no-scrollbar overflow-y-scroll">
             {item.ingredients}
           </CardDescription>
         </CardContent>

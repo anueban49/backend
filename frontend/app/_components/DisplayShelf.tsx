@@ -66,7 +66,7 @@ export function DisplayShelf(props: DisplayShelfProps) {
                 return (
                   <ProductCard
                     key={el._id}
-                    id={el._id}
+                    _id={el._id}
                     name={el.name}
                     image={el.image}
                     ingredients={el.ingredients}
