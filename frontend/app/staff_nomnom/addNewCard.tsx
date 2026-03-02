@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-import { CategoryType } from "./order/ManageDishes";
+import { CategoryType } from "@/context/SSR-inventoryContext";
 import { createNewSchema, CreatenewType } from "../schemas/CreateNewSchema";
 import {
   Select,
@@ -24,23 +24,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { Upload, X } from "lucide-react";
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const CLOUD_NAME = process.env.CLOUDINARY_CN;
+const UPLOAD_PRESET = "dishImages";
 
-const convertToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
 export function CreateNewDish() {
   //this here is just a <CreateNewDish> COMPONENT. its a COMPONENT, not the ACTUAL function.
   const [cath, setCath] = useState<CategoryType[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [method, setMethod] = useState("");
   const [isUploading, setisUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof createNewSchema>>({
+  const form = useForm<CreatenewType>({
     resolver: zodResolver(createNewSchema),
     mode: "onSubmit",
     defaultValues: {
@@ -61,24 +60,77 @@ export function CreateNewDish() {
     getCathData();
   }, []);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        alert("File size exceeds the 5MB limit");
+        setFile(null);
+        setPreview(null);
+      }
+      if (!file.type.startsWith("image/")) {
+        setError("Please select images only");
+      }
+
+      setFile(file);
+      setPreview(URL.createObjectURL(file));
+      await fileUpload(file);
+    }
+  };
+
+  const fileUpload = async (file: File) => {
+    if (!file) return;
+    setisUploading(true);
+    setError(null);
+    setMethod("FormData (raw file)");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", UPLOAD_PRESET);
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/dbicloi01/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setUploadedUrl(data.secure_url);
+        form.setValue("image", data.secure_url);
+        console.log("upload success:", data.secure_url);
+      } else {
+        setError(data.error?.message || "Upload failed");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setisUploading(false);
+    }
+  };
+
   const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
       console.log("image needed");
-      return;
     }
     setisUploading(true);
-    const base64Image = await convertToBase64(data.image);
     try {
       const response = await api.post("product/products/create", {
         name: data.name,
         price: data.price,
         ingredients: data.ingredients,
         category: data.category,
-        image: base64Image,
+        image: {
+          url: data.image,
+          publicId: "",
+        }, //it should be url, string now
       });
-      console.log(response)
+      console.log("created product:", response);
       form.reset();
       setPreview(null);
+      setUploadedUrl(null);
+      setFile(null);
+      setError(null);
       if (!response) {
         console.log("uploading failed");
       }
@@ -89,10 +141,17 @@ export function CreateNewDish() {
     }
   };
 
+  const resetUpload = () => {
+    setPreview(null);
+    setUploadedUrl(null);
+    setFile(null);
+    form.setValue("image", "" as any);
+  };
+
   return (
     <>
       {" "}
-      <div className="w-full ">
+      <div className="w-full aspect-2/3">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -122,7 +181,7 @@ export function CreateNewDish() {
                     <FormLabel>Price</FormLabel>
                     <FormControl autoCapitalize="words">
                       <Input
-                        type="number"
+                        type="price"
                         step="0.01"
                         placeholder="type price"
                         {...field}
@@ -142,7 +201,7 @@ export function CreateNewDish() {
                   <FormLabel>Ingredients</FormLabel>
                   <FormControl>
                     <Input
-                      type="text"
+                      type="ingredients"
                       placeholder="Type Ingredients"
                       {...field}
                     />
@@ -202,25 +261,18 @@ export function CreateNewDish() {
                           </Button>
                         </div>
                       ) : (
-                        <div className="overflow-hidden relative rounded-xl aspect-7/2">
-                          <Input
-                            className="w-full h-full border-none flex flex-col align-center justify-center text-white"
+                        <label className="block cursor-pointer w-full aspect-9/2 border-2 border-dashed rounded-2xl">
+                          <div className=" flex flex-col items-center justify-center h-full w-full text-gray-400 bg-transparent">
+                            Click to upload image
+                            <Upload />
+                          </div>
+                          <input
+                            className="text-transparent"
                             type="file"
                             accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const reader = new FileReader();
-                                reader.onloadend = () => {
-                                  setPreview(reader.result as string);
-                                };
-                                reader.readAsDataURL(file);
-
-                                field.onChange(file);
-                              }
-                            }}
-                          />
-                        </div>
+                            onChange={handleFileChange}
+                          ></input>
+                        </label>
                       )}
                     </div>
                   </FormControl>
@@ -238,3 +290,5 @@ export function CreateNewDish() {
     </>
   );
 }
+
+
