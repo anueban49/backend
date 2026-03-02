@@ -16,6 +16,6 @@ export const createNewSchema = z.object({
   price: z.number().positive("Price must be greater than 0"),
   ingredients: z.string(),
   category: z.string(),
-  image: ImageSchema,
+  image: z.string(),
 });
 export type CreatenewType = z.infer<typeof createNewSchema>;
