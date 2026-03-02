@@ -20,19 +20,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+
 
 export const AddDeliveryAddress = () => {
   const { user, refreshUser } = useAuth();
-  const [open, setOpen] = useState(false);
+
 
   //a function for adding a new delivery address to the database.
   const form = useForm<AddressFormdata>({

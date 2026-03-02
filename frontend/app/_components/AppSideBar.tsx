@@ -1,12 +1,11 @@
 "use client";
 //on click to add item (+) -> it should pass the price, name, description parameter and display it as list on the side bar
 //udner the hood-> should calculate the total price
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
