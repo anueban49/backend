@@ -14,8 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-import { CategoryType } from "./page";
-import { createNewSchema, CreatenewType } from "./CreateNewSchema";
+import { CategoryType } from "./order/ManageDishes";
+import { createNewSchema, CreatenewType } from "../schemas/CreateNewSchema";
 import {
   Select,
   SelectContent,
@@ -45,7 +45,7 @@ export function CreateNewDish() {
     mode: "onSubmit",
     defaultValues: {
       name: "",
-      price: "",
+      price: 0,
       ingredients: "",
       category: "",
       image: undefined,
@@ -63,14 +63,15 @@ export function CreateNewDish() {
 
   const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
-      console.log("image needed")
+      console.log("image needed");
+      return;
     }
     setisUploading(true);
     const base64Image = await convertToBase64(data.image);
     try {
       const response = await api.post("product/products/create", {
         name: data.name,
-        price: parseFloat(data.price),
+        price: data.price,
         ingredients: data.ingredients,
         category: data.category,
         image: base64Image,
@@ -121,7 +122,7 @@ export function CreateNewDish() {
                     <FormLabel>Price</FormLabel>
                     <FormControl autoCapitalize="words">
                       <Input
-                        type="price"
+                        type="number"
                         step="0.01"
                         placeholder="type price"
                         {...field}
@@ -141,7 +142,7 @@ export function CreateNewDish() {
                   <FormLabel>Ingredients</FormLabel>
                   <FormControl>
                     <Input
-                      type="ingredients"
+                      type="text"
                       placeholder="Type Ingredients"
                       {...field}
                     />
