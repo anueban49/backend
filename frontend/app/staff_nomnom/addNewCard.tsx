@@ -24,18 +24,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { Upload, X } from "lucide-react";
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const CLOUD_NAME = process.env.CLOUDINARY_CN;
-const UPLOAD_PRESET = "dishImages";
+import { X } from "lucide-react";
 
+const convertToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
 export function CreateNewDish() {
   //this here is just a <CreateNewDish> COMPONENT. its a COMPONENT, not the ACTUAL function.
   const [cath, setCath] = useState<CategoryType[]>([]);
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadedUrl, setUploadedUrl] = useState(null);
-  const [error, setError] = useState<string | null>(null);
-  const [method, setMethod] = useState("");
   const [isUploading, setisUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -126,7 +127,7 @@ export function CreateNewDish() {
   };
   const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
-      console.log("image needed");
+      console.log("image needed")
     }
     setisUploading(true);
     const base64Image = await convertToBase64(data.image);
@@ -136,17 +137,11 @@ export function CreateNewDish() {
         price: parseFloat(data.price),
         ingredients: data.ingredients,
         category: data.category,
-        image: {
-          url: data.image,
-          publicId: "",
-        }, //it should be url, string now
+        image: base64Image,
       });
-      console.log("created product:", response);
+      console.log(response)
       form.reset();
       setPreview(null);
-      setUploadedUrl(null);
-      setFile(null);
-      setError(null);
       if (!response) {
         console.log("uploading failed");
       }
@@ -157,17 +152,10 @@ export function CreateNewDish() {
     }
   };
 
-  const resetUpload = () => {
-    setPreview(null);
-    setUploadedUrl(null);
-    setFile(null);
-    form.setValue("image", "");
-  };
-
   return (
     <>
       {" "}
-      <div className="w-full aspect-2/3">
+      <div className="w-full ">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -277,18 +265,25 @@ export function CreateNewDish() {
                           </Button>
                         </div>
                       ) : (
-                        <label className="block cursor-pointer w-full aspect-9/2 border-2 border-dashed rounded-2xl">
-                          <div className=" flex flex-col items-center justify-center h-full w-full text-gray-400 bg-transparent">
-                            Click to upload image
-                            <Upload />
-                          </div>
-                          <input
-                            className="text-transparent"
+                        <div className="overflow-hidden relative rounded-xl aspect-7/2">
+                          <Input
+                            className="w-full h-full border-none flex flex-col align-center justify-center text-white"
                             type="file"
                             accept="image/*"
-                            onChange={handleFileChange}
-                          ></input>
-                        </label>
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                  setPreview(reader.result as string);
+                                };
+                                reader.readAsDataURL(file);
+
+                                field.onChange(file);
+                              }
+                            }}
+                          />
+                        </div>
                       )}
                     </div>
                   </FormControl>
