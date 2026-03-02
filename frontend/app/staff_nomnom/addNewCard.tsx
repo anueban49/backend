@@ -48,7 +48,7 @@ export function CreateNewDish() {
       price: "",
       ingredients: "",
       category: "",
-      image: "",
+      image: undefined,
     },
   });
 
@@ -61,70 +61,6 @@ export function CreateNewDish() {
     getCathData();
   }, []);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        alert("File size exceeds the 5MB limit");
-        setFile(null);
-        setPreview(null);
-      }
-      if (!file.type.startsWith("image/")) {
-        setError("Please select images only");
-      }
-
-      setFile(file);
-      setPreview(URL.createObjectURL(file));
-      await fileUpload(file);
-    }
-  };
-
-  const fileUpload = async (file: File) => {
-    if (!file) return;
-    setisUploading(true);
-    setError(null);
-    setMethod("FormData (raw file)");
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", UPLOAD_PRESET);
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/dbicloi01/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setUploadedUrl(data.secure_url);
-        form.setValue("image", data.secure_url);
-        console.log("upload success:", data.secure_url);
-      } else {
-        setError(data.error?.message || "Upload failed");
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setisUploading(false);
-    }
-  };
-  const editProduct = async (id: string, data: any) => {
-    try {
-      const res = await api.patch(`/product/products/${id}`, data);
-      console.log("updated", res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const deleteProduct = async (id: string) => {
-    try {
-      const res = await api.delete(`/product/products/${id}`);
-      console.log("deleted", res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
   const onSubmit = async (data: CreatenewType) => {
     if (!data.image) {
       console.log("image needed")
