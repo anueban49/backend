@@ -10,12 +10,18 @@ import cors from "cors";
 
 config();
 
-await connectToDB();
-
 const app = express();
+app.use(async (req, res, next) => {
+  try {
+    await connectToDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "DB connection failed" });
+  }
+});
 app.use(
   cors({
-    origin: "backend-sf44.vercel.app",
+    origin: "https://backend-sf44-mkdkfvkeb-anuebans-projects.vercel.app/",
     credentials: true,
   }),
 );
@@ -27,11 +33,7 @@ app.use("/user", UserRouter);
 app.use("/staff", StaffsRouter);
 app.use("/order", OrderRouter);
 
-const port = 4049;
-
-app.listen(port, () => {
-  console.log(`Example app listening on port 4049`);
-});
+export default app;
 
 // Cloudinary = File storage (images, videos)
 // MongoDB = Metadata storage (URLs, prices, descriptions)
