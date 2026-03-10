@@ -12,7 +12,7 @@ export const getMe: RequestHandler = async (req, res) => {
   try {
     const { user } = jwt.verify(token, "mountain", {
       algorithms: ["HS384"],
-    }) as { user: Omit<typeof UserModel, "password"> };
+    }) as any;
 
     // Fetch the full user data from database to include address
     const fullUser = await UserModel.findById(user._id).select("-password");
