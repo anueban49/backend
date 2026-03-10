@@ -13,7 +13,12 @@ config();
 await connectToDB();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "backend-sf44.vercel.app",
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 app.use("/product", ProductRouter);
