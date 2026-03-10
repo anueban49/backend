@@ -20,10 +20,7 @@
     "formidable": "^3.5.4",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.21.0",
-    "multer": "^2.0.2",
-    "next": "^16.1.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
