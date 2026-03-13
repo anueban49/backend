@@ -6,7 +6,7 @@ cloudinary.config({
   api_secret: `${process.env.CLOUDINARY_API_SECRET}`,
 });
 
-export default cloudinary;
+export default cloudinary; 
 // app/api/upload/route.ts or pages/api/upload.ts
 
 

@@ -27,6 +27,14 @@ app.use(
 );
 
 app.use(express.json());
+const port = 4049
+app.listen(port, () => {
+  "Example app listeign on port 4049"
+})
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
 app.use("/product", ProductRouter);
 app.use("/category", CategoryRouter);
 app.use("/user", UserRouter);
@@ -35,8 +43,4 @@ app.use("/order", OrderRouter);
 
 export default app;
 
-// Cloudinary = File storage (images, videos)
-// MongoDB = Metadata storage (URLs, prices, descriptions)
-// Always store the publicId from Cloudinary for later deletion/updates
-// Use Cloudinary transformations for responsive images
-// Keep image URLs in MongoDB for fast queries
+
