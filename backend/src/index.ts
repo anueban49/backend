@@ -21,7 +21,7 @@ app.use(async (req, res, next) => {
 });
 app.use(
   cors({
-    origin: "https://backend-sf44-mkdkfvkeb-anuebans-projects.vercel.app/",
+    origin: "https://backend-sf44.vercel.app/",
     credentials: true,
   }),
 );
