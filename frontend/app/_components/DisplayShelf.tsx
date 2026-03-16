@@ -43,7 +43,7 @@ export function DisplayShelf(props: DisplayShelfProps) {
             <div className="grid grid-cols-3 grid-rows-2">
               {Array.from({ length: 6 }).map((_, index) => (
                 <Card
-                  key={index}
+                  key={index}   
                   className="w-full overflow-hidden bg-gray-600 border-gray-600 p-0 gap-0"
                 >
                   <CardContent className="p-4">
