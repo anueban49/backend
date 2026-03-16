@@ -1,5 +1,5 @@
 "use client";
-//this page will be used for mainly profile editing & stuffs
+
 import SignupForm from "../_components/SignupForm";
 import LoginForm from "../_components/LoginForm";
 import { useState } from "react";
@@ -38,7 +38,4 @@ export default function userAuth() {
     </div>
   );
 }
-//user aunthentication & user authorization are diff diggah
 
-//user authentication is supposed to verify that the user it not a bot.
-//user authorization is supposed to verify that the user is registered | unregistered.
