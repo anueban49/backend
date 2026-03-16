@@ -21,19 +21,19 @@ app.use(async (req, res, next) => {
 });
 app.use(
   cors({
-    origin: "https://backend-sf44.vercel.app/",
+    origin: `https://backend-sf44.vercel.app/`,
     credentials: true,
   }),
 );
 
 app.use(express.json());
-const port = 4049
+const port = 4049;
 app.listen(port, () => {
-  "Example app listeign on port 4049"
-})
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+  "Example app listeign on port 4049";
+});
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
 app.use("/product", ProductRouter);
 app.use("/category", CategoryRouter);
@@ -42,5 +42,3 @@ app.use("/staff", StaffsRouter);
 app.use("/order", OrderRouter);
 
 export default app;
-
-
