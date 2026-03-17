@@ -12,12 +12,7 @@ config();
 
 const app = express();
 
-app.use(
-  cors({
-    origin: `https://backend-sf44.vercel.app/`,
-    credentials: true,
-  }),
-);
+app.use(cors());
 
 app.use(express.json());
 
