@@ -1,13 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
 
-
+import Image from "next/image";
 import { ProductType, useIMcrud } from "@/context/SSR-inventoryContext";
 import { useEffect, useState } from "react";
 
 export function AddToCartDialog(_id: string) {
   // console.log(_id) id pass confirmed.
-  const { fetchProductbyID, } = useIMcrud();
+  const { fetchProductbyID } = useIMcrud();
   const [item, setItem] = useState<ProductType | null>(null);
 
   useEffect(() => {
@@ -24,12 +24,19 @@ export function AddToCartDialog(_id: string) {
       fetchData();
     }
   }, [_id]);
-  if (item) {console.log("item found")}
+  if (item) {
+    console.log("item found");
+  }
   return (
     <>
       <div className="w-full aspect-2/1 grid grid-rows-1 grid-cols-2">
         <div className="col-span-1 bg-gary-300">
-          <img src={item?.image} className="object-cover" alt={item?.image} />
+          <Image
+            width={100}
+            height={200}
+            src={item?.image as string}
+            alt={item?.name as string}
+          />
         </div>
         <div className="flex flex-col justify-between">
           <div>

@@ -14,6 +14,7 @@ import { useAuth } from "./AuthProvider";
 import { DollarSignIcon, MapPin, Minus, Plus, X } from "lucide-react";
 
 import { OrderType, useOrder } from "./OrderContext";
+import Image from "next/image";
 //Cart display has to render items, and their total price and total item counts.
 //while order has to do with history of orders, order status et cetera/.
 
@@ -54,7 +55,10 @@ export function SwitchMenu() {
                       className="border-b border-dashed w-full aspect-3/1 overflow-hidden gap-0 p-0 bg-white rounded-2xl flex flex-row border-transparent shadow-none"
                     >
                       <CardContent className="w-1/3 p-0 aspect-square">
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
+                          alt="cartProduct"
                           src={item.image}
                           className=" w-full h-full p-1 rounded-xl object-cover object-center"
                         />

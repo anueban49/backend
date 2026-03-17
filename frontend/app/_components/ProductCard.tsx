@@ -28,7 +28,7 @@ import { useAuth } from "./AuthProvider";
 import { Suggestion } from "./Suggestion";
 
 export function ProductCard(item: CartitemsType) {
-  const { addToCart} = useCart();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<FooditemType>();
   const [dialogQuantity, setDialogQuantity] = useState<number>(1);
   const { fetchProductbyID } = useIMcrud();
@@ -54,8 +54,11 @@ export function ProductCard(item: CartitemsType) {
     <>
       <Card className="w-full p-2 gap-2 ">
         <CardContent className="relative p-2 w-full h-2/3 overflow-hidden rounded-2xl">
-          <img
+          <Image
+            width={300}
+            height={200}
             src={item.image}
+            alt={item.name}
             className="rounded-xl w-full aspect-4/3 object-center object-cover"
           />{" "}
           <Dialog>
@@ -79,10 +82,11 @@ export function ProductCard(item: CartitemsType) {
             <DialogContent>
               <div className="w-full h-fit aspect-2/1 grid grid-rows-1 grid-cols-2 gap-4 ">
                 <div className="col-span-1 overflow-hidden rounded-xl">
-                  <img
-                    src={product?.image}
+                  <Image
+                    src={product?.image as string}
                     className="object-cover object-center aspect-square "
-                    alt={product?.image}
+                    alt={product?.name as string}
+                    fill
                   />
                 </div>
                 <div className="flex flex-col justify-between">

@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-   turbopack: {
-    root: __dirname, // Sets the project root to the directory of next.config.js
-  },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

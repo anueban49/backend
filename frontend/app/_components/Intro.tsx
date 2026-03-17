@@ -10,9 +10,9 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import AutoPlay from "embla-carousel-autoplay";
+import Image from "next/image";
 
 export const Intro = () => {
-
   const router = useRouter();
   useEffect(() => {
     const user = localStorage.getItem("accessToken");
@@ -61,8 +61,10 @@ export const Intro = () => {
                 key={index}
                 className="w-full basis-1/3 rounded-2xl overflow-hidden"
               >
-                <img
+                <Image
+                  alt="introImg"
                   src={img}
+                  fill
                   className="aspect-square object-cover object-center opacity-20 "
                 />
               </CarouselItem>

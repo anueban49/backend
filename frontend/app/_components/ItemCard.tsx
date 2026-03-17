@@ -11,6 +11,7 @@ import { Pen, X } from "lucide-react";
 import { CrudContext, useIMcrud, ProductType } from "../../context/SSR-inventoryContext";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/lib/axios";
+import Image from "next/image";
 
 export function ItemCard(props: ProductType) {
   const [item, setItem] = useState<ProductType | null>(null);
@@ -50,7 +51,7 @@ export function ItemCard(props: ProductType) {
           </Dialog>
 
           <div className="w-full h-4/6 overflow-hidden">
-            <img
+            <Image
               className="object-cover rounded-xl"
               src={props.image}
               alt={props.name}

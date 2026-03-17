@@ -225,6 +225,8 @@ export function CreateNew() {
                       {preview ? (
                         <div className="overflow-hidden relative rounded-xl aspect-7/2">
                           <Image
+                            width={300}
+                            height={300}
                             src={preview}
                             alt="Preview"
                             fill
