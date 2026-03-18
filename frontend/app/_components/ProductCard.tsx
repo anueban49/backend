@@ -81,12 +81,13 @@ export function ProductCard(item: CartitemsType) {
             </DialogTrigger>
             <DialogContent>
               <div className="w-full h-fit aspect-2/1 grid grid-rows-1 grid-cols-2 gap-4 ">
-                <div className="col-span-1 overflow-hidden rounded-xl">
+                <div className="col-span-1 overflow-hidden rounded-xl object-cover">
                   <Image
                     src={product?.image as string}
                     className="object-cover object-center aspect-square "
                     alt={product?.name as string}
-                    fill
+                    width={300}
+                    height={300}
                   />
                 </div>
                 <div className="flex flex-col justify-between">

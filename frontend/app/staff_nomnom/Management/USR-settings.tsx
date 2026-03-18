@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { AddNewCategory } from "../../_components/AddNewCategory";
 import { useState, useEffect } from "react";
-import {  useStaffAuth } from "@/context/StaffContext";
+import { useStaffAuth } from "@/context/StaffContext";
 
 import {
   Drawer,
@@ -28,11 +28,8 @@ import {
 } from "@/app/_components/AuthProvider";
 import { api } from "@/lib/axios";
 import { useIMcrud } from "@/context/SSR-inventoryContext";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 type ClientType = Omit<UserCompleteInfoType, "password">;
 export function Settings() {
   const { categories } = useIMcrud();
@@ -40,6 +37,7 @@ export function Settings() {
   const [clients, setClients] = useState<ClientType[] | null>(null);
   const { staff, logout } = useStaffAuth();
   const [loading, setloading] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     const getClients = async () => {
       try {
@@ -98,6 +96,16 @@ export function Settings() {
                 Employee ID:{" "}
                 <EyeIcon width={15} color="gray" onClick={toggle} />
               </p>
+              <Button
+                variant={"outline"}
+                className="w-fit rounded-2xl"
+                onClick={() => {
+                  logout();
+                  router.push(`/`);
+                }}
+              >
+                Log Out
+              </Button>
               {show ? (
                 <p className="text-sm text-gray-400 ">{staff?._id}</p>
               ) : (
@@ -249,7 +257,8 @@ export function Settings() {
                 variant={"ghost"}
                 className="rounded-2xl"
                 onClick={() => {
-                  logout;
+                  logout();
+                  router.push("/");
                 }}
               >
                 Sign Out

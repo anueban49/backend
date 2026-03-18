@@ -63,9 +63,10 @@ export const Intro = () => {
               >
                 <Image
                   alt="introImg"
+                  width={500}
+                  height={500}
                   src={img}
-                  fill
-                  className="aspect-square object-cover object-center opacity-20 "
+                  className="aspect-square object-cover object-center opacity-20 rounded-2xl "
                 />
               </CarouselItem>
             ))}

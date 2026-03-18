@@ -46,10 +46,10 @@ export const StaffAuthProvider = ({ children }: { children: ReactNode }) => {
   const signup = async (input: StaffSignup) => {
     try {
       const res = await api.post<{ staff: StaffType }>("/staff/add", input);
-      console.log(res);
+      console.log(res)
     } catch (error) {
       console.error("Signup error:", error);
-      throw error; // Re-throw so handleSignup can catch it
+      throw error; 
     }
   };
   const login = async ({ StaffID, password }: StaffLoginFormType) => {

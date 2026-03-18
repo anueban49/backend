@@ -62,8 +62,10 @@ export default function Staffregister() {
     try {
       const { data } = await api.post<StaffType>("/staff/add", input);
       console.log(data);
+      const id = data.StaffID;
       console.log("success");
       toast.success("Account successfully created");
+      alert(`Your Staff ID: ${id}`);
       router.push("/staff_nomnom");
     } catch (error) {
       console.error(error);

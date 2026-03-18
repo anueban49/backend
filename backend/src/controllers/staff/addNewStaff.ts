@@ -3,6 +3,8 @@ import { StaffModel } from "../../database/schema/staff.schema.js";
 import bcrypt from "bcrypt";
 export const addNewStaff: RequestHandler = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  console.log({hashedPassword});
+  
   try {
     const body = req.body;
 
@@ -27,7 +29,12 @@ export const addNewStaff: RequestHandler = async (req, res) => {
       const ID = `${firstname}_${lastInitial}#${last4Digits}`;
       return ID;
     };
+    console.log("=======");
     const generatedID = staffIdGenerate();
+    console.log({generatedID});
+    
+    
+// await StaffModel.deleteOne({ username: null })
 
     const newStaff = await StaffModel.create({
       StaffID: generatedID,
@@ -37,6 +44,8 @@ export const addNewStaff: RequestHandler = async (req, res) => {
       email: body.email,
       SSN: body.SSN,
     });
+    console.log({newStaff});
+    
     const {password: _, ...rest} = newStaff.toObject();
     res.status(201).json({
       staff: rest,

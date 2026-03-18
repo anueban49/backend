@@ -53,6 +53,8 @@ export function ItemCard(props: ProductType) {
           <div className="w-full h-4/6 overflow-hidden">
             <Image
               className="object-cover rounded-xl"
+              width={300}
+              height={250}
               src={props.image}
               alt={props.name}
             />

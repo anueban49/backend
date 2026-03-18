@@ -30,10 +30,10 @@ export function AddToCartDialog(_id: string) {
   return (
     <>
       <div className="w-full aspect-2/1 grid grid-rows-1 grid-cols-2">
-        <div className="col-span-1 bg-gary-300">
+        <div className="col-span-1 bg-gray-300 object-contain overflow-clip">
           <Image
-            width={100}
-            height={200}
+            width={10}
+            height={10}
             src={item?.image as string}
             alt={item?.name as string}
           />
