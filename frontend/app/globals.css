@@ -142,10 +142,9 @@ body {
   background-color: #404040;
 }
 @layer utilities {
-  @keyframes scroll{
-    
+  @keyframes scroll {
   }
-} 
+}
 .btnTransform {
   /* transform: translateX(-100%); */
   transition: ease-in-out 0.3s;
@@ -157,6 +156,19 @@ body {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.marquee-track {
+  display: inline-flex;
+  animation: marquee 10s linear infinite;
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }

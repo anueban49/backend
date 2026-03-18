@@ -1,13 +1,28 @@
 "use client";
 import { FacebookIcon, InstagramIcon } from "lucide-react";
+
 import Image from "next/image";
+
 export function Footer() {
+  const TextMarqee = () => {
+    const items = Array.from({ length: 6 }).map((_, i) => (
+      <p key={i}>Fresh Fast Delivered</p>
+    ));
+    return (
+      <div style={{ overflow: "hidden", whiteSpace: "nowrap" }}>
+        <div className="marquee-track gap-10">
+          {items}
+          {items}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-full w-full h-150 py-8 bg-primary">
       <div className="w-full  h-10 bg-[#EF4444] text-white p-4 flex items-center font-semibold">
         {" "}
-        Fresh fast Delivered Fresh fast Delivered Fresh fast Delivered Fresh
-        fast Delivered{" "}
+        <TextMarqee />
       </div>
       <div className="grid grid-cols-5 h-full p-10 ">
         <div className="flex flex-col gap-1 items-center p-10">
